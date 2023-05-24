@@ -39,11 +39,11 @@ class PlayerController(Player):
     #     # self.window_height = height
     #
     #     # Initialize Display
-    #     self.pygame_display: pygame.pygame_display = pygame.pygame_display.set_mode(
+    #     self.pygame_surface_main: pygame.pygame_surface_main = pygame.pygame_surface_main.set_mode(
     #         (640, 480)
     #     )
     #
-    #     pygame.pygame_display.set_caption('Player')
+    #     pygame.pygame_surface_main.set_caption('Player')
     #     self.clock = pygame.time.Clock()
     #
     #     """
@@ -128,7 +128,7 @@ class PlayerController(Player):
 #                     self.action_current = Action.DOWN
 #
 #         # 2. move
-#         self.do_get_chunk_thing(self.action_current)  # update the chunk_head
+#         self.move_chunk_in_container_chunk_snake(self.action_current)  # draw the chunk_head
 #         self.list_point_snake.insert(0, self.chunk_head)
 #
 #         # 3. check if game over
@@ -145,7 +145,7 @@ class PlayerController(Player):
 #             self.list_point_snake.pop_chunk_last()
 #             print("POPPPED")
 #
-#         # 5. update ui and clock
+#         # 5. draw ui and clock
 #         self.draw_graphics()
 #         self.clock.tick(FPS)w
 #
@@ -153,17 +153,17 @@ class PlayerController(Player):
 #         return game_over, self.score
 #
 #     def draw_graphics(self):
-#         self.pygame_display.fill(ColorRGB.BLACK)
+#         self.pygame_surface_main.fill(ColorRGB.BLACK)
 #
 #         for pt in self.list_point_snake:
-#             pygame.draw.rect(self.pygame_display, ColorRGB.BLUE_1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-#             pygame.draw.rect(self.pygame_display, ColorRGB.BLUE_2, pygame.Rect(pt.x + 4, pt.y + 4, 12, 12))
+#             pygame.draw.rectangle_button(self.pygame_surface_main, ColorRGB.BLUE_1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+#             pygame.draw.rectangle_button(self.pygame_surface_main, ColorRGB.BLUE_2, pygame.Rect(pt.x + 4, pt.y + 4, 12, 12))
 #
-#         pygame.draw.rect(self.pygame_display, ColorRGB.RED, pygame.Rect(self.chunk_food.x, self.chunk_food.y, BLOCK_SIZE, BLOCK_SIZE))
+#         pygame.draw.rectangle_button(self.pygame_surface_main, ColorRGB.RED, pygame.Rect(self.chunk_food.x, self.chunk_food.y, BLOCK_SIZE, BLOCK_SIZE))
 #
 #         text = font_text.render("Score: " + str(self.score), True, ColorRGB.WHITE)
-#         self.pygame_display.blit(text, [0, 0])
-#         pygame.pygame_display.flip()
+#         self.pygame_surface_main.blit(text, [0, 0])
+#         pygame.pygame_surface_main.flip()
 #
 #     def get_collided(self) -> bool:
 #
@@ -180,7 +180,7 @@ class PlayerController(Player):
 #
 #         return False
 #
-#     def do_get_chunk_thing(self, action_current: Action):
+#     def move_chunk_in_container_chunk_snake(self, action_current: Action):
 #
 #         x = self.chunk_head.x
 #         y = self.chunk_head.y

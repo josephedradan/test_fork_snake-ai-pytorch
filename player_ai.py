@@ -15,6 +15,8 @@ pygame.init()
 font = pygame.font.Font('arial.ttf', 25)
 
 
+# def get_action
+
 class SnakeGameAI(Player):
     window_width: int
     window_height: int
@@ -38,7 +40,7 @@ class SnakeGameAI(Player):
         self.window_width = window_width
         self.window_height = window_height
 
-        # init pygame_display
+        # init pygame_surface_main
         self.display = pygame.display.set_mode((self.window_width, self.window_height))
         pygame.display.set_caption('Player')
         self.clock = pygame.time.Clock()
@@ -85,7 +87,7 @@ class SnakeGameAI(Player):
                 quit()
 
         # 2. move
-        self._move(action)  # update the chunk_head
+        self._move(action)  # draw the chunk_head
         self.list_point_snake.insert(0, self.head)
 
         # 3. check if game over
@@ -104,7 +106,7 @@ class SnakeGameAI(Player):
         else:
             self.list_point_snake.pop_chunk_last()
 
-        # 5. update ui and clock
+        # 5. draw ui and clock
         self._update_ui()
         self.clock.tick(FPS)
 
@@ -139,21 +141,28 @@ class SnakeGameAI(Player):
         pygame.display.flip()
 
     def _move(self, action: List[int]):
-        # [straight, right, left]
+        """
+        action is a List of 3 ints representing [straight, right, left]
+
+        :param action:
+        :return:
+        """
+
+
 
         clock_wise = [Action.RIGHT, Action.DOWN, Action.LEFT, Action.UP]
         idx = clock_wise.index(self.direction)
 
         if np.array_equal(action, [1, 0, 0]):
-            new_dir = clock_wise[idx]  # no change
+            new_dir: Action = clock_wise[idx]  # no change
         elif np.array_equal(action, [0, 1, 0]):
             next_idx = (idx + 1) % 4
-            new_dir = clock_wise[next_idx]  # right turn r -> d -> l -> u
+            new_dir: Action = clock_wise[next_idx]  # right turn r -> d -> l -> u
         else:  # [0, 0, 1]
             next_idx = (idx - 1) % 4
-            new_dir = clock_wise[next_idx]  # left turn r -> u -> l -> d
+            new_dir:Action = clock_wise[next_idx]  # left turn r -> u -> l -> d
 
-        self.direction = new_dir
+        self.direction: Action = new_dir
 
         x = self.head.x
         y = self.head.y

@@ -102,9 +102,9 @@ class DataSnake(Collidable):
 
         Notes:
             1. Get the first chunk
-            2. Get the position of the first chunk and modify it
+            2. Get the position_center of the first chunk and modify it
             3. Pop the last chunk
-            4. Modify the last chunk's position
+            4. Modify the last chunk's position_center
             5. append left the last chunk
 
         :param action:

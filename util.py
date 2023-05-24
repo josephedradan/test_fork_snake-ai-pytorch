@@ -27,6 +27,7 @@ from enum import auto
 from typing import Dict
 from typing import Iterable
 from typing import Set
+from typing import Tuple
 from typing import TypeVar
 from typing import Union
 
@@ -45,8 +46,10 @@ DICT_K_ACTION_V_ACTION_REVERSE: Dict[Action, Action] = {
     Action.RIGHT: Action.LEFT
 }
 
+TYPE_POSITION = Tuple[int, int]
 
-class ColorRGB:
+
+class ColorRGB(Tuple[int, int]):
     WHITE = (255, 255, 255)
     RED = (200, 0, 0)
     BLUE_1 = (0, 0, 255)
@@ -62,6 +65,7 @@ BLOCK_SIZE_OFFSET = 1
 FPS = 20
 
 FONT_SIZE = 20
+TEXT_LINE_SPACING_AMOUNT = FONT_SIZE + 5
 
 T = TypeVar('T')
 

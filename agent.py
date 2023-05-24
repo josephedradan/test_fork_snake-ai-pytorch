@@ -16,9 +16,10 @@ LR = 0.001
 
 
 class Agent:
+    amount_games: int
 
     def __init__(self):
-        self.n_games = 0
+        self.amount_games = 0
         self.epsilon = 0  # randomness
         self.gamma = 0.9  # discount rate
         self.memory = deque(maxlen=MAX_MEMORY)  # popleft()
@@ -37,6 +38,25 @@ class Agent:
         dir_u = game.direction == Action.UP
         dir_d = game.direction == Action.DOWN
 
+        """
+        Notes:
+            dir_ is the current direction relative to the global
+            point_ is relative to dir_ and is the direction that will lead to the comment "Danger ..."
+            
+            so,
+            
+            [
+                Current direction (global) going to move straight (direction is relative),
+                Current direction (global) going to move right (direction is relative),
+                Current direction (global) going to move left (direction is relative),
+                is Current direction (global) moving left,
+                is Current direction (global) moving right,
+                is Current direction (global) moving up,
+                is Current direction (global) moving down,
+                
+            
+        
+        """
         state = [
             # Danger straight
             (dir_r and game.is_collision(point_r)) or
@@ -90,7 +110,7 @@ class Agent:
 
     def get_action(self, state):
         # random moves: tradeoff exploration / exploitation
-        self.epsilon = 80 - self.n_games
+        self.epsilon = 80 - self.amount_games
         final_move = [0, 0, 0]
         if random.randint(0, 200) < self.epsilon:
             move = random.randint(0, 2)
