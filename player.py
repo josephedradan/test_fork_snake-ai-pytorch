@@ -38,11 +38,11 @@ class Player(ABC):
         self.action = action
 
     @abstractmethod
-    def get_action(self) -> Action:  # TODO: RENAME TO ACTION
+    def get_action(self) -> Action:
         ...
 
     # def reset(self, action_initial: Action, x_initial: int, y_initial: int):
-    #     # init game state
+    #     # init game_snake state
     #     self.action_current = action_initial
     #
     #     self.head = Chunk(x_initial, y_initial)

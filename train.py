@@ -22,7 +22,7 @@ Reference:
 
 """
 from agent import Agent
-from player_ai import SnakeGameAI
+from player_ai import PlayerAI
 from helper import plot
 
 
@@ -32,7 +32,7 @@ def train():
     total_score = 0
     record = 0
     agent = Agent()
-    game = SnakeGameAI()
+    game = PlayerAI()
 
     while True:
         # get old state

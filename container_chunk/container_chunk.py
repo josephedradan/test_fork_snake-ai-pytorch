@@ -35,7 +35,6 @@ class ContainerChunk:
                  iterable_chunk: Union[Iterable[Chunk], None] = None
                  ):
         """
-        Do not call self.reset(...) here because
 
         Notes:
             Recall that python dictionaries past 3.6 are ordered by insertion
@@ -44,8 +43,6 @@ class ContainerChunk:
         :param iterable_chunk:
         """
         self._dict_k_chunk_v_chunk = {}
-
-        # self.reset(chunk_initial, iterable_chunk)  # Don't call this
 
         if isinstance(iterable_chunk, Iterable):
             self._dict_k_chunk_v_chunk.update(zip(iterable_chunk,

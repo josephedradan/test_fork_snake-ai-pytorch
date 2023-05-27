@@ -52,6 +52,17 @@ class Settings:
                  font_size=FONT_SIZE,
                  text_line_spacing_offset=5,
                  ):
+        """
+        Settings files, pass this file around and it will be used throughout the application most likely
+
+        :param width:
+        :param height:
+        :param block_size:
+        :param block_size_offset:
+        :param fps:
+        :param font_size:
+        :param text_line_spacing_offset:
+        """
         self.block_size = block_size
 
         self.height = get_dimension_corrected(self.block_size, height)

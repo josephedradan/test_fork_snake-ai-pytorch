@@ -6,7 +6,7 @@ import torch
 
 from player_ai import Action
 from player_ai import Chunk
-from player_ai import SnakeGameAI
+from player_ai import PlayerAI
 from model import Linear_QNet
 from model import QTrainer
 
@@ -26,70 +26,7 @@ class Agent:
         self.model = Linear_QNet(11, 256, 3)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
-    def get_state(self, game:SnakeGameAI):
-        head = game.list_point_snake[0]
-        point_l = Chunk(head.x - 20, head.y)
-        point_r = Chunk(head.x + 20, head.y)
-        point_u = Chunk(head.x, head.y - 20)
-        point_d = Chunk(head.x, head.y + 20)
 
-        dir_l = game.direction == Action.LEFT
-        dir_r = game.direction == Action.RIGHT
-        dir_u = game.direction == Action.UP
-        dir_d = game.direction == Action.DOWN
-
-        """
-        Notes:
-            dir_ is the current direction relative to the global
-            point_ is relative to dir_ and is the direction that will lead to the comment "Danger ..."
-            
-            so,
-            
-            [
-                Current direction (global) going to move straight (direction is relative),
-                Current direction (global) going to move right (direction is relative),
-                Current direction (global) going to move left (direction is relative),
-                is Current direction (global) moving left,
-                is Current direction (global) moving right,
-                is Current direction (global) moving up,
-                is Current direction (global) moving down,
-                
-            
-        
-        """
-        state = [
-            # Danger straight
-            (dir_r and game.is_collision(point_r)) or
-            (dir_l and game.is_collision(point_l)) or
-            (dir_u and game.is_collision(point_u)) or
-            (dir_d and game.is_collision(point_d)),
-
-            # Danger right
-            (dir_u and game.is_collision(point_r)) or
-            (dir_d and game.is_collision(point_l)) or
-            (dir_l and game.is_collision(point_u)) or
-            (dir_r and game.is_collision(point_d)),
-
-            # Danger left
-            (dir_d and game.is_collision(point_r)) or
-            (dir_u and game.is_collision(point_l)) or
-            (dir_r and game.is_collision(point_u)) or
-            (dir_l and game.is_collision(point_d)),
-
-            # Move action_current
-            dir_l,
-            dir_r,
-            dir_u,
-            dir_d,
-
-            # CollidableFood location
-            game.food.x < game.point_head.x,  # chunk_food left
-            game.food.x > game.point_head.x,  # chunk_food right
-            game.food.y < game.point_head.y,  # chunk_food up
-            game.food.y > game.point_head.y  # chunk_food down
-        ]
-
-        return np.array(state, dtype=int)
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))  # popleft if MAX_MEMORY is reached

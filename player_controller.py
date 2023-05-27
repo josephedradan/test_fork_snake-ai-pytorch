@@ -11,7 +11,7 @@ pygame.init()
 
 font = pygame.font.Font('arial.ttf', 25)
 
-# font_text = pygame.font_text.SysFont('arial', 25)
+# pygame_font_text = pygame.pygame_font_text.SysFont('arial', 25)
 
 DICT_K_KEY_MOVEMENT_V_ACTION: Dict[int, Action] = {
     pygame.K_a: Action.LEFT,
@@ -128,10 +128,10 @@ class PlayerController(Player):
 #                     self.action_current = Action.DOWN
 #
 #         # 2. move
-#         self.move_chunk_in_container_chunk_snake(self.action_current)  # draw the chunk_head
+#         self.get_chunk_snake_to_move_possible(self.action_current)  # draw the chunk_head
 #         self.list_point_snake.insert(0, self.chunk_head)
 #
-#         # 3. check if game over
+#         # 3. check if game_snake over
 #         game_over = False
 #         if self.get_collided():
 #             game_over = True
@@ -149,7 +149,7 @@ class PlayerController(Player):
 #         self.draw_graphics()
 #         self.clock.tick(FPS)w
 #
-#         # 6. return game over and score
+#         # 6. return game_snake over and score
 #         return game_over, self.score
 #
 #     def draw_graphics(self):
@@ -161,7 +161,7 @@ class PlayerController(Player):
 #
 #         pygame.draw.rectangle_button(self.pygame_surface_main, ColorRGB.RED, pygame.Rect(self.chunk_food.x, self.chunk_food.y, BLOCK_SIZE, BLOCK_SIZE))
 #
-#         text = font_text.render("Score: " + str(self.score), True, ColorRGB.WHITE)
+#         text = pygame_font_text.render("Score: " + str(self.score), True, ColorRGB.WHITE)
 #         self.pygame_surface_main.blit(text, [0, 0])
 #         pygame.pygame_surface_main.flip()
 #
@@ -180,7 +180,7 @@ class PlayerController(Player):
 #
 #         return False
 #
-#     def move_chunk_in_container_chunk_snake(self, action_current: Action):
+#     def get_chunk_snake_to_move_possible(self, action_current: Action):
 #
 #         x = self.chunk_head.x
 #         y = self.chunk_head.y
@@ -196,15 +196,15 @@ class PlayerController(Player):
 #         self.chunk_head = Chunk(x, y)
 #
 # if __name__ == '__main__':
-#     game = PlayerController(
+#     game_snake = PlayerController(
 #         Action.RIGHT,
 #         640 // 2,
 #         480 // 2,
 #     )
 #
-#     # game loop
+#     # game_snake loop
 #     while True:
-#         game_over, score = game.play_step()
+#         game_over, score = game_snake.play_step()
 #
 #         if game_over == True:
 #             break

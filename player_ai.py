@@ -17,7 +17,7 @@ font = pygame.font.Font('arial.ttf', 25)
 
 # def get_action
 
-class SnakeGameAI(Player):
+class PlayerAI(Player):
     window_width: int
     window_height: int
 
@@ -54,7 +54,7 @@ class SnakeGameAI(Player):
         self.reset()
 
     # def reset(self):
-    #     # init game state
+    #     # init game_snake state
     #     self.action_current = Action.RIGHT
     #
     #     self.head = Chunk(self.window_width / 2, self.window_height / 2)
@@ -90,7 +90,7 @@ class SnakeGameAI(Player):
         self._move(action)  # draw the chunk_head
         self.list_point_snake.insert(0, self.head)
 
-        # 3. check if game over
+        # 3. check if game_snake over
         reward = 0
         game_over = False
         if self.is_collision() or self.frame_iteration > 100 * len(self.list_point_snake):
@@ -110,7 +110,7 @@ class SnakeGameAI(Player):
         self._update_ui()
         self.clock.tick(FPS)
 
-        # 6. return game over and score
+        # 6. return game_snake over and score
         return reward, game_over, self.score
 
     def is_collision(self, pt=None):

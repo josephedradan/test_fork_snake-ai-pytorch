@@ -43,6 +43,11 @@ TYPEVAR_CONTAINER_CHUNK = TypeVar('TYPEVAR_CONTAINER_CHUNK', bound=ContainerChun
 
 
 class Collidable(ABC, Generic[TYPEVAR_CONTAINER_CHUNK]):
+    """
+    Wrapper around a ContainerChunk that stores additional information related to
+    a ContainerChunk
+
+    """
     container_chunk: ContainerChunk
 
     def __init__(self, container_chunk: ContainerChunk):

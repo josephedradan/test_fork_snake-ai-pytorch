@@ -22,11 +22,15 @@ Reference:
 
 """
 import itertools
+from collections import deque
+from typing import Deque
 
 import pygame
 
 from _settings import Settings
+from collidable.collidable_snake import CollidableSnake
 from game_snake import GameSnake
+from util import Action
 from util import BLOCK_SIZE
 from util import BLOCK_SIZE_OFFSET
 from util import ColorRGB
@@ -50,8 +54,8 @@ class PygameGraphicsGameSnake:
     def __init__(self,
                  settings: Settings,
                  pygame_display: pygame.display,
-                 font_text: pygame.font.Font,
-                 font_fps: pygame.font.Font,
+                 pygame_font_text: pygame.font.Font,
+                 pygame_font_fps: pygame.font.Font,
                  game_snake: GameSnake
                  ):
 
@@ -63,18 +67,18 @@ class PygameGraphicsGameSnake:
         self.settings = settings
         self.pygame_display = pygame_display
 
-        self.font_text = font_text
-        self.font_fps = font_fps
+        self.font_text = pygame_font_text
+        self.font_fps = pygame_font_fps
 
         self.clock = pygame.time.Clock()
 
-        #####
+        ##########
 
         self.game_snake = game_snake
 
     def draw_graphics(self):
         """
-        Draw collidable_snake game
+        Draw collidable_snake game_snake
 
         Notes:
             The order of draws determines if something is drawn on top of something.
@@ -94,6 +98,9 @@ class PygameGraphicsGameSnake:
 
         # Draw snakes
         for index, collidable_snake in enumerate(self.game_snake.list_collidable_snake):
+
+            print(collidable_snake.get_container_chunk())
+            # Snake head
             pygame.draw.rect(
                 self.pygame_display,
                 ColorRGB.GREEN_KELLY,
@@ -103,8 +110,12 @@ class PygameGraphicsGameSnake:
                             BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2))
             )
 
-            for chunk in itertools.islice(collidable_snake.get_container_chunk(), 1,
-                                          len(collidable_snake.get_container_chunk())):
+            # Snake body
+            for chunk in itertools.islice(
+                    collidable_snake.get_container_chunk(),
+                    1,
+                    len(collidable_snake.get_container_chunk())):
+
                 pygame.draw.rect(
                     self.pygame_display,
                     ColorRGB.GREEN,
@@ -156,15 +167,37 @@ class PygameGraphicsGameSnake:
 
     def run(self):
 
-        while True:
-            bool_game_over, reward, snake = self.game_snake.play_step()
+        deque_collidable: Deque[CollidableSnake] = deque(self.game_snake.list_collidable_snake)
 
-            # Update ui and clock
+        while deque_collidable:
+
+            collidable_snake: CollidableSnake = deque_collidable.popleft()
+
+            action_from_player: Action = collidable_snake.get_player().get_action()
+
+            game_over, _, _ = self.game_snake.play_step(collidable_snake, action_from_player)
+
             self.clock.tick(FPS)
-            self.draw_graphics()
+            self.draw_graphics()  # Drawing must be after the check
 
-            if bool_game_over is True:
-                break
+            if game_over is True:
+                continue
+
+            deque_collidable.append(collidable_snake)
 
         for snake in self.game_snake.list_collidable_snake:
             print('Final Score', snake.score)
+
+        # while True:
+        #     bool_game_over, reward, snake = self.game_snake.play_step()
+        #     print(bool_game_over)
+        #     # Update ui and clock
+        #
+        #     if bool_game_over is True:
+        #         break
+        #
+        #     self.clock.tick(FPS)
+        #     self.draw_graphics()  # Drawing must be after the check
+        #
+        # for snake in self.game_snake.list_collidable_snake:
+        #     print('Final Score', snake.score)

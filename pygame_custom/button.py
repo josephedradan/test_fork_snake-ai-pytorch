@@ -67,8 +67,12 @@ class Button:
         )
 
     def is_position_colliding(self, position: TYPE_POSITION) -> bool:
-        print("FSDFSDF", self.rectangle_button.left, self.rectangle_button.right, self.rectangle_button.top,
-              self.rectangle_button.bottom)
+        """
+        Check if a given position is in this object's hit box basically
+
+        :param position:
+        :return:
+        """
         return (
                 position[0] in range(self.rectangle_button.left, self.rectangle_button.right)
                 and position[1] in range(self.rectangle_button.top, self.rectangle_button.bottom)

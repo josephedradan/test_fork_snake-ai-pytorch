@@ -81,4 +81,4 @@ class ContainerChunkSnake(ContainerChunk):
         return self._deque_chunk.__iter__()
 
     def __str__(self):
-        return f"{type(self).__name__}"
+        return f"{type(self).__name__} {self._deque_chunk}"

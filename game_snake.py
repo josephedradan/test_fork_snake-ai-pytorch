@@ -23,6 +23,9 @@ Reference:
 """
 import itertools
 import random
+from collections import deque
+from typing import Deque
+from typing import Dict
 from typing import List
 from typing import Tuple
 from typing import Union
@@ -39,7 +42,7 @@ from player_controller import PlayerController
 from util import Action
 
 
-class GameSnake():
+class GameSnake:
     settings: Settings
     amount_of_block_width: int
     amount_of_block_height: int
@@ -54,8 +57,8 @@ class GameSnake():
                  # pygame_surface_main: pygame.display,
                  # window_width: int,
                  # window_height: int,
-                 # font_text: pygame.font.Font,
-                 # font_fps: pygame.font.Font
+                 # pygame_font_text: pygame.font.Font,
+                 # pygame_font_fps: pygame.font.Font
                  settings: Settings,
                  amount_of_block_width,
                  amount_of_block_height,
@@ -70,7 +73,6 @@ class GameSnake():
 
         self.amount_of_block_width = amount_of_block_width
         self.amount_of_block_height = amount_of_block_height
-
 
         """ 
         #################### 
@@ -180,92 +182,83 @@ class GameSnake():
                     collidable_given.get_container_chunk().add_new_chunk(chunk_food)
                     return chunk_food
 
-
-    def play_step(self):
+    def play_step(self, collidable_snake: Collidable, action_from_player: Action):
         self.index_frame += 1
         bool_game_over = False
         reward = 0
 
         # time_previous = time.time()
 
-        for snake in self.list_collidable_snake:
+        container_chunk_snake = collidable_snake.get_container_chunk()
 
-            # Get Direction from player
-            action: Action = snake.get_player().get_action()
+        chunk_snake_to_move_possible, x_chunk_snake_last_old, y_chunk_snake_last_old = self.get_chunk_snake_to_move_possible(
+            # time_previous,
+            container_chunk_snake,
+            action_from_player
+        )
 
-            container_chunk_snake = snake.get_container_chunk()
+        # TODO: MOVE THIS CHECKING SOMEWHERELSE + REDISGN
+        ####################
+        # Collision checking
+        ####################
+        collidable_object: Union[Collidable, None] = self.get_collidable_from_chunk_that_collided(
+            chunk_snake_to_move_possible
+        )
 
-            # Get chunk to move
-            chunk_snake_to_move, x_chunk_last_old, y_chunk_last_old = self.move_chunk_in_container_chunk_snake(
-                # time_previous,
-                container_chunk_snake,
-                action
+        # Check collision collidable_snake with food
+        if isinstance(collidable_object, CollidableFood):
+            collidable_snake.score += 1
+
+            self._place_food(collidable_object, chunk_snake_to_move_possible)
+
+            # Extend the current collidable_snake
+            collidable_snake.get_container_chunk().add_new_chunk(
+                Chunk(x_chunk_snake_last_old, y_chunk_snake_last_old)
+
             )
 
-            ####################
-            # Collision checking
-            ####################
+        # Collision collidable_snake with collidable_snake (Does not care about which collidable_snake)
+        if isinstance(collidable_object, CollidableSnake):
+            bool_game_over = True
+            reward = -10
+            return bool_game_over, reward, collidable_snake
 
-            collidable_object: Union[Collidable, None] = self.get_collidable_from_chunk(chunk_snake_to_move)
+        # Check collision collidable_snake with wall
+        if isinstance(collidable_object, CollidableWall):
+            bool_game_over = True
+            reward = -10
+            print("DED")
+            return bool_game_over, reward, collidable_snake
 
-            # Collision with collidable_given
-            if isinstance(collidable_object, CollidableFood):
-                snake.score += 1
+        # Move the collidable_snake by placing chunk_snake_to_move_possible at the front of container_chunk_snake
+        container_chunk_snake.add_new_chunk_front(chunk_snake_to_move_possible)
 
-                self._place_food(collidable_object, chunk_snake_to_move)
+        # 6. return game_snake over and score
+        return bool_game_over, reward, None  # TODO MAKE THIS BETTER, SNAKE DOES NTO EXIST
 
-                # Extend the current snake
-                snake.get_container_chunk().add_new_chunk(
-                    Chunk(x_chunk_last_old, y_chunk_last_old)
-
-                )
-
-            # Collision with snake (Does not care about which snake)
-            if isinstance(collidable_object, CollidableSnake):
-                bool_game_over = True
-                reward = -10
-                return bool_game_over, reward, snake
-
-            if isinstance(collidable_object, CollidableWall):
-                bool_game_over = True
-                reward = -10
-                return bool_game_over, reward, snake
-
-            # Move the snake by placing chunk_snake_to_move at the front of container_chunk_snake
-            container_chunk_snake.add_new_chunk_front(chunk_snake_to_move)
-
-        # 6. return game over and score
-        return bool_game_over, reward, snake
-
-    def move_chunk_in_container_chunk_snake(self, container_chunk_snake: ContainerChunkSnake, action: Action) -> Tuple[Chunk, int, int]:
+    def get_chunk_snake_to_move_possible(self, container_chunk_snake: ContainerChunkSnake, action: Action) -> Tuple[
+        Chunk, int, int]:
         """
-        Move the CollidableSnake
-
-        Notes:
-            1. Get the first chunk
-            2. Get the position_center of the first chunk and modify it
-            3. Pop the last chunk
-            4. Modify the last chunk's position_center
-            5. append left the last chunk
+        Move the CollidableSnake optimally by moving the last chunk of container_chunk_snake to be the first chunk
 
         :param container_chunk_snake:
         :param action:
-        :return: (chunk_that_moved, x_chunk_last_before_move, y_chunk_last_before_move)
+        :return:
         """
 
-        chunk_head: Chunk = container_chunk_snake.get_chunk_first()
+        chunk_snake_first: Chunk = container_chunk_snake.get_chunk_first()
 
-        print(container_chunk_snake._deque_chunk)
-        print(chunk_head)
-        print()
+        # print(container_chunk_snake._deque_chunk)
+        # print(chunk_snake_first)
+        # print()
 
-        x_chunk_head_new = chunk_head.x
-        y_chunk_head_nex = chunk_head.y
+        x_chunk_head_new = chunk_snake_first.x
+        y_chunk_head_new = chunk_snake_first.y
 
-        chunk_last: Chunk = container_chunk_snake.pop_chunk_last()
+        chunk_snake_last_to_move_possible: Chunk = container_chunk_snake.pop_chunk_last()
 
-        print(chunk_last)
-        print()
+        # print(chunk_snake_last_to_move_possible)
+        # print()
 
         # time_delta = time.time() - time_previous
 
@@ -274,24 +267,30 @@ class GameSnake():
         elif action == Action.LEFT:
             x_chunk_head_new -= self.settings.block_size
         elif action == Action.DOWN:
-            y_chunk_head_nex += self.settings.block_size
+            y_chunk_head_new += self.settings.block_size
         elif action == Action.UP:
-            y_chunk_head_nex -= self.settings.block_size
+            y_chunk_head_new -= self.settings.block_size
 
-        # Last position of chunk
-        x_chunk_last_old = chunk_last.x
-        y_chunk_last_old = chunk_last.y
+        # Save x and y position of chunk_snake_last_to_move_possible
+        x_chunk_last_old = chunk_snake_last_to_move_possible.x
+        y_chunk_last_old = chunk_snake_last_to_move_possible.y
 
-        # chunk_last will now be the chunk that moved
-        chunk_last.x = x_chunk_head_new
-        chunk_last.y = y_chunk_head_nex
+        chunk_snake_last_to_move_possible.x = x_chunk_head_new
+        chunk_snake_last_to_move_possible.y = y_chunk_head_new
 
-        return chunk_last, x_chunk_last_old, y_chunk_last_old
+        return chunk_snake_last_to_move_possible, x_chunk_last_old, y_chunk_last_old
 
-    def get_collidable_from_chunk(self, chunk: Chunk) -> Union[Collidable, None]:
-
+    def get_collidable_from_chunk_that_collided(self, chunk: Chunk) -> Union[Collidable, None]:
+        """
+        Notes:
+            If chunk collided with a collidable, return that collidable
+            
+        :param chunk:
+        :return:
+        """
         collidable: Collidable
-        for collidable in itertools.chain(self.list_collidable_snake, self.list_collidable_food,
+        for collidable in itertools.chain(self.list_collidable_snake,
+                                          self.list_collidable_food,
                                           self.list_collidable_wall):
             if chunk in collidable.get_container_chunk():
                 return collidable
@@ -300,7 +299,7 @@ class GameSnake():
 
     # def get_collided(self, chunk: Chunk) -> bool:
     #     """
-    #     Check if a chunk has collided with something in the game
+    #     Check if a chunk has collided with something in the game_snake
     #
     #     Notes:
     #         1. Check if the chunk_front is colliding
@@ -324,18 +323,23 @@ class GameSnake():
 
     def run(self):
 
-        # pygame.init()
+        deque_collidable: Deque[CollidableSnake] = deque(self.list_collidable_snake)
 
-        while True:
-            game_over = self.play_step()
+        while deque_collidable:
+
+            collidable_snake: CollidableSnake = deque_collidable.popleft()
+
+            action_from_player: Action = collidable_snake.get_player().get_action()
+
+            game_over, _, _ = self.play_step(collidable_snake, action_from_player)
 
             if game_over is True:
-                break
+                continue
+
+            deque_collidable.append(collidable_snake)
 
         for snake in self.list_collidable_snake:
             print('Final Score', snake.score)
-
-        # pygame.quit()
 
 
 def main():
