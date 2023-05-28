@@ -30,10 +30,6 @@ from player import Player
 
 class GameState(ABC):
 
-    def __init__(self, game_snake: GameSnake):
-
-        self.game_snake = game_snake
-
     @abstractmethod
-    def generate_game_state(self, player: Player):
+    def generate_game_state(self, game_snake: GameSnake, player: Player):
         ...

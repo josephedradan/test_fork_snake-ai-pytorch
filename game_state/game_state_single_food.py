@@ -29,11 +29,7 @@ from player import Player
 
 class GameStateSingleFood(GameState):
 
-    def __init__(self, game_snake: GameSnake):
-        super().__init__(game_snake)
-
-    def generate_game_state(self, collidable_snake: CollidableSnake):
-
+    def generate_game_state(self, game_snake: GameSnake, player: Player):
 
 
         head = self.game_state.list_point_snake[0]

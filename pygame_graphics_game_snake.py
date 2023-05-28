@@ -78,15 +78,16 @@ class PygameGraphicsGameSnake:
 
     def draw_graphics(self):
         """
-        Draw collidable_snake game_snake
+        Non generalized drawing pygame graphics
 
         Notes:
             The order of draws determines if something is drawn on top of something.
 
         :return:
         """
-        self.pygame_display.fill(ColorRGB.BLACK)
+        self.clock.tick(FPS)  # Sets the FPS of the game
 
+        self.pygame_display.fill(ColorRGB.BLACK)
         # Draw walls
         for collidable_wall in self.game_snake.list_collidable_wall:
             for chunk_wall in collidable_wall.get_container_chunk():
@@ -167,37 +168,14 @@ class PygameGraphicsGameSnake:
 
     def run(self):
 
-        deque_collidable: Deque[CollidableSnake] = deque(self.game_snake.list_collidable_snake)
+        def callback_draw_game():
+            """
+            This callable contains pygame drawing related stuff
 
-        while deque_collidable:
+            :return:
+            """
+            nonlocal self
 
-            collidable_snake: CollidableSnake = deque_collidable.popleft()
+            self.draw_graphics()
 
-            action_from_player: Action = collidable_snake.get_player().get_action()
-
-            game_over, _, _ = self.game_snake.play_step(collidable_snake, action_from_player)
-
-            self.clock.tick(FPS)
-            self.draw_graphics()  # Drawing must be after the check
-
-            if game_over is True:
-                continue
-
-            deque_collidable.append(collidable_snake)
-
-        for snake in self.game_snake.list_collidable_snake:
-            print('Final Score', snake.score)
-
-        # while True:
-        #     bool_game_over, reward, snake = self.game_snake.play_step()
-        #     print(bool_game_over)
-        #     # Update ui and clock
-        #
-        #     if bool_game_over is True:
-        #         break
-        #
-        #     self.clock.tick(FPS)
-        #     self.draw_graphics()  # Drawing must be after the check
-        #
-        # for snake in self.game_snake.list_collidable_snake:
-        #     print('Final Score', snake.score)
+        self.game_snake.run(callback_draw_game)

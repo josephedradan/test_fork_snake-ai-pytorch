@@ -44,10 +44,12 @@ class CollidableSnake(Collidable[ContainerChunkSnake]):
         :param player:
         :param iterable_chunk:
         """
+
+        # WARNING: Doing operations before the super call is uncommon and illegal other languages
+        container_chunk_snake = ContainerChunkSnake(iterable_chunk)
+
         super().__init__(
-            ContainerChunkSnake(
-                iterable_chunk
-            )
+            container_chunk_snake
         )
 
         self.player = player

@@ -24,8 +24,8 @@ Reference:
 import itertools
 import random
 from collections import deque
+from typing import Callable
 from typing import Deque
-from typing import Dict
 from typing import List
 from typing import Tuple
 from typing import Union
@@ -321,9 +321,21 @@ class GameSnake:
     #
     #     return False
 
-    def run(self):
+    def run(self, callback_end_call_for_iteration: Union[Callable, None] = None):
+        """
 
+
+        :param callback_end_call_for_iteration: Callback function to run
+        :return:
+        """
         deque_collidable: Deque[CollidableSnake] = deque(self.list_collidable_snake)
+
+        if callback_end_call_for_iteration is None:
+
+            def callback_does_nothing():
+                pass
+
+            callback_end_call_for_iteration = callback_does_nothing
 
         while deque_collidable:
 
@@ -337,6 +349,8 @@ class GameSnake:
                 continue
 
             deque_collidable.append(collidable_snake)
+
+            callback_end_call_for_iteration()
 
         for snake in self.list_collidable_snake:
             print('Final Score', snake.score)

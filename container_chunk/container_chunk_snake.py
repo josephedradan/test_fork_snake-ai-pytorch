@@ -36,6 +36,7 @@ class ContainerChunkSnake(ContainerChunk):
                  ):
         super().__init__(iterable_chunk)
 
+        # TODO: Remove when done thinking about the behavior below
         # self._deque_chunk = deque([
         #     chunk_initial,
         #     # Chunk(self.chunk_head.x - BLOCK_SIZE, self.chunk_head.y),
