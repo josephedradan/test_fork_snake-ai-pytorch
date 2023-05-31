@@ -1,5 +1,5 @@
 """
-Date created: 5/5/2023
+Date created: 5/30/2023
 
 Purpose:
 
@@ -15,7 +15,7 @@ Explanation:
 
 Tags:
 
-Contributors:
+Contributors: 
     https://github.com/josephedradan
     
 Reference:
@@ -28,9 +28,8 @@ from chunk import Chunk
 from container_chunk.container_chunk import ContainerChunk
 
 
-class ContainerChunkWall(ContainerChunk):
-    # TODO: ADd more features
+class ContainerChunkFood(ContainerChunk):
+
+    # TODO: Add more features
     def __init__(self, iterable_chunk: Union[Iterable[Chunk], None] = None):
         super().__init__(iterable_chunk)
-
-

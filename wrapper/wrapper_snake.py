@@ -26,13 +26,13 @@ from typing import Sequence
 from typing import Union
 
 from chunk import Chunk
-from collidable.collidable import Collidable
+from wrapper.wrapper import Wrapper
 from container_chunk.container_chunk_snake import ContainerChunkSnake
 from player import Player
 from util import Action
 
 
-class CollidableSnake(Collidable[ContainerChunkSnake]):
+class WrapperSnake(Wrapper[ContainerChunkSnake]):
     player: Player
     score: int
 

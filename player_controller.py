@@ -74,7 +74,7 @@ class PlayerController(Player):
     #     if self.chunk_food in self.list_point_snake:
     #         self._place_food()
 
-    def get_action(self) -> Action:
+    def get_action_new(self) -> Action:
 
         # 1. collect user input
         for event in pygame.event.get():

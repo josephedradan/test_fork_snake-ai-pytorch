@@ -42,7 +42,7 @@ from container_chunk.container_chunk import ContainerChunk
 TYPEVAR_CONTAINER_CHUNK = TypeVar('TYPEVAR_CONTAINER_CHUNK', bound=ContainerChunk)
 
 
-class Collidable(ABC, Generic[TYPEVAR_CONTAINER_CHUNK]):
+class Wrapper(Generic[TYPEVAR_CONTAINER_CHUNK]):
     """
     Wrapper around a ContainerChunk that stores additional information related to
     a ContainerChunk

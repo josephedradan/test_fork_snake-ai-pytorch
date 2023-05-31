@@ -39,6 +39,9 @@ class Action(Enum):
     DOWN = auto()
 
 
+TYPE_ACTION_POSSIBLE = Union[Action, None]
+
+
 DICT_K_ACTION_V_ACTION_REVERSE: Dict[Action, Action] = {
     Action.UP: Action.DOWN,
     Action.DOWN: Action.UP,
@@ -49,7 +52,7 @@ DICT_K_ACTION_V_ACTION_REVERSE: Dict[Action, Action] = {
 TYPE_POSITION = Tuple[int, int]
 
 
-class ColorRGB(Tuple[int, int]):
+class ColorRGB(Tuple[int, int, int]):
     WHITE = (255, 255, 255)
     RED = (200, 0, 0)
     BLUE_1 = (0, 0, 255)

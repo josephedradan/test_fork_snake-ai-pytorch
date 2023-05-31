@@ -37,10 +37,17 @@ class ContainerChunk:
         """
 
         Notes:
-            Recall that python dictionaries past 3.6 are ordered by insertion
+            Recall that python dictionaries past 3.6 are ordered by insertion.
 
         :param chunk_initial:
         :param iterable_chunk:
+        """
+
+        """
+        Notes:
+            A dict is used instead of a set because the value of the dict is the chunk 
+            in THIS object and the key is used for the hash of the chunk. Recall that the hash
+            of the chunk uses the position of the chunk
         """
         self._dict_k_chunk_v_chunk = {}
 
@@ -51,7 +58,14 @@ class ContainerChunk:
     def add_new_chunk(self, chunk: Chunk):
         self._dict_k_chunk_v_chunk[chunk] = chunk
 
-    def remove_chunk(self, chunk: Chunk) -> Chunk:
+    def pop_chunk(self, chunk: Chunk) -> Chunk:
+        """
+        This will return the chunk of this object assuming that the given chunk has the same hash
+        of the object that will be returned
+
+        :param chunk:
+        :return:
+        """
         return self._dict_k_chunk_v_chunk.pop(chunk)
 
     def reset(self, iterable_chunk_additional: Union[Iterable[Chunk], None] = None):
@@ -69,3 +83,7 @@ class ContainerChunk:
 
     def __len__(self):
         return self._dict_k_chunk_v_chunk.__len__()
+
+
+    def get_dict_k_chunk_v_chunk(self) -> Dict[Chunk, Chunk]:
+        return self._dict_k_chunk_v_chunk

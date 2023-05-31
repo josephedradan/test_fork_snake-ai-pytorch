@@ -28,12 +28,12 @@ from typing import Tuple
 from typing import Union
 
 from chunk import Chunk
-from collidable.collidable import Collidable
 from util import Action
 from util import BLOCK_SIZE
+from wrapper.wrapper import Wrapper
 
 
-class DataSnake(Collidable):
+class DataSnake(Wrapper):
     action_current: Action
     deque_chunk_snake: deque[Chunk]
 
@@ -98,7 +98,7 @@ class DataSnake(Collidable):
 
     def move_snake(self, action: Action) -> Tuple[int, int]:
         """
-        Move the CollidableSnake chunk
+        Move the WrapperSnake chunk
 
         Notes:
             1. Get the first chunk

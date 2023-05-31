@@ -31,5 +31,6 @@ from player import Player
 class GameState(ABC):
 
     @abstractmethod
-    def generate_game_state(self, game_snake: GameSnake, player: Player):
+    @staticmethod
+    def generate_game_state(game_snake: GameSnake, player: Player):
         ...

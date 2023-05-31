@@ -15,7 +15,7 @@ pygame.init()
 font = pygame.font.Font('arial.ttf', 25)
 
 
-# def get_action
+# def get_action_new
 
 class PlayerAI(Player):
     window_width: int

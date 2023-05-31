@@ -22,15 +22,11 @@ Reference:
 
 """
 import itertools
-from collections import deque
-from typing import Deque
 
 import pygame
 
 from _settings import Settings
-from collidable.collidable_snake import CollidableSnake
 from game_snake import GameSnake
-from util import Action
 from util import BLOCK_SIZE
 from util import BLOCK_SIZE_OFFSET
 from util import ColorRGB
@@ -89,8 +85,8 @@ class PygameGraphicsGameSnake:
 
         self.pygame_display.fill(ColorRGB.BLACK)
         # Draw walls
-        for collidable_wall in self.game_snake.list_collidable_wall:
-            for chunk_wall in collidable_wall.get_container_chunk():
+        for wrapper_wall in self.game_snake.list_wrapper_wall:
+            for chunk_wall in wrapper_wall.get_container_chunk():
                 pygame.draw.rect(
                     self.pygame_display,
                     ColorRGB.GRAY,
@@ -98,25 +94,24 @@ class PygameGraphicsGameSnake:
                 )
 
         # Draw snakes
-        for index, collidable_snake in enumerate(self.game_snake.list_collidable_snake):
+        for index, wrapper_snake in enumerate(self.game_snake.list_wrapper_snake):
 
-            print(collidable_snake.get_container_chunk())
+            print(wrapper_snake.get_container_chunk())
             # Snake head
             pygame.draw.rect(
                 self.pygame_display,
                 ColorRGB.GREEN_KELLY,
-                pygame.Rect(collidable_snake.get_container_chunk()[0].x + BLOCK_SIZE_OFFSET,
-                            collidable_snake.get_container_chunk()[0].y + BLOCK_SIZE_OFFSET,
+                pygame.Rect(wrapper_snake.get_container_chunk()[0].x + BLOCK_SIZE_OFFSET,
+                            wrapper_snake.get_container_chunk()[0].y + BLOCK_SIZE_OFFSET,
                             BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2),
                             BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2))
             )
 
             # Snake body
             for chunk in itertools.islice(
-                    collidable_snake.get_container_chunk(),
+                    wrapper_snake.get_container_chunk(),
                     1,
-                    len(collidable_snake.get_container_chunk())):
-
+                    len(wrapper_snake.get_container_chunk())):
                 pygame.draw.rect(
                     self.pygame_display,
                     ColorRGB.GREEN,
@@ -136,7 +131,7 @@ class PygameGraphicsGameSnake:
                 # )
 
             text = self.font_text.render(
-                f"P{index} Score: {collidable_snake.score}",
+                f"P{index} Score: {wrapper_snake.score}",
                 True,
                 ColorRGB.GREEN
             )
@@ -144,8 +139,8 @@ class PygameGraphicsGameSnake:
             self.pygame_display.blit(text, (0, FONT_SIZE * (index + 1)))  # Offset scores
 
         # Draw food
-        for collidable_food in self.game_snake.list_collidable_food:
-            for chunk_food in collidable_food.get_container_chunk():
+        for wrapper_food in self.game_snake.list_wrapper_food:
+            for chunk_food in wrapper_food.get_container_chunk():
                 pygame.draw.rect(
                     self.pygame_display,
                     ColorRGB.RED,

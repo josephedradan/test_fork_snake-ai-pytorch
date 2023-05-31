@@ -25,12 +25,12 @@ from typing import Iterable
 from typing import Union
 
 from chunk import Chunk
-from collidable.collidable import Collidable
-from collidable.collidable import TYPEVAR_CONTAINER_CHUNK
+from wrapper.wrapper import Wrapper
+from wrapper.wrapper import TYPEVAR_CONTAINER_CHUNK
 from container_chunk.container_chunk import ContainerChunk
 
 
-class CollidableFood(Collidable[TYPEVAR_CONTAINER_CHUNK]):
+class WrapperFood(Wrapper[TYPEVAR_CONTAINER_CHUNK]):
 
     def __init__(self,
                  iterable_chunk: Union[Iterable[Chunk], None] = None

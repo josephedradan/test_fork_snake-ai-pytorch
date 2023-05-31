@@ -21,77 +21,98 @@ Contributors:
 Reference:
 
 """
-from collidable.collidable_snake import CollidableSnake
+from typing import Union
+
+import numpy as np
+
+from chunk import Chunk
 from game_snake import GameSnake
 from game_state.game_state import GameState
 from player import Player
+from util import Action
+from wrapper.wrapper_food import WrapperFood
+from wrapper.wrapper_snake import WrapperSnake
 
 
 class GameStateSingleFood(GameState):
 
-    def generate_game_state(self, game_snake: GameSnake, player: Player):
+    def generate_game_state(self, game_snake: GameSnake, wrapper_snake: WrapperSnake):
+        chunk_snake_head: Chunk = wrapper_snake.get_container_chunk().get_chunk_first()
 
+        chunk_possible_left = Chunk(chunk_snake_head.x - game_snake.settings.block_size, chunk_snake_head.y)
+        chunk_possible_right = Chunk(chunk_snake_head.x + game_snake.settings.block_size, chunk_snake_head.y)
+        chunk_possible_up = Chunk(chunk_snake_head.x, chunk_snake_head.y - game_snake.settings.block_size)
+        chunk_possible_down = Chunk(chunk_snake_head.x, chunk_snake_head.y + game_snake.settings.block_size)
 
-        head = self.game_state.list_point_snake[0]
-        point_l = Chunk(head.x - 20, head.y)
-        point_r = Chunk(head.x + 20, head.y)
-        point_u = Chunk(head.x, head.y - 20)
-        point_d = Chunk(head.x, head.y + 20)
+        player: Player = wrapper_snake.get_player()
 
-        dir_l = self.game_state.direction == Action.LEFT
-        dir_r = self.game_state.direction == Action.RIGHT
-        dir_u = self.game_state.direction == Action.UP
-        dir_d = self.game_state.direction == Action.DOWN
+        bool_action_left = player.get_action_current() == Action.LEFT
+        bool_action_right = player.get_action_current() == Action.RIGHT
+        bool_action_up = player.get_action_current() == Action.UP
+        bool_action_down = player.get_action_current() == Action.DOWN
+
+        #####
+
+        chunk_food: Union[Chunk, None] = None
+
+        if game_snake.list_wrapper_food:
+            wrapper_food_arbitrary: WrapperFood = game_snake.list_wrapper_food[0]
+
+            container_chunk_food = wrapper_food_arbitrary.get_container_chunk()
+
+            _dict_k_chunk_v_chunk = container_chunk_food.get_dict_k_chunk_v_chunk()
+
+            if _dict_k_chunk_v_chunk:
+                # WARNING : Potentially slow if there are a lot of keys
+                chunk_food = tuple(_dict_k_chunk_v_chunk.keys())[0]
 
         """
         Notes:
-            dir_ is the current direction relative to the global
-            point_ is relative to dir_ and is the direction that will lead to the comment "Danger ..."
-
-            so,
-
             [
-                Snake going forward (from snake's perspective), check if next move going forward will collide
-                Snake going forward (from snake's perspective), check if next move going right will collide 
-                Snake going forward (from snake's perspective), check if next move going left will collide
+                Snake going forward (from snake's perspective), check if next move going forward will collide,
+                Snake going forward (from snake's perspective), check if next move going right will collide ,
+                Snake going forward (from snake's perspective), check if next move going left will collide,
                 is Current direction (from global perspective) moving left,
                 is Current direction (from global perspective) moving right,
                 is Current direction (from global perspective) moving up,
                 is Current direction (from global perspective) moving down,
-                food
-
-
+                chunk_food is left of chunk_snake_head,
+                chunk_food is right of chunk_snake_head,
+                chunk_food is up of chunk_snake_head,
+                chunk_food is down of chunk_snake_head,
+            ]
+            
         """
         state = [
             # Snake going forward (from snake's perspective), check if next move going forward will collide
-            (dir_r and self.game_state.is_collision(point_r)) or
-            (dir_l and self.game_state.is_collision(point_l)) or
-            (dir_u and self.game_state.is_collision(point_u)) or
-            (dir_d and self.game_state.is_collision(point_d)),
+            (bool_action_right and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_right)) or
+            (bool_action_left and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_left)) or
+            (bool_action_up and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_up)) or
+            (bool_action_down and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_down)),
 
             # Snake going forward (from snake's perspective), check if next move going right will collide
-            (dir_u and self.game_state.is_collision(point_r)) or
-            (dir_d and self.game_state.is_collision(point_l)) or
-            (dir_l and self.game_state.is_collision(point_u)) or
-            (dir_r and self.game_state.is_collision(point_d)),
+            (bool_action_up and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_right)) or
+            (bool_action_down and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_left)) or
+            (bool_action_left and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_up)) or
+            (bool_action_right and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_down)),
 
             # Snake going forward (from snake's perspective), check if next move going left will collide
-            (dir_d and self.game_state.is_collision(point_r)) or
-            (dir_u and self.game_state.is_collision(point_l)) or
-            (dir_r and self.game_state.is_collision(point_u)) or
-            (dir_l and self.game_state.is_collision(point_d)),
+            (bool_action_down and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_right)) or
+            (bool_action_up and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_left)) or
+            (bool_action_right and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_up)) or
+            (bool_action_left and game_snake.get_wrapper_from_chunk_that_collided(chunk_possible_down)),
 
-            # Move action_current
-            dir_l,
-            dir_r,
-            dir_u,
-            dir_d,
+            # Selected Action
+            bool_action_left,
+            bool_action_right,
+            bool_action_up,
+            bool_action_down,
 
-            # CollidableFood location
-            self.game_state.food.x < self.game_state.point_head.x,  # chunk_food left
-            self.game_state.food.x > self.game_state.point_head.x,  # chunk_food right
-            self.game_state.food.y < self.game_state.point_head.y,  # chunk_food up
-            self.game_state.food.y > self.game_state.point_head.y  # chunk_food down
+            # chunk_snake_head global position relative to chunk_food
+            chunk_food.x < chunk_snake_head.x if chunk_food is not None else False,
+            chunk_food.x > chunk_snake_head.x if chunk_food is not None else False,
+            chunk_food.y < chunk_snake_head.y if chunk_food is not None else False,
+            chunk_food.y > chunk_snake_head.y if chunk_food is not None else False,
         ]
 
         return np.array(state, dtype=int)

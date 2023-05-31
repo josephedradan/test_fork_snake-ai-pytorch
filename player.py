@@ -25,20 +25,24 @@ from abc import ABC
 from abc import abstractmethod
 from typing import Union
 
+from util import TYPE_ACTION_POSSIBLE
 from util import Action
 
 
 class Player(ABC):
-    action: Union[Action, None]
+    action: TYPE_ACTION_POSSIBLE
 
-    def __init__(self, action_initial: Union[Action, None] = None):
+    def __init__(self, action_initial: TYPE_ACTION_POSSIBLE = None):
         self.action = action_initial
 
-    def set_action(self, action: Action):
+    def set_action(self, action: TYPE_ACTION_POSSIBLE):
         self.action = action
 
+    def get_action_current(self) -> TYPE_ACTION_POSSIBLE:
+        return self.action
+
     @abstractmethod
-    def get_action(self) -> Action:
+    def get_action_new(self) -> TYPE_ACTION_POSSIBLE:
         ...
 
     # def reset(self, action_initial: Action, x_initial: int, y_initial: int):

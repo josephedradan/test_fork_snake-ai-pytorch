@@ -60,11 +60,16 @@ class ContainerChunkSnake(ContainerChunk):
         super(ContainerChunkSnake, self).add_new_chunk(chunk)
         self._deque_chunk.appendleft(chunk)
 
-    def remove_chunk(self, chunk: Chunk):
-        super(ContainerChunkSnake, self).remove_chunk(chunk)
+    def pop_chunk(self, chunk: Chunk):
+        super(ContainerChunkSnake, self).pop_chunk(chunk)
         self._deque_chunk.remove(chunk)
 
     def get_chunk_first(self) -> Chunk:
+        """
+        This should be an O(1) operation
+
+        :return:
+        """
         return self._deque_chunk[0]
 
     def pop_chunk_last(self) -> Chunk:
