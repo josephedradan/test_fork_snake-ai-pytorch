@@ -26,17 +26,18 @@ from typing import Union
 import numpy as np
 
 from chunk import Chunk
-from game_snake import GameSnake
-from game_state.game_state import GameState
+from logic_game_snake import LogicGameSnake
+from game_state.generator_game_state import GeneratorGameState
 from player import Player
 from util import Action
 from wrapper.wrapper_food import WrapperFood
 from wrapper.wrapper_snake import WrapperSnake
 
 
-class GameStateSingleFood(GameState):
+class GeneratorGameStateFoodSingle(GeneratorGameState):
 
-    def generate_game_state(self, game_snake: GameSnake, wrapper_snake: WrapperSnake):
+    @staticmethod
+    def get_game_state(game_snake: LogicGameSnake, wrapper_snake: WrapperSnake):
         chunk_snake_head: Chunk = wrapper_snake.get_container_chunk().get_chunk_first()
 
         chunk_possible_left = Chunk(chunk_snake_head.x - game_snake.settings.block_size, chunk_snake_head.y)
@@ -68,19 +69,23 @@ class GameStateSingleFood(GameState):
 
         """
         Notes:
-            [
-                Snake going forward (from snake's perspective), check if next move going forward will collide,
-                Snake going forward (from snake's perspective), check if next move going right will collide ,
-                Snake going forward (from snake's perspective), check if next move going left will collide,
-                is Current direction (from global perspective) moving left,
-                is Current direction (from global perspective) moving right,
-                is Current direction (from global perspective) moving up,
-                is Current direction (from global perspective) moving down,
-                chunk_food is left of chunk_snake_head,
-                chunk_food is right of chunk_snake_head,
-                chunk_food is up of chunk_snake_head,
-                chunk_food is down of chunk_snake_head,
-            ]
+            
+            Shape is (11,)
+        
+            Output:
+                [
+                    Snake going forward (from snake's perspective), check if next move going forward will collide,
+                    Snake going forward (from snake's perspective), check if next move going right will collide ,
+                    Snake going forward (from snake's perspective), check if next move going left will collide,
+                    is Current direction (from global perspective) moving left,
+                    is Current direction (from global perspective) moving right,
+                    is Current direction (from global perspective) moving up,
+                    is Current direction (from global perspective) moving down,
+                    chunk_food is left of chunk_snake_head,
+                    chunk_food is right of chunk_snake_head,
+                    chunk_food is up of chunk_snake_head,
+                    chunk_food is down of chunk_snake_head,
+                ]
             
         """
         state = [

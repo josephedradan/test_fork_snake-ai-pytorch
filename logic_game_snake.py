@@ -42,7 +42,7 @@ from wrapper.wrapper_snake import WrapperSnake
 from wrapper.wrapper_wall import WrapperWall
 
 
-class GameSnake:
+class LogicGameSnake:
     settings: Settings
     amount_of_block_width: int
     amount_of_block_height: int
@@ -76,7 +76,7 @@ class GameSnake:
 
         """ 
         #################### 
-        Menu related stuff 
+        GameSnakePygame related stuff 
         #################### 
         """
 
@@ -186,7 +186,7 @@ class GameSnake:
                     wrapper_food.get_container_chunk().add_new_chunk(chunk_food)
                     return chunk_food
 
-    def play_step(self, wrapper_snake: WrapperSnake, action_from_player: Action):
+    def play_step_wrapper_snake(self, wrapper_snake: WrapperSnake, action_from_player: Action):
         self.index_frame += 1
         bool_game_over = False
         reward = 0
@@ -332,7 +332,7 @@ class GameSnake:
         :param callback_end_call_for_iteration: Callback function to run
         :return:
         """
-        deque_wrapper: Deque[WrapperSnake] = deque(self.list_wrapper_snake)
+        deque_wrapper_snake: Deque[WrapperSnake] = deque(self.list_wrapper_snake)
 
         if callback_end_call_for_iteration is None:
             def callback_does_nothing():
@@ -340,18 +340,19 @@ class GameSnake:
 
             callback_end_call_for_iteration = callback_does_nothing
 
-        while deque_wrapper:
+        # Loop control over WrapperSnake for fine control for a WrapperSnake
+        while deque_wrapper_snake:
 
-            wrapper_snake: WrapperSnake = deque_wrapper.popleft()
+            wrapper_snake: WrapperSnake = deque_wrapper_snake.popleft()
 
             action_from_player: Action = wrapper_snake.get_player().get_action_new()
 
-            game_over, _, _ = self.play_step(wrapper_snake, action_from_player)
+            game_over, _, _ = self.play_step_wrapper_snake(wrapper_snake, action_from_player)
 
             if game_over is True:
                 continue
 
-            deque_wrapper.append(wrapper_snake)
+            deque_wrapper_snake.append(wrapper_snake)
 
             callback_end_call_for_iteration()
 
@@ -360,7 +361,7 @@ class GameSnake:
 
 
 def main():
-    game = GameSnake()
+    game = LogicGameSnake()
 
     game.run()
 

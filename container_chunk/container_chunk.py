@@ -84,6 +84,5 @@ class ContainerChunk:
     def __len__(self):
         return self._dict_k_chunk_v_chunk.__len__()
 
-
     def get_dict_k_chunk_v_chunk(self) -> Dict[Chunk, Chunk]:
         return self._dict_k_chunk_v_chunk

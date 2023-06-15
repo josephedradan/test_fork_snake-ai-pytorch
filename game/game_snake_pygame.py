@@ -30,15 +30,15 @@ import sys
 import pygame
 
 from _settings import Settings
-from pygame_custom.button import Button
-from game_snake import GameSnake
-from pygame_graphics_game_snake import PygameGraphicsGameSnake
+from game.game_snake import GameSnake
+from logic_game_snake import LogicGameSnake
+from graphics.graphics_pygame import GraphicsPygame
+from pygame_snake.button import Button
 from util import ColorRGB
 from util import TYPE_POSITION
 
 
-class Menu:
-    settings: Settings
+class GameSnakePygame(GameSnake):
 
     pygame_font_text: pygame.font.Font
     pygame_font_fps: pygame.font.Font
@@ -49,8 +49,7 @@ class Menu:
         :param settings:
         """
 
-        self.settings = settings
-
+        super().__init__(settings)
 
         """
         ####################
@@ -123,24 +122,23 @@ class Menu:
                     button_play.draw_hover(self.pygame_surface_main)
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
-
                         # Make new game_snake
-                        game_snake = GameSnake(
+                        game_snake = LogicGameSnake(
                             self.settings,
                             amount_of_block_width,
                             amount_of_block_height
                         )
 
                         # Make pygame graphics for the game_snake
-                        pygame_graphics_game_snake = PygameGraphicsGameSnake(
+                        graphics_pygame = GraphicsPygame(
                             self.settings,
+                            game_snake,
                             self.pygame_surface_main,
                             self.pygame_font_text,
                             self.pygame_font_text,
-                            game_snake
                         )
 
-                        pygame_graphics_game_snake.run()
+                        graphics_pygame.run()
 
                         self.pygame_surface_main.fill(ColorRGB.BLACK)
                         button_play.draw(self.pygame_surface_main)
@@ -162,15 +160,3 @@ class Menu:
                     button_quit.draw(self.pygame_surface_main)
 
             pygame.display.flip()
-
-
-def main():
-    settings = Settings(800, 600)
-
-    game = Menu(settings)
-
-    game.run()
-
-
-if __name__ == '__main__':
-    main()

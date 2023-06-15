@@ -26,7 +26,8 @@ import itertools
 import pygame
 
 from _settings import Settings
-from game_snake import GameSnake
+from logic_game_snake import LogicGameSnake
+from graphics.graphics import Graphics
 from util import BLOCK_SIZE
 from util import BLOCK_SIZE_OFFSET
 from util import ColorRGB
@@ -34,25 +35,19 @@ from util import FONT_SIZE
 from util import FPS
 
 
-class PygameGraphicsGameSnake:
-    settings: Settings
+class GraphicsPygame(Graphics):
     pygame_display: pygame.display
     font_text: pygame.font.Font
     font_fps: pygame.font.Font
 
-    game_snake: GameSnake
-
     clock: pygame.time.Clock
-
-    amount_of_block_width: int
-    amount_of_block_height: int
 
     def __init__(self,
                  settings: Settings,
+                 game_snake: LogicGameSnake,
                  pygame_display: pygame.display,
                  pygame_font_text: pygame.font.Font,
                  pygame_font_fps: pygame.font.Font,
-                 game_snake: GameSnake
                  ):
 
         """
@@ -60,7 +55,8 @@ class PygameGraphicsGameSnake:
         Pygame related stuff
         ####################
         """
-        self.settings = settings
+        super().__init__(settings, game_snake)
+
         self.pygame_display = pygame_display
 
         self.font_text = pygame_font_text
@@ -69,8 +65,6 @@ class PygameGraphicsGameSnake:
         self.clock = pygame.time.Clock()
 
         ##########
-
-        self.game_snake = game_snake
 
     def draw_graphics(self):
         """
@@ -112,6 +106,7 @@ class PygameGraphicsGameSnake:
                     wrapper_snake.get_container_chunk(),
                     1,
                     len(wrapper_snake.get_container_chunk())):
+
                 pygame.draw.rect(
                     self.pygame_display,
                     ColorRGB.GREEN,
@@ -161,16 +156,4 @@ class PygameGraphicsGameSnake:
 
         pygame.display.flip()  # Draw on screen
 
-    def run(self):
 
-        def callback_draw_game():
-            """
-            This callable contains pygame drawing related stuff
-
-            :return:
-            """
-            nonlocal self
-
-            self.draw_graphics()
-
-        self.game_snake.run(callback_draw_game)

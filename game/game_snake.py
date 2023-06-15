@@ -1,5 +1,5 @@
 """
-Date created: 5/24/2023
+Date created: 6/15/2023
 
 Purpose:
 
@@ -24,13 +24,15 @@ Reference:
 from abc import ABC
 from abc import abstractmethod
 
-from game_snake import GameSnake
-from player import Player
+from _settings import Settings
 
 
-class GameState(ABC):
+class GameSnake(ABC):
+    settings: Settings
+
+    def __init__(self, settings: Settings):
+        self.settings = settings
 
     @abstractmethod
-    @staticmethod
-    def generate_game_state(game_snake: GameSnake, player: Player):
+    def run(self):
         ...

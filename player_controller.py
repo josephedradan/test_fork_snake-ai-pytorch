@@ -110,7 +110,7 @@ class PlayerController(Player):
 
         return self.action
 
-#     def play_step(self):
+#     def play_step_wrapper_snake(self):
 #
 #         # 1. collect user input
 #         for event in pygame.event.get():
@@ -204,7 +204,7 @@ class PlayerController(Player):
 #
 #     # game_snake loop
 #     while True:
-#         game_over, score = game_snake.play_step()
+#         game_over, score = game_snake.play_step_wrapper_snake()
 #
 #         if game_over == True:
 #             break
