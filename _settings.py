@@ -21,10 +21,10 @@ Contributors:
 Reference:
 
 """
-from util import BLOCK_SIZE
-from util import BLOCK_SIZE_OFFSET
-from util import FONT_SIZE
-from util import FPS
+from constants import BLOCK_SIZE
+from constants import BLOCK_SIZE_OFFSET
+from constants import FONT_SIZE
+from constants import FPS
 
 
 def get_dimension_corrected(block_size: int, dimension: int):

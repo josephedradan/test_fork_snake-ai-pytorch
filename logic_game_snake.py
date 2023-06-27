@@ -24,18 +24,20 @@ Reference:
 import itertools
 import random
 from collections import deque
-from typing import Callable
 from typing import Deque
-from typing import List
 from typing import Tuple
 from typing import Union
 
 from _settings import Settings
+from agent.temp import get_wrapper_from_chunk_that_collided
 from chunk import Chunk
+from constants import Action
+from constants import TYPE_CALLABLE_FOR_ITERATION_END
 from container_chunk.container_chunk_snake import ContainerChunkSnake
-from player import Player
-from player_controller import PlayerController
-from util import Action
+from player.player import Player
+from player.player_controller import PlayerController
+from singleton_data.singleton_data_game import SingletonDataGame
+from singleton_data.singleton_data_player import SingletonDataPlayer
 from wrapper.wrapper import Wrapper
 from wrapper.wrapper_food import WrapperFood
 from wrapper.wrapper_snake import WrapperSnake
@@ -47,27 +49,16 @@ class LogicGameSnake:
     amount_of_block_width: int
     amount_of_block_height: int
 
-    list_wrapper_snake: List[WrapperSnake]
-    list_wrapper_food: List[WrapperFood]
-    list_wrapper_wall: List[WrapperWall]
-
-    index_frame: int
-
     def __init__(self,
                  # pygame_surface_main: pygame.display,
                  # window_width: int,
                  # window_height: int,
-                 # pygame_font_text: pygame.font.Font,
-                 # pygame_font_fps: pygame.font.Font
+                 # pygame_font_text: pygame.font_text.Font,
+                 # pygame_font_fps: pygame.font_text.Font
                  settings: Settings,
                  amount_of_block_width,
                  amount_of_block_height,
                  ):
-        """
-
-        :param width:
-        :param height:
-        """
 
         self.settings = settings
 
@@ -80,17 +71,15 @@ class LogicGameSnake:
         #################### 
         """
 
-        self.list_wrapper_snake = []
-        self.list_wrapper_food = []
-        self.list_wrapper_wall = []
+        self.singleton_data_game = SingletonDataGame(self.settings)
+        self.singleton_data_player = SingletonDataPlayer()
 
         self.reset()
 
     def reset(self):
 
-        self.list_wrapper_wall.clear()
-        self.list_wrapper_snake.clear()
-        self.list_wrapper_food.clear()
+        self.singleton_data_game.reset()
+        self.singleton_data_player.reset()
 
         ##########
 
@@ -112,28 +101,27 @@ class LogicGameSnake:
             wrapper_wall_border.get_container_chunk().add_new_chunk(Chunk(0, y_start))
             wrapper_wall_border.get_container_chunk().add_new_chunk(Chunk(x_start, y_start))
 
-        self.list_wrapper_wall.append(wrapper_wall_border)
+        self.singleton_data_game.list_wrapper_wall.append(wrapper_wall_border)
 
         ##########
 
-        player: Player = PlayerController(Action.RIGHT)  # TODO: REUSE OBJECTS
-
-        snake: WrapperSnake = WrapperSnake(  # TODO: REUSE OBJECTS
-            player,
+        wrapper_snake: WrapperSnake = WrapperSnake(  # TODO: REUSE OBJECTS
             [Chunk(640 // 2, 480 // 2)]  # Initial position_center
         )
 
-        self.list_wrapper_snake.append(snake)
+        player: Player = PlayerController(wrapper_snake, Action.RIGHT)  # TODO: REUSE OBJECTS
+
+        self.singleton_data_game.list_player.append(player)
+
+        self.singleton_data_game.list_wrapper_snake.append(wrapper_snake)
 
         ##########
 
         wrapper_food: WrapperFood = WrapperFood()  # TODO: REUSE OBJECTS
 
-        self.list_wrapper_food.append(wrapper_food)
+        self.singleton_data_game.list_wrapper_food.append(wrapper_food)
 
-        self.index_frame = 0
-
-        for wrapper_food in self.list_wrapper_food:
+        for wrapper_food in self.singleton_data_game.list_wrapper_food:
             self._place_food(wrapper_food)
 
     def _place_food(self, wrapper_food: WrapperFood,
@@ -165,9 +153,9 @@ class LogicGameSnake:
 
             # If chunk_food not in all list_wrapper, then chunk_food can be added to the wrapper
             if all([chunk_food not in wrapper_selected.get_container_chunk()
-                    for wrapper_selected in itertools.chain(self.list_wrapper_snake,
-                                                            self.list_wrapper_food,
-                                                            self.list_wrapper_wall)]):
+                    for wrapper_selected in itertools.chain(self.singleton_data_game.list_wrapper_snake,
+                                                            self.singleton_data_game.list_wrapper_food,
+                                                            self.singleton_data_game.list_wrapper_wall)]):
                 wrapper_food.get_container_chunk().add_new_chunk(chunk_food)
                 return chunk_food
 
@@ -180,20 +168,27 @@ class LogicGameSnake:
 
                 # If chunk_food not in all list_wrapper, then chunk_food can be added to the wrapper
                 if all([chunk_food not in wrapper_selected.get_container_chunk()
-                        for wrapper_selected in itertools.chain(self.list_wrapper_snake,
-                                                                self.list_wrapper_food,
-                                                                self.list_wrapper_wall)]):
+                        for wrapper_selected in itertools.chain(self.singleton_data_game.list_wrapper_snake,
+                                                                self.singleton_data_game.list_wrapper_food,
+                                                                self.singleton_data_game.list_wrapper_wall)]):
                     wrapper_food.get_container_chunk().add_new_chunk(chunk_food)
                     return chunk_food
 
-    def play_step_wrapper_snake(self, wrapper_snake: WrapperSnake, action_from_player: Action):
-        self.index_frame += 1
-        bool_game_over = False
-        reward = 0
+    def play_step_player(self,
+                         player: Player,
+                         action_from_player: Action) -> SingletonDataPlayer:
+
+        self.singleton_data_game.index_frame += 1
+
+        self.singleton_data_player.bool_snake_died = False
+        self.singleton_data_player.wrapper_object_that_collided = None
+        self.singleton_data_player.reward = 0
 
         # time_previous = time.time()
 
-        container_chunk_snake = wrapper_snake.get_container_chunk()
+        wrapper_from_player: Wrapper = player.get_wrapper()
+
+        container_chunk_snake = wrapper_from_player.get_container_chunk()
 
         chunk_snake_to_move_possible, x_chunk_snake_last_old, y_chunk_snake_last_old = self.get_chunk_snake_to_move_possible(
             # time_previous,
@@ -201,47 +196,54 @@ class LogicGameSnake:
             action_from_player
         )
 
-        # TODO: MOVE THIS CHECKING SOMEWHERELSE + REDISGN
+        # TODO: MOVE THIS CHECKING SOMEWHERELSE + REDESIGN
         ####################
         # Collision checking
         ####################
-        wrapper_object_that_collided: Union[Wrapper, None] = self.get_wrapper_from_chunk_that_collided(
+        wrapper_object_that_collided: Union[Wrapper, None] = get_wrapper_from_chunk_that_collided(
+            self.singleton_data_game,
             chunk_snake_to_move_possible
         )
 
-        # Check collision wrapper_snake with food
+        # Check collision player with food
         if isinstance(wrapper_object_that_collided, WrapperFood):
-            wrapper_snake.score += 1
+            player.score += 1
 
             self._place_food(wrapper_object_that_collided, chunk_snake_to_move_possible)
 
-            # Extend the current wrapper_snake
-            wrapper_snake.get_container_chunk().add_new_chunk(
+            # Extend the current player
+            wrapper_from_player.get_container_chunk().add_new_chunk(
                 Chunk(x_chunk_snake_last_old, y_chunk_snake_last_old)
 
             )
 
-        # Collision wrapper_snake with wrapper_snake (Does not care about which wrapper_snake)
+        # Collision player with player (Does not care about which player)
         if isinstance(wrapper_object_that_collided, WrapperSnake):
-            bool_game_over = True
-            reward = -10
-            return bool_game_over, reward, wrapper_snake
+            self.singleton_data_player.bool_snake_died = True
+            self.singleton_data_player.wrapper_object_that_collided = wrapper_object_that_collided
+            self.singleton_data_player.reward = -1
+            print("Hit Snake")
 
-        # Check collision wrapper_snake with wall
+            return self.singleton_data_player
+
+        # Check collision player with wall
         if isinstance(wrapper_object_that_collided, WrapperWall):
-            bool_game_over = True
-            reward = -10
-            print("DED")
-            return bool_game_over, reward, wrapper_snake
+            self.singleton_data_player.bool_snake_died = True
+            self.singleton_data_player.wrapper_object_that_collided = wrapper_object_that_collided
+            self.singleton_data_player.reward = -1
 
-        # Move the wrapper_snake by placing chunk_snake_to_move_possible at the front of container_chunk_snake
+            print("Hit wall")
+            return self.singleton_data_player
+
+        # Move the player by placing chunk_snake_to_move_possible at the front of container_chunk_snake
         container_chunk_snake.add_new_chunk_front(chunk_snake_to_move_possible)
 
         # 6. return game_snake over and score
-        return bool_game_over, reward, None  # TODO MAKE THIS BETTER, SNAKE DOES NTO EXIST
+        return self.singleton_data_player
 
-    def get_chunk_snake_to_move_possible(self, container_chunk_snake: ContainerChunkSnake, action: Action) -> Tuple[
-        Chunk, int, int]:
+    def get_chunk_snake_to_move_possible(self,
+                                         container_chunk_snake: ContainerChunkSnake,
+                                         action: Action) -> Tuple[Chunk, int, int]:
         """
         Move the WrapperSnake optimally by moving the last chunk of container_chunk_snake to be the first chunk
 
@@ -284,23 +286,6 @@ class LogicGameSnake:
 
         return chunk_snake_last_to_move_possible, x_chunk_last_old, y_chunk_last_old
 
-    def get_wrapper_from_chunk_that_collided(self, chunk: Chunk) -> Union[Wrapper, None]:
-        """
-        Notes:
-            If chunk collided with a wrapper, return that wrapper
-            
-        :param chunk:
-        :return:
-        """
-        wrapper: Wrapper
-        for wrapper in itertools.chain(self.list_wrapper_snake,
-                                       self.list_wrapper_food,
-                                       self.list_wrapper_wall):
-            if chunk in wrapper.get_container_chunk():
-                return wrapper
-
-        return None
-
     # def get_collided(self, chunk: Chunk) -> bool:
     #     """
     #     Check if a chunk has collided with something in the game_snake
@@ -319,53 +304,61 @@ class LogicGameSnake:
     #             chunk.y < 0):
     #         return True
     #
-    #     # for snake in self.list_wrapper_snake:
+    #     # for snake in self.singleton_singleton_data_game.list_wrapper_snake:
     #     #     if snake.get_container_chunk_snake().is_chunk_in_snake(chunk):
     #     #         return True
     #
     #     return False
 
-    def run(self, callback_end_call_for_iteration: Union[Callable, None] = None):
+    def run(self, callback_for_iteration_end: Union[TYPE_CALLABLE_FOR_ITERATION_END, None] = None) -> SingletonDataGame:
         """
 
 
-        :param callback_end_call_for_iteration: Callback function to run
+        :param callback_for_iteration_end: Callback function to run
         :return:
         """
-        deque_wrapper_snake: Deque[WrapperSnake] = deque(self.list_wrapper_snake)
+        deque_player: Deque[Player] = deque(self.singleton_data_game.list_player)
 
-        if callback_end_call_for_iteration is None:
+        if callback_for_iteration_end is None:
             def callback_does_nothing():
                 pass
 
-            callback_end_call_for_iteration = callback_does_nothing
+            callback_for_iteration_end = callback_does_nothing
 
-        # Loop control over WrapperSnake for fine control for a WrapperSnake
-        while deque_wrapper_snake:
+        # Loop control over WrapperSnake for fine control
+        while deque_player:
 
-            wrapper_snake: WrapperSnake = deque_wrapper_snake.popleft()
+            player: Player = deque_player.popleft()
 
-            action_from_player: Action = wrapper_snake.get_player().get_action_new()
+            action_from_player: Action = player.get_action_new(self.singleton_data_game)
 
-            game_over, _, _ = self.play_step_wrapper_snake(wrapper_snake, action_from_player)
+            singleton_data_player = self.play_step_player(
+                player,
+                action_from_player
+            )
 
-            if game_over is True:
+            player.send_feedback_play_step(self.singleton_data_game, singleton_data_player)
+
+            if singleton_data_player.bool_snake_died is True:
+                # Continue will skip re-adding deque_player back
                 continue
 
-            deque_wrapper_snake.append(wrapper_snake)
+            deque_player.append(player)
 
-            callback_end_call_for_iteration()
+            callback_for_iteration_end()
 
-        for snake in self.list_wrapper_snake:
-            print('Final Score', snake.score)
+        print(self.singleton_data_game)
+        for player in self.singleton_data_game.list_player:
+            print('Final Score', player.score)
 
+        return self.singleton_data_game
 
-def main():
-    game = LogicGameSnake()
-
-    game.run()
-
-
-if __name__ == '__main__':
-    main()
-    # print(type(pygame))
+# def main():
+#     game = LogicGameSnake()
+#
+#     game.run()
+#
+#
+# if __name__ == '__main__':
+#     main()
+#     # print(type(pygame))

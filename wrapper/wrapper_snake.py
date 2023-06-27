@@ -22,22 +22,16 @@ Reference:
 
 """
 from typing import Iterable
-from typing import Sequence
 from typing import Union
 
 from chunk import Chunk
-from wrapper.wrapper import Wrapper
 from container_chunk.container_chunk_snake import ContainerChunkSnake
-from player import Player
-from util import Action
+from wrapper.wrapper import Wrapper
 
 
 class WrapperSnake(Wrapper[ContainerChunkSnake]):
-    player: Player
-    score: int
 
     def __init__(self,
-                 player: Player,
                  iterable_chunk: Union[Iterable[Chunk], None] = None
                  ):
         """
@@ -52,20 +46,13 @@ class WrapperSnake(Wrapper[ContainerChunkSnake]):
             container_chunk_snake
         )
 
-        self.player = player
+    # def reset_snake(self,
+    #                 chunk_initial: Chunk,
+    #                 iterable_chunk_additional: Union[Sequence[Chunk], None] = None
+    #                 ):
+    #     super().reset([chunk_initial, *iterable_chunk_additional])
+    #
+    #     self.player.set_action(action_initial)
 
-        self.score = 0
-
-    def reset_snake(self,
-                    action_initial: Action,
-                    chunk_initial: Chunk,
-                    iterable_chunk_additional: Union[Sequence[Chunk], None] = None
-                    ):
-        super().reset([chunk_initial, *iterable_chunk_additional])
-
-        self.player.set_action(action_initial)
-
-        self.score = 0
-
-    def get_player(self) -> Player:
-        return self.player
+    # def get_player(self) -> Player:
+    #     return self.player

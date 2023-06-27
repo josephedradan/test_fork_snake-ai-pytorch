@@ -25,6 +25,7 @@ from abc import ABC
 from abc import abstractmethod
 
 from _settings import Settings
+from singleton_data.singleton_data_game import SingletonDataGame
 from logic_game_snake import LogicGameSnake
 
 
@@ -47,7 +48,7 @@ class Graphics(ABC):
     def get_game_snake(self) -> LogicGameSnake:
         return self.game_snake
 
-    def run(self):
+    def run(self) -> SingletonDataGame:
         def callback_draw_game():
             """
             This callable contains pygame drawing related stuff
@@ -58,4 +59,4 @@ class Graphics(ABC):
 
             self.draw_graphics()
 
-        self.game_snake.run(callback_draw_game)
+        return self.game_snake.run(callback_draw_game)

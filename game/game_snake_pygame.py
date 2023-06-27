@@ -30,16 +30,16 @@ import sys
 import pygame
 
 from _settings import Settings
+from singleton_data.singleton_data_game import SingletonDataGame
 from game.game_snake import GameSnake
-from logic_game_snake import LogicGameSnake
 from graphics.graphics_pygame import GraphicsPygame
+from logic_game_snake import LogicGameSnake
 from pygame_snake.button import Button
-from util import ColorRGB
-from util import TYPE_POSITION
+from constants import ColorRGB
+from constants import TYPE_POSITION
 
 
 class GameSnakePygame(GameSnake):
-
     pygame_font_text: pygame.font.Font
     pygame_font_fps: pygame.font.Font
 
@@ -88,6 +88,8 @@ class GameSnakePygame(GameSnake):
             ColorRGB.GREEN
         )
 
+        singleton_data_game = None
+
         """ 
         #################### 
         Pre calculated stuff 
@@ -111,6 +113,10 @@ class GameSnakePygame(GameSnake):
 
             # print(position_mouse)
 
+            ########################
+            # Buttons
+            ########################
+
             # TODO: Find better menu displaying solution, button to a new loop seems kind of cringe
 
             for event in pygame.event.get():
@@ -122,28 +128,28 @@ class GameSnakePygame(GameSnake):
                     button_play.draw_hover(self.pygame_surface_main)
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        # Make new game_snake
-                        game_snake = LogicGameSnake(
+                        # Make new logic_game_snake
+                        logic_game_snake = LogicGameSnake(
                             self.settings,
                             amount_of_block_width,
                             amount_of_block_height
                         )
 
-                        # Make pygame graphics for the game_snake
+                        # Make pygame graphics for the logic_game_snake
                         graphics_pygame = GraphicsPygame(
                             self.settings,
-                            game_snake,
+                            logic_game_snake,
                             self.pygame_surface_main,
                             self.pygame_font_text,
                             self.pygame_font_text,
                         )
 
-                        graphics_pygame.run()
+                        singleton_data_game: SingletonDataGame = graphics_pygame.run()  # TODO: GET BETTER STATS
 
                         self.pygame_surface_main.fill(ColorRGB.BLACK)
                         button_play.draw(self.pygame_surface_main)
 
-                        # FIXME: After the game_snake is done, text font is not fully drawn
+                        # FIXME: After the logic_game_snake is done, text font_text is not fully drawn
 
                 else:
                     button_play.draw(self.pygame_surface_main)
@@ -158,5 +164,26 @@ class GameSnakePygame(GameSnake):
 
                 else:
                     button_quit.draw(self.pygame_surface_main)
+
+                ########################
+                # Text post game data
+                ########################
+
+                if singleton_data_game:
+                    for index, player in enumerate(singleton_data_game.list_player):
+                        surface_text = self.pygame_font_text.render(
+                            f"Snake {index} score: {player.score}",
+                            True,
+                            ColorRGB.WHITE)
+
+                        rectangle = surface_text.get_rect(
+                            center=(self.settings.width // 2,  # X
+                                    ((self.settings.height // 2) +  # Y
+                                     (self.settings.text_line_spacing_amount * 3) +  # Y Offset from other text
+                                     self.settings.text_line_spacing_amount * index  # Y Spacing for each line
+                                     ))
+                        )
+
+                        self.pygame_surface_main.blit(surface_text, rectangle)
 
             pygame.display.flip()

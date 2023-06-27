@@ -1,15 +1,17 @@
 from typing import Dict
-from typing import Union
 
 import pygame
 
-from player import Player
-from util import Action
-from util import DICT_K_ACTION_V_ACTION_REVERSE
+from singleton_data.singleton_data_game import SingletonDataGame
+from player.player import Player
+from constants import Action
+from constants import DICT_K_ACTION_V_ACTION_REVERSE
+from constants import TYPE_ACTION_POSSIBLE
+from wrapper.wrapper import Wrapper
 
 pygame.init()
 
-font = pygame.font.Font('arial.ttf', 25)
+# font = pygame.font.Font('../arial.ttf', 25)
 
 # pygame_font_text = pygame.pygame_font_text.SysFont('arial', 25)
 
@@ -22,17 +24,14 @@ DICT_K_KEY_MOVEMENT_V_ACTION: Dict[int, Action] = {
 
 
 class PlayerController(Player):
-    window_width: int
-    window_height: int
 
-    direction: Action
-
-    def __init__(self, action_initial: Union[Action, None] = None):
+    def __init__(self, wrapper: Wrapper, action_initial: TYPE_ACTION_POSSIBLE = None):
         """
         :param width:
         :param height:
         """
-        super().__init__(action_initial)
+        super().__init__(wrapper, action_initial)
+
         # super().__init__(action_initial, x_initial, y_initial)
 
     #     # self.window_width = width
@@ -48,7 +47,7 @@ class PlayerController(Player):
     #
     #     """
     #     ####################
-    #     PlayerController state related stuff
+    #     PlayerController game_state_current related stuff
     #     ####################
     #     """
     #
@@ -74,7 +73,7 @@ class PlayerController(Player):
     #     if self.chunk_food in self.list_point_snake:
     #         self._place_food()
 
-    def get_action_new(self) -> Action:
+    def get_action_new(self, singleton_data_game: SingletonDataGame) -> Action:  # FIXME HEAVILY TIED TO PYGAME
 
         # 1. collect user input
         for event in pygame.event.get():
@@ -110,7 +109,7 @@ class PlayerController(Player):
 
         return self.action
 
-#     def play_step_wrapper_snake(self):
+#     def play_step_player(self):
 #
 #         # 1. collect user input
 #         for event in pygame.event.get():
@@ -204,7 +203,7 @@ class PlayerController(Player):
 #
 #     # game_snake loop
 #     while True:
-#         game_over, score = game_snake.play_step_wrapper_snake()
+#         game_over, score = game_snake.play_step_player()
 #
 #         if game_over == True:
 #             break

@@ -28,8 +28,8 @@ Reference:
 
 import pygame
 
-from util import ColorRGB
-from util import TYPE_POSITION
+from constants import ColorRGB
+from constants import TYPE_POSITION
 
 
 class Button:
@@ -44,13 +44,13 @@ class Button:
     def __init__(self,
                  text: str,
                  position_center: TYPE_POSITION,
-                 font: pygame.font.Font,
+                 font_text: pygame.font.Font,
                  color: ColorRGB,
                  color_hover: ColorRGB
                  ):
         self.text = text
         self.position_center = position_center
-        self.font = font
+        self.font = font_text
 
         self.color = color
         self.color_hover = color_hover

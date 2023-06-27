@@ -21,15 +21,23 @@ Contributors:
 Reference:
 
 """
+import itertools
 from collections import deque
 from enum import Enum
 from enum import auto
+from typing import Callable
 from typing import Dict
 from typing import Iterable
+from typing import List
 from typing import Set
 from typing import Tuple
 from typing import TypeVar
 from typing import Union
+from typing import Union
+
+from wrapper.wrapper import Wrapper
+from wrapper.wrapper import Wrapper
+from wrapper.wrapper import Wrapper
 
 
 class Action(Enum):
@@ -38,6 +46,12 @@ class Action(Enum):
     UP = auto()
     DOWN = auto()
 
+
+LIST_ACTION_CYCLE_CLOCKWISE: List[Action] = [Action.RIGHT, Action.DOWN, Action.LEFT, Action.UP]
+
+DICT_K_ACTION_V_INDEX_ACTION_CYCLE_CLOCKWISE: Dict[Action, int] = {
+    action: index for index, action in enumerate(LIST_ACTION_CYCLE_CLOCKWISE)
+}
 
 TYPE_ACTION_POSSIBLE = Union[Action, None]
 
@@ -51,6 +65,13 @@ DICT_K_ACTION_V_ACTION_REVERSE: Dict[Action, Action] = {
 
 TYPE_POSITION = Tuple[int, int]
 
+TYPE_GAME_STATE = Tuple[int, ...]
+
+TYPE_BOOL_SNAKE_DIED = bool
+TYPE_WRAPPER_POSSIBLE = Union[Wrapper, None]
+TYPE_CALLABLE_FOR_ITERATION_END = Callable[[TYPE_BOOL_SNAKE_DIED, TYPE_WRAPPER_POSSIBLE], None]
+
+TYPE_TUPLE_ACTION_RELATIVE = Tuple[int, int, int]
 
 class ColorRGB(Tuple[int, int, int]):
     WHITE = (255, 255, 255)
@@ -126,3 +147,5 @@ class DequeFastLookUp(deque[T]):
 
     def __contains__(self, item: T):
         return item in self.set_
+
+

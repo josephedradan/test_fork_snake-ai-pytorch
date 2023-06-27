@@ -49,7 +49,7 @@ class QTrainer:
             reward = torch.unsqueeze(reward, 0)
             done = (done,)
 
-        # 1: predicted Q values with current state
+        # 1: predicted Q values with current game_state_current
         pred = self.model(state)
 
         target = pred.clone()

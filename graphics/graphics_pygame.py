@@ -28,11 +28,11 @@ import pygame
 from _settings import Settings
 from logic_game_snake import LogicGameSnake
 from graphics.graphics import Graphics
-from util import BLOCK_SIZE
-from util import BLOCK_SIZE_OFFSET
-from util import ColorRGB
-from util import FONT_SIZE
-from util import FPS
+from constants import BLOCK_SIZE
+from constants import BLOCK_SIZE_OFFSET
+from constants import ColorRGB
+from constants import FONT_SIZE
+from constants import FPS
 
 
 class GraphicsPygame(Graphics):
@@ -78,8 +78,9 @@ class GraphicsPygame(Graphics):
         self.clock.tick(FPS)  # Sets the FPS of the game
 
         self.pygame_display.fill(ColorRGB.BLACK)
+
         # Draw walls
-        for wrapper_wall in self.game_snake.list_wrapper_wall:
+        for wrapper_wall in self.game_snake.singleton_data_game.list_wrapper_wall:
             for chunk_wall in wrapper_wall.get_container_chunk():
                 pygame.draw.rect(
                     self.pygame_display,
@@ -88,24 +89,26 @@ class GraphicsPygame(Graphics):
                 )
 
         # Draw snakes
-        for index, wrapper_snake in enumerate(self.game_snake.list_wrapper_snake):
+        for index, player in enumerate(self.game_snake.singleton_data_game.list_player):
 
-            print(wrapper_snake.get_container_chunk())
+            wrapper_from_player = player.get_wrapper()
+
+            print(wrapper_from_player.get_container_chunk())
             # Snake head
             pygame.draw.rect(
                 self.pygame_display,
                 ColorRGB.GREEN_KELLY,
-                pygame.Rect(wrapper_snake.get_container_chunk()[0].x + BLOCK_SIZE_OFFSET,
-                            wrapper_snake.get_container_chunk()[0].y + BLOCK_SIZE_OFFSET,
+                pygame.Rect(wrapper_from_player.get_container_chunk()[0].x + BLOCK_SIZE_OFFSET,
+                            wrapper_from_player.get_container_chunk()[0].y + BLOCK_SIZE_OFFSET,
                             BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2),
                             BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2))
             )
 
             # Snake body
             for chunk in itertools.islice(
-                    wrapper_snake.get_container_chunk(),
+                    wrapper_from_player.get_container_chunk(),
                     1,
-                    len(wrapper_snake.get_container_chunk())):
+                    len(wrapper_from_player.get_container_chunk())):
 
                 pygame.draw.rect(
                     self.pygame_display,
@@ -126,7 +129,7 @@ class GraphicsPygame(Graphics):
                 # )
 
             text = self.font_text.render(
-                f"P{index} Score: {wrapper_snake.score}",
+                f"P{index} Score: {player.score}",
                 True,
                 ColorRGB.GREEN
             )
@@ -134,7 +137,7 @@ class GraphicsPygame(Graphics):
             self.pygame_display.blit(text, (0, FONT_SIZE * (index + 1)))  # Offset scores
 
         # Draw food
-        for wrapper_food in self.game_snake.list_wrapper_food:
+        for wrapper_food in self.game_snake.singleton_data_game.list_wrapper_food:
             for chunk_food in wrapper_food.get_container_chunk():
                 pygame.draw.rect(
                     self.pygame_display,

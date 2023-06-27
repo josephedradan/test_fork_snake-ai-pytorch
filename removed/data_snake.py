@@ -28,8 +28,8 @@ from typing import Tuple
 from typing import Union
 
 from chunk import Chunk
-from util import Action
-from util import BLOCK_SIZE
+from constants import Action
+from constants import BLOCK_SIZE
 from wrapper.wrapper import Wrapper
 
 

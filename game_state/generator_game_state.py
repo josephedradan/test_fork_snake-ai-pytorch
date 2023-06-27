@@ -24,13 +24,14 @@ Reference:
 from abc import ABC
 from abc import abstractmethod
 
-from logic_game_snake import LogicGameSnake
-from player import Player
+from singleton_data.singleton_singleton_data_game import SingletonDataGame
+from player.player import Player
+from constants import TYPE_GAME_STATE
 
 
 class GeneratorGameState(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_game_state(game_snake: LogicGameSnake, player: Player):
+    def get_game_state(singleton_data_game: SingletonDataGame, player: Player) -> TYPE_GAME_STATE:
         ...
