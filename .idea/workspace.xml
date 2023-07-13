@@ -4,27 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ea6f27ae-6a93-4139-9cc9-bb386d1f4749" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/agent/agent_q_learning.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/agent_q_learning.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/agent/temp.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/temp.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/game_snake_pygame.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/game_snake_pygame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_state/generator_game_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_state/generator_game_state.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game_state/generator_game_state_food_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_state/generator_game_state_food_single.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/graphics.py" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/graphics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/graphics/graphics_pygame.py" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/graphics_pygame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logic_game_snake.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic_game_snake.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player/player_ai.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player_ai.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player/player_ai_q_learning.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player_ai_q_learning.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player/player_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player_keyboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pygame_snake/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/pygame_abstraction/button.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/singleton_data/singleton_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/singleton_data/singleton_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/singleton_data/singleton_data_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/data/data_game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/singleton_data/singleton_data_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/data/data_player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wrapper/wrapper_snake.py" beforeDir="false" afterPath="$PROJECT_DIR$/wrapper/wrapper_snake.py" afterDir="false" />
-    </list>
+    <list default="true" id="ea6f27ae-6a93-4139-9cc9-bb386d1f4749" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -230,7 +210,7 @@
       <workItem from="1686340218673" duration="115465000" />
       <workItem from="1688372737654" duration="2760000" />
       <workItem from="1688466163061" duration="11566000" />
-      <workItem from="1688902261849" duration="44922000" />
+      <workItem from="1688902261849" duration="45236000" />
     </task>
     <servers />
   </component>
