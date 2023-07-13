@@ -36,10 +36,13 @@ class SingletonData(ABC):
     dict_k_type_singleton_data_v_instance: Dict[Type[SingletonData], SingletonData] = {}
 
     def __new__(cls, *args, **kwargs):
+
         if cls.dict_k_type_singleton_data_v_instance.get(cls) is None:
             cls.dict_k_type_singleton_data_v_instance[cls] = (
-                super(SingletonData, cls).__new__(cls, *args, **kwargs)
+                super(SingletonData, cls).__new__(cls)
             )
+
+        print("SINGLETON DATA SHIT", cls.dict_k_type_singleton_data_v_instance)
 
         return cls.dict_k_type_singleton_data_v_instance[cls]
 

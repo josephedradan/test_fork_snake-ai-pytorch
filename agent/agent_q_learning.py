@@ -24,6 +24,7 @@ class AgentQLearning:
         self.model = LinearQNet(11, 256, 3)
         self.trainer = QTrainer(self.model, learning_rate=LR, gamma=self.gamma)
 
+
     def remember(self, state, action, reward, next_state, done):
         """
         Deque that stores the game game_state_current essentially and will pop old game states when more game states are added
@@ -74,4 +75,4 @@ class AgentQLearning:
 
             final_move[index_move] = 1
 
-        return final_move
+        return final_move  # FIXME FIGURE OUT TYPE LATER IDK

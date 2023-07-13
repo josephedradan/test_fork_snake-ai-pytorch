@@ -24,14 +24,14 @@ Reference:
 from abc import ABC
 from abc import abstractmethod
 
-from singleton_data.singleton_singleton_data_game import SingletonDataGame
 from player.player import Player
 from constants import TYPE_GAME_STATE
+from agent.data.data_game import DataGame
 
 
 class GeneratorGameState(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_game_state(singleton_data_game: SingletonDataGame, player: Player) -> TYPE_GAME_STATE:
+    def get_game_state(data_game: DataGame, player: Player) -> TYPE_GAME_STATE:
         ...

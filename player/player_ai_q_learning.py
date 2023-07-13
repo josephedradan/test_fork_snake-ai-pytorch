@@ -3,7 +3,6 @@ from typing import Type
 from typing import Union
 
 import numpy as np
-import pygame
 
 from agent.agent_q_learning import AgentQLearning
 from constants import Action
@@ -14,17 +13,17 @@ from constants import TYPE_GAME_STATE
 from constants import TYPE_TUPLE_ACTION_RELATIVE
 from game_state.generator_game_state import GeneratorGameState
 from game_state.generator_game_state_food_single import GeneratorGameStateFoodSingle
+from helper import plot
 from player.player import Player
-from singleton_data.singleton_data_game import SingletonDataGame
-from singleton_data.singleton_data_player import SingletonDataPlayer
-from wrapper.wrapper import Wrapper
+from agent.data.data_game import DataGame
+from agent.data.data_player import DataPlayer
 
-pygame.init()
-font = pygame.font.Font('../arial.ttf', 25)
+# pygame.init()
+# font = pygame.font.Font('../arial.ttf', 25)
 
-NP_NDARRAY_ACTION_SAME = np.ndarray([1, 0, 0])
-NP_NDARRAY_ACTION_RIGHT = np.ndarray([0, 1, 0])
-NP_NDARRAY_ACTION_LEFT = np.ndarray([0, 0, 1])
+TUPLE_ACTION_SAME = (1, 0, 0)
+TUPLE_ACTION_RIGHT = (0, 1, 0)
+TUPLE_ACTION_LEFT = (0, 0, 1)
 
 
 # def get_action_new
@@ -37,13 +36,9 @@ class PlayerAIQLearning(Player):
 
     frame_iteration: int
 
-    def __init__(self,
-                 wrapper: Wrapper,
-                 action_initial: TYPE_ACTION_POSSIBLE = None,
-                 generator_game_state: Type[GeneratorGameState] = GeneratorGameStateFoodSingle
-                 ):
+    def __init__(self, generator_game_state: Type[GeneratorGameState] = GeneratorGameStateFoodSingle):
 
-        super().__init__(wrapper, action_initial)
+        super().__init__()
 
         self.generator_game_state = generator_game_state
         self.agent_q_learning = AgentQLearning()
@@ -56,6 +51,13 @@ class PlayerAIQLearning(Player):
 
         self.game_state_current: Union[TYPE_GAME_STATE, None] = None
         self.tuple_action_relative_current: Union[TYPE_TUPLE_ACTION_RELATIVE, None] = None
+
+        #####
+
+        self.plot_scores = []
+        self.plot_scores_mean = []
+        self.score_total = 0
+        self.score_highest = 0
 
         # """
         # ####################
@@ -72,14 +74,14 @@ class PlayerAIQLearning(Player):
         #
         # """
         # ####################
-        # PlayerController game_state_current related stuff
+        # PlayerKeyboard game_state_current related stuff
         # ####################
         # """
         #
-        # self.reset()
+        # self._initialize()
 
-    # def reset(self):
-    #     # init game_snake game_state_current
+    # def _initialize(self):
+    #     # init logic_game_snake game_state_current
     #     self.action_current = Action.RIGHT
     #
     #     self.head = Chunk(self.window_width / 2, self.window_height / 2)
@@ -95,30 +97,52 @@ class PlayerAIQLearning(Player):
     #     self._place_food()
     #     self.index_frame = 0
 
-    def get_action_new(self, singleton_data_game: SingletonDataGame) -> TYPE_ACTION_POSSIBLE:
+    def get_action_new(self, data_game: DataGame) -> TYPE_ACTION_POSSIBLE:
 
-        self.game_state_current = self.generator_game_state.get_game_state(singleton_data_game, self)
+        self.game_state_current = self.generator_game_state.get_game_state(data_game, self)
 
         self.tuple_action_relative_current = self.agent_q_learning.get_tuple_action_relative(self.game_state_current)
+        print("#"*20, self.tuple_action_relative_current)
 
         return self.get_action_from_tuple_action_relative(self.tuple_action_relative_current)
 
     def send_feedback_play_step(self,
-                                singleton_data_game: SingletonDataGame,
-                                singleton_data_player: SingletonDataPlayer,
+                                data_game: DataGame,
+                                data_player: DataPlayer,
                                 ):
 
-        game_state_new = self.generator_game_state.get_game_state(singleton_data_game, self)
+        game_state_new = self.generator_game_state.get_game_state(data_game, self)
 
         self.agent_q_learning.train_short_memory(
             self.game_state_current,
             self.get_action_current(),
-            singleton_data_player.reward,
+            data_player.reward,
             game_state_new,
-            singleton_data_player.bool_snake_died,
+            data_player.bool_snake_died,
         )
 
+        self.agent_q_learning.remember(
+            self.game_state_current,
+            self.get_action_current(),
+            data_player.reward,
+            game_state_new,
+            data_player.bool_snake_died,
+        )
 
+        if data_player.bool_snake_died:
+
+            self.agent_q_learning.amount_games += 1
+            self.agent_q_learning.train_long_memory()
+
+            if self.score > self.score_highest:
+                self.score_highest = self.score
+                self.agent_q_learning.model.save()
+
+            self.plot_scores.append(self.score)
+            self.score_total += self.score
+            score_mean = self.score_total / self.agent_q_learning.amount_games
+            self.plot_scores_mean.append(score_mean)
+            plot(self.plot_scores, self.plot_scores_mean)
 
     # def _place_food(self):
     #     x = random.randint(0, (self.window_width - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE
@@ -140,7 +164,7 @@ class PlayerAIQLearning(Player):
     #     self._move(action)  # draw the chunk_head
     #     self.list_point_snake.insert(0, self.head)
     #
-    #     # 3. check if game_snake over
+    #     # 3. check if logic_game_snake over
     #     reward = 0
     #     game_over = False
     #     if self.is_collision() or self.frame_iteration > 100 * len(self.list_point_snake):
@@ -160,7 +184,7 @@ class PlayerAIQLearning(Player):
     #     self._update_ui()
     #     self.clock.tick(FPS)
     #
-    #     # 6. return game_snake over and score
+    #     # 6. return logic_game_snake over and score
     #     return reward, game_over, self.score
     #
     # def is_collision(self, pt=None):
@@ -230,22 +254,23 @@ class PlayerAIQLearning(Player):
 
         index_action_cycle_clockwise = DICT_K_ACTION_V_INDEX_ACTION_CYCLE_CLOCKWISE.get(self.action)
 
+
         if index_action_cycle_clockwise is None:
+
             return self.action
 
-        if np.array_equal(tuple_action_relative, NP_NDARRAY_ACTION_SAME):
-
+        if np.array_equal(tuple_action_relative, TUPLE_ACTION_SAME):
             # Action is the same so no change is needed
             # self.action = LIST_ACTION_CYCLE_CLOCKWISE[index_action_cycle_clockwise]
             pass
 
-        elif np.array_equal(tuple_action_relative, NP_NDARRAY_ACTION_RIGHT):
+        elif np.array_equal(tuple_action_relative, TUPLE_ACTION_RIGHT):
             next_idx = (index_action_cycle_clockwise + 1) % 4
 
             # Action will turn right relative to current Action (r -> d -> l -> u)
             self.action = LIST_ACTION_CYCLE_CLOCKWISE[next_idx]
 
-        elif np.array_equal(tuple_action_relative, NP_NDARRAY_ACTION_LEFT):  # [0, 0, 1]
+        elif np.array_equal(tuple_action_relative, TUPLE_ACTION_LEFT):  # [0, 0, 1]
             next_idx = (index_action_cycle_clockwise - 1) % 4
 
             # Action will turn left relative to current Action (r -> u -> l -> d)

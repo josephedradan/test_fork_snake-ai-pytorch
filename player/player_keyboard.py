@@ -2,12 +2,10 @@ from typing import Dict
 
 import pygame
 
-from singleton_data.singleton_data_game import SingletonDataGame
+from agent.data.data_game import DataGame
 from player.player import Player
 from constants import Action
 from constants import DICT_K_ACTION_V_ACTION_REVERSE
-from constants import TYPE_ACTION_POSSIBLE
-from wrapper.wrapper import Wrapper
 
 pygame.init()
 
@@ -15,7 +13,7 @@ pygame.init()
 
 # pygame_font_text = pygame.pygame_font_text.SysFont('arial', 25)
 
-DICT_K_KEY_MOVEMENT_V_ACTION: Dict[int, Action] = {
+DICT_K_PYGAME_EVENT_KEY_V_ACTION: Dict[int, Action] = {
     pygame.K_a: Action.LEFT,
     pygame.K_d: Action.RIGHT,
     pygame.K_w: Action.UP,
@@ -23,14 +21,14 @@ DICT_K_KEY_MOVEMENT_V_ACTION: Dict[int, Action] = {
 }
 
 
-class PlayerController(Player):
+class PlayerKeyboard(Player):
 
-    def __init__(self, wrapper: Wrapper, action_initial: TYPE_ACTION_POSSIBLE = None):
+    def __init__(self):
         """
         :param width:
         :param height:
         """
-        super().__init__(wrapper, action_initial)
+        super().__init__()
 
         # super().__init__(action_initial, x_initial, y_initial)
 
@@ -47,11 +45,11 @@ class PlayerController(Player):
     #
     #     """
     #     ####################
-    #     PlayerController game_state_current related stuff
+    #     PlayerKeyboard game_state_current related stuff
     #     ####################
     #     """
     #
-    #     # Initialize PlayerController State
+    #     # Initialize PlayerKeyboard State
     #     self.action_current: Action = Action.RIGHT
     #
     #     self.chunk_head: Chunk = Chunk(640 / 2, 480 / 2)
@@ -73,39 +71,27 @@ class PlayerController(Player):
     #     if self.chunk_food in self.list_point_snake:
     #         self._place_food()
 
-    def get_action_new(self, singleton_data_game: SingletonDataGame) -> Action:  # FIXME HEAVILY TIED TO PYGAME
+    def get_action_new(self, data_game: DataGame) -> Action:  # FIXME HEAVILY TIED TO PYGAME
 
-        # 1. collect user input
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-
-            # if event.type == pygame.KEYDOWN:
-            #     if event.key == pygame.K_a:
-            #         self.action_current = Action.LEFT
-            #     elif event.key == pygame.K_d:
-            #         self.action_current = Action.RIGHT
-            #     elif event.key == pygame.K_w:
-            #         self.action_current = Action.UP
-            #     elif event.key == pygame.K_s:
-            #         self.action_current = Action.DOWN
+        for event in data_game.list_pygame_event:
 
             if event.type == pygame.KEYDOWN:
 
-                action_selected = DICT_K_KEY_MOVEMENT_V_ACTION.get(event.key, None)
-
-                print("key", action_selected)
+                action_selected = DICT_K_PYGAME_EVENT_KEY_V_ACTION.get(event.key, None)
 
                 """
                 If the action_selected is not self.action and action_selected is not None
                 
                 Notes:
                     This should prevent moving back into yourself and 
-                    not reassigning a unregistered action to self.action  
+                    not reassigning a unregistered action to self.action
+                    
+                    Returning immediately will prevent an following events from being processed
+                    e.g holding down 2 keys at the sametime
                 """
                 if DICT_K_ACTION_V_ACTION_REVERSE.get(action_selected) != self.action and action_selected is not None:
                     self.action = action_selected
+                    return self.action
 
         return self.action
 
@@ -130,7 +116,7 @@ class PlayerController(Player):
 #         self.get_chunk_snake_to_move_possible(self.action_current)  # draw the chunk_head
 #         self.list_point_snake.insert(0, self.chunk_head)
 #
-#         # 3. check if game_snake over
+#         # 3. check if logic_game_snake over
 #         game_over = False
 #         if self.get_collided():
 #             game_over = True
@@ -148,7 +134,7 @@ class PlayerController(Player):
 #         self.draw_graphics()
 #         self.clock.tick(FPS)w
 #
-#         # 6. return game_snake over and score
+#         # 6. return logic_game_snake over and score
 #         return game_over, self.score
 #
 #     def draw_graphics(self):
@@ -195,15 +181,15 @@ class PlayerController(Player):
 #         self.chunk_head = Chunk(x, y)
 #
 # if __name__ == '__main__':
-#     game_snake = PlayerController(
+#     logic_game_snake = PlayerKeyboard(
 #         Action.RIGHT,
 #         640 // 2,
 #         480 // 2,
 #     )
 #
-#     # game_snake loop
+#     # logic_game_snake loop
 #     while True:
-#         game_over, score = game_snake.play_step_player()
+#         game_over, score = logic_game_snake.play_step_player()
 #
 #         if game_over == True:
 #             break

@@ -23,8 +23,12 @@ Reference:
 """
 from __future__ import annotations
 
+from typing import Deque
 from typing import List
 from typing import TYPE_CHECKING
+from typing import Union
+
+import pygame
 
 from _settings import Settings
 
@@ -34,8 +38,7 @@ if TYPE_CHECKING:
     from wrapper.wrapper_snake import WrapperSnake
     from wrapper.wrapper_wall import WrapperWall
 
-
-class SingletonDataGame:
+class DataGame:
     """
     A lite container of the variables in LogicGameSnake
 
@@ -53,7 +56,12 @@ class SingletonDataGame:
     list_wrapper_food: List[WrapperFood]
     list_wrapper_wall: List[WrapperWall]
 
+    #####
+
+    list_pygame_event: List[pygame.event.Event]
     index_frame: int
+    deque_player: Union[Deque[Player], None]
+    bool_game_over: bool
 
     def __init__(self, settings: Settings):
         self.settings = settings
@@ -64,14 +72,15 @@ class SingletonDataGame:
         self.list_wrapper_food = []
         self.list_wrapper_wall = []
 
-        self.index_frame = 0
+        #####
 
-    def reset(self):
-        self.list_wrapper_wall.clear()
-        self.list_wrapper_snake.clear()
-        self.list_wrapper_food.clear()
+        self.list_pygame_event = []
 
         self.index_frame = 0
+
+        self.deque_player = None
+
+        self.bool_game_over = False
 
     def __str__(self):
         return "\n".join(f"Player {index} Score: {player.score}" for index, player in enumerate(self.list_player))

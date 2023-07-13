@@ -50,7 +50,7 @@ class WrapperSnake(Wrapper[ContainerChunkSnake]):
     #                 chunk_initial: Chunk,
     #                 iterable_chunk_additional: Union[Sequence[Chunk], None] = None
     #                 ):
-    #     super().reset([chunk_initial, *iterable_chunk_additional])
+    #     super()._initialize([chunk_initial, *iterable_chunk_additional])
     #
     #     self.player.set_action(action_initial)
 

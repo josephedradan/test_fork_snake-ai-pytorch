@@ -70,7 +70,7 @@ def train(game_snake: GameSnake, settings: Settings,
 
         if done:
             # train long deque_memory, plot result
-            game.reset()
+            game._initialize()
             agent.amount_games += 1
             agent.train_long_memory()
 
@@ -78,7 +78,7 @@ def train(game_snake: GameSnake, settings: Settings,
                 record = score
                 agent.model.save()
 
-            print('PlayerController', agent.amount_games, 'Score', score, 'Record:', record)
+            print('PlayerKeyboard', agent.amount_games, 'Score', score, 'Record:', record)
 
             plot_scores.append(score)
             total_score += score
@@ -86,13 +86,13 @@ def train(game_snake: GameSnake, settings: Settings,
             plot_mean_scores.append(mean_score)
             plot(plot_scores, plot_mean_scores)
 
-
-def callback():
-
-
-    state_previous:
-
-    def callback_body()
+#
+# def callback():
+#
+#
+#     state_previous:
+#
+#     def callback_body()
 
 
 

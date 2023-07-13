@@ -25,38 +25,46 @@ from abc import ABC
 from abc import abstractmethod
 
 from _settings import Settings
-from singleton_data.singleton_data_game import SingletonDataGame
 from logic_game_snake import LogicGameSnake
+from agent.data.data_game import DataGame
 
 
 class Graphics(ABC):
     settings: Settings
 
-    game_snake: LogicGameSnake
+    logic_game_snake: LogicGameSnake
 
     def __init__(self,
                  settings: Settings,
-                 game_snake: LogicGameSnake
+                 logic_game_snake: LogicGameSnake
                  ):
         self.settings = settings
-        self.game_snake = game_snake
+        self.logic_game_snake = logic_game_snake
 
     @abstractmethod
     def draw_graphics(self):
-        ...
+        """
+        Default draw graphics is to not do anything
 
-    def get_game_snake(self) -> LogicGameSnake:
-        return self.game_snake
+        :return:
+        """
+        pass
 
-    def run(self) -> SingletonDataGame:
-        def callback_draw_game():
-            """
-            This callable contains pygame drawing related stuff
+    def get_logic_game_snake(self) -> LogicGameSnake:
+        return self.logic_game_snake
 
-            :return:
-            """
-            nonlocal self
+    @abstractmethod
+    def run_loop(self) -> DataGame:  # TODO: MAYBE RETURN SOMETHING ELSE? MORE GAME DATA???
+        """
 
-            self.draw_graphics()
+        Notes:
+            You can override this method to implement a custom loop
 
-        return self.game_snake.run(callback_draw_game)
+        :return:
+        """
+        pass
+        # while not self.logic_game_snake.data_game.bool_game_over:  # Fixme: self.logic_game_snake is a little too powerful?
+        #     game_data = self.logic_game_snake.get_generator_run_step()
+        #     self.draw_graphics()
+        #
+        # return self.logic_game_snake.data_game

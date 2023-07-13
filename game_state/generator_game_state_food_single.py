@@ -25,26 +25,26 @@ from typing import Union
 
 import numpy as np
 
-from agent.temp import get_wrapper_from_chunk_that_collided
+from agent.temp import get_bool_wrapper_from_chunk_that_collided
 from chunk import Chunk
 from constants import Action
 from constants import TYPE_GAME_STATE
-from singleton_data.singleton_singleton_data_game import SingletonDataGame
 from game_state.generator_game_state import GeneratorGameState
 from player.player import Player
+from agent.data.data_game import DataGame
 from wrapper.wrapper_food import WrapperFood
 
 
 class GeneratorGameStateFoodSingle(GeneratorGameState):
 
     @staticmethod
-    def get_game_state(singleton_data_game: SingletonDataGame, player: Player) -> TYPE_GAME_STATE:
+    def get_game_state(data_game: DataGame, player: Player) -> TYPE_GAME_STATE:
         chunk_snake_head: Chunk = player.get_wrapper().get_container_chunk().get_chunk_first()
 
-        chunk_possible_left = Chunk(chunk_snake_head.x - singleton_data_game.settings.block_size, chunk_snake_head.y)
-        chunk_possible_right = Chunk(chunk_snake_head.x + singleton_data_game.settings.block_size, chunk_snake_head.y)
-        chunk_possible_up = Chunk(chunk_snake_head.x, chunk_snake_head.y - singleton_data_game.settings.block_size)
-        chunk_possible_down = Chunk(chunk_snake_head.x, chunk_snake_head.y + singleton_data_game.settings.block_size)
+        chunk_possible_left = Chunk(chunk_snake_head.x - data_game.settings.block_size, chunk_snake_head.y)
+        chunk_possible_right = Chunk(chunk_snake_head.x + data_game.settings.block_size, chunk_snake_head.y)
+        chunk_possible_up = Chunk(chunk_snake_head.x, chunk_snake_head.y - data_game.settings.block_size)
+        chunk_possible_down = Chunk(chunk_snake_head.x, chunk_snake_head.y + data_game.settings.block_size)
 
         bool_action_left = player.get_action_current() == Action.LEFT
         bool_action_right = player.get_action_current() == Action.RIGHT
@@ -55,8 +55,8 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
 
         chunk_food: Union[Chunk, None] = None
 
-        if singleton_data_game.list_wrapper_food:
-            wrapper_food_arbitrary: WrapperFood = singleton_data_game.list_wrapper_food[0]
+        if data_game.list_wrapper_food:
+            wrapper_food_arbitrary: WrapperFood = data_game.list_wrapper_food[0]
 
             container_chunk_food = wrapper_food_arbitrary.get_container_chunk()
 
@@ -89,22 +89,22 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
         """
         state = [
             # Snake going forward (from snake's perspective), check if next move going forward will collide
-            (bool_action_right and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_right)) or
-            (bool_action_left and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_left)) or
-            (bool_action_up and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_up)) or
-            (bool_action_down and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_down)),
+            (bool_action_right and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_right)) or
+            (bool_action_left and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_left)) or
+            (bool_action_up and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_up)) or
+            (bool_action_down and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_down)),
 
             # Snake going forward (from snake's perspective), check if next move going right will collide
-            (bool_action_up and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_right)) or
-            (bool_action_down and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_left)) or
-            (bool_action_left and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_up)) or
-            (bool_action_right and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_down)),
+            (bool_action_up and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_right)) or
+            (bool_action_down and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_left)) or
+            (bool_action_left and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_up)) or
+            (bool_action_right and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_down)),
 
             # Snake going forward (from snake's perspective), check if next move going left will collide
-            (bool_action_down and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_right)) or
-            (bool_action_up and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_left)) or
-            (bool_action_right and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_up)) or
-            (bool_action_left and get_wrapper_from_chunk_that_collided(singleton_data_game, chunk_possible_down)),
+            (bool_action_down and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_right)) or
+            (bool_action_up and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_left)) or
+            (bool_action_right and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_up)) or
+            (bool_action_left and get_bool_wrapper_from_chunk_that_collided(data_game, chunk_possible_down)),
 
             # Selected Action
             bool_action_left,
@@ -118,5 +118,8 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
             chunk_food.y < chunk_snake_head.y if chunk_food is not None else False,
             chunk_food.y > chunk_snake_head.y if chunk_food is not None else False,
         ]
+
+        print("Staet print")
+        print(state)
 
         return np.array(state, dtype=int)

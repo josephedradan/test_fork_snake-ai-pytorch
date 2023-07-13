@@ -23,17 +23,15 @@ Reference:
 """
 from abc import ABC
 
-from player.player import Player
 from constants import TYPE_ACTION_POSSIBLE
-from wrapper.wrapper import Wrapper
+from player.player import Player
 
 
 class PlayerAI(Player, ABC):
 
-    def __init__(self, wrapper: Wrapper,
-                 action_initial: TYPE_ACTION_POSSIBLE = None,
-                 # generator_game_state  # FIXME: IDK if this should be above the above parameter
+    def __init__(self,
+                 action_initial: TYPE_ACTION_POSSIBLE = None
                  ):
-        super().__init__(wrapper, action_initial)
+        super().__init__()
 
         # self.generator_game_state = generator_game_state

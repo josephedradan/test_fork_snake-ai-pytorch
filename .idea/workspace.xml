@@ -5,13 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ea6f27ae-6a93-4139-9cc9-bb386d1f4749" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/agent/temp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/player/player_ai.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/singleton_data/singleton_data.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/singleton_data/singleton_data_game.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/singleton_data/singleton_data_player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/_settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/agent_q_learning.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent/agent_q_learning.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/agent_q_learning.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent/temp.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/temp.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game/game_snake_pygame.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/game_snake_pygame.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game_state/generator_game_state.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_state/generator_game_state.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game_state/generator_game_state_food_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_state/generator_game_state_food_single.py" afterDir="false" />
@@ -19,15 +14,16 @@
       <change beforePath="$PROJECT_DIR$/graphics/graphics_pygame.py" beforeDir="false" afterPath="$PROJECT_DIR$/graphics/graphics_pygame.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/logic_game_snake.py" beforeDir="false" afterPath="$PROJECT_DIR$/logic_game_snake.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player_ai.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player_ai_q_learning.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/player_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player_controller.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pygame_snake/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/pygame_snake/button.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/removed/data_snake.py" beforeDir="false" afterPath="$PROJECT_DIR$/removed/data_snake.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player/player_ai.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player_ai.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player/player_ai_q_learning.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player_ai_q_learning.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player/player_controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/player/player_keyboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pygame_snake/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/pygame_abstraction/button.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/singleton_data/singleton_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/singleton_data/singleton_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/singleton_data/singleton_data_game.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/data/data_game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/singleton_data/singleton_data_player.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/data/data_player.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wrapper/wrapper_snake.py" beforeDir="false" afterPath="$PROJECT_DIR$/wrapper/wrapper_snake.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wrapper/wrapper_wall.py" beforeDir="false" afterPath="$PROJECT_DIR$/wrapper/wrapper_wall.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,11 +63,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch\agent\data" />
       <recent name="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch\singleton_data" />
       <recent name="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch\agent" />
       <recent name="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch\player" />
       <recent name="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch\game" />
-      <recent name="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch" />
     </key>
   </component>
   <component name="RunManager" selected="Python.main">
@@ -154,7 +150,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch\pygame_custom\menu.py" />
+      <option name="SCRIPT_NAME" value="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch\menu.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -163,7 +159,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="menu" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="model" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="test_fork_snake-ai-pytorch" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -176,7 +172,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="H:\Programming\Python\github_forks_test_private\test_fork_snake-ai-pytorch\menu.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/model.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -210,10 +206,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.model" />
         <item itemvalue="Python.constants" />
         <item itemvalue="Python.player" />
         <item itemvalue="Python.logic_game_snake" />
-        <item itemvalue="Python.menu (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -231,7 +227,10 @@
       <workItem from="1683442480904" duration="16271000" />
       <workItem from="1683786085842" duration="35678000" />
       <workItem from="1684620620092" duration="111166000" />
-      <workItem from="1686340218673" duration="106177000" />
+      <workItem from="1686340218673" duration="115465000" />
+      <workItem from="1688372737654" duration="2760000" />
+      <workItem from="1688466163061" duration="11566000" />
+      <workItem from="1688902261849" duration="44922000" />
     </task>
     <servers />
   </component>
@@ -270,8 +269,9 @@
     <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$player_snake_player__1_.coverage" NAME="player_snake_player (1) Coverage Results" MODIFIED="1682743317491" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$game.coverage" NAME="game Coverage Results" MODIFIED="1683783428047" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$game__1_.coverage" NAME="game (1) Coverage Results" MODIFIED="1684731401513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$main.coverage" NAME="main Coverage Results" MODIFIED="1687773114203" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$main.coverage" NAME="main Coverage Results" MODIFIED="1689230260480" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$button.coverage" NAME="button Coverage Results" MODIFIED="1684580096804" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/custom" />
+    <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$model.coverage" NAME="model Coverage Results" MODIFIED="1688636943233" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$data_snake.coverage" NAME="data_snake Coverage Results" MODIFIED="1682767866573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$container_chunk.coverage" NAME="container_chunk Coverage Results" MODIFIED="1683028642463" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/container_chunk" />
     <SUITE FILE_PATH="coverage/test_fork_snake_ai_pytorch$game_snake__1_.coverage" NAME="game_snake (1) Coverage Results" MODIFIED="1686712478565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

@@ -26,13 +26,14 @@ import itertools
 import pygame
 
 from _settings import Settings
-from logic_game_snake import LogicGameSnake
-from graphics.graphics import Graphics
 from constants import BLOCK_SIZE
 from constants import BLOCK_SIZE_OFFSET
 from constants import ColorRGB
 from constants import FONT_SIZE
 from constants import FPS
+from graphics.graphics import Graphics
+from logic_game_snake import LogicGameSnake
+from agent.data.data_game import DataGame
 
 
 class GraphicsPygame(Graphics):
@@ -44,7 +45,7 @@ class GraphicsPygame(Graphics):
 
     def __init__(self,
                  settings: Settings,
-                 game_snake: LogicGameSnake,
+                 logic_game_snake: LogicGameSnake,
                  pygame_display: pygame.display,
                  pygame_font_text: pygame.font.Font,
                  pygame_font_fps: pygame.font.Font,
@@ -55,7 +56,7 @@ class GraphicsPygame(Graphics):
         Pygame related stuff
         ####################
         """
-        super().__init__(settings, game_snake)
+        super().__init__(settings, logic_game_snake)
 
         self.pygame_display = pygame_display
 
@@ -80,7 +81,7 @@ class GraphicsPygame(Graphics):
         self.pygame_display.fill(ColorRGB.BLACK)
 
         # Draw walls
-        for wrapper_wall in self.game_snake.singleton_data_game.list_wrapper_wall:
+        for wrapper_wall in self.logic_game_snake.data_game.list_wrapper_wall:
             for chunk_wall in wrapper_wall.get_container_chunk():
                 pygame.draw.rect(
                     self.pygame_display,
@@ -89,12 +90,11 @@ class GraphicsPygame(Graphics):
                 )
 
         # Draw snakes
-        for index, player in enumerate(self.game_snake.singleton_data_game.list_player):
+        for index, player in enumerate(self.logic_game_snake.data_game.list_player):
 
             wrapper_from_player = player.get_wrapper()
 
-            print(wrapper_from_player.get_container_chunk())
-            # Snake head
+            # Draw snake head
             pygame.draw.rect(
                 self.pygame_display,
                 ColorRGB.GREEN_KELLY,
@@ -104,12 +104,11 @@ class GraphicsPygame(Graphics):
                             BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2))
             )
 
-            # Snake body
+            # Draw snake body
             for chunk in itertools.islice(
                     wrapper_from_player.get_container_chunk(),
                     1,
                     len(wrapper_from_player.get_container_chunk())):
-
                 pygame.draw.rect(
                     self.pygame_display,
                     ColorRGB.GREEN,
@@ -128,16 +127,18 @@ class GraphicsPygame(Graphics):
                 #     pygame.Rect(chunk.x + 4, chunk.y + 4, 12, 12)
                 # )
 
+            # Create text score
             text = self.font_text.render(
                 f"P{index} Score: {player.score}",
                 True,
                 ColorRGB.GREEN
             )
 
+            # Draw text score
             self.pygame_display.blit(text, (0, FONT_SIZE * (index + 1)))  # Offset scores
 
         # Draw food
-        for wrapper_food in self.game_snake.singleton_data_game.list_wrapper_food:
+        for wrapper_food in self.logic_game_snake.data_game.list_wrapper_food:
             for chunk_food in wrapper_food.get_container_chunk():
                 pygame.draw.rect(
                     self.pygame_display,
@@ -159,4 +160,23 @@ class GraphicsPygame(Graphics):
 
         pygame.display.flip()  # Draw on screen
 
+    def run_loop(self) -> DataGame:
 
+        generator_run_step = self.logic_game_snake.get_generator_run_step()
+
+        self.logic_game_snake.data_game.list_pygame_event = pygame.event.get()
+
+        for data_game in generator_run_step:
+
+            list_pygame_event = pygame.event.get()
+
+            data_game.list_pygame_event = list_pygame_event
+
+            # This loop prevents the pygame window from hanging
+            for event in list_pygame_event:
+                pass
+
+
+            self.draw_graphics()
+
+        return self.logic_game_snake.data_game

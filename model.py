@@ -5,6 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+from constants import Action
+
 
 class LinearQNet(nn.Module):
     def __init__(self, input_size: int, hidden_size: int, output_size: int):
@@ -34,10 +36,18 @@ class QTrainer:
         self.optimizer = optim.Adam(model.parameters(), lr=self.learning_rate)
         self.criterion = nn.MSELoss()  # Loss function
 
-    def train_step(self, state, action, reward, state_next, done):
+    def train_step(self, state, action: Action, reward, state_next, done):
+
+        print("FUCK")
+        print("action", action)
+        print("reward", reward)
+        print("state_next", state_next)
+        print("done", done)
+        print()
+
         state = torch.tensor(state, dtype=torch.float)
         state_next = torch.tensor(state_next, dtype=torch.float)
-        action = torch.tensor(action, dtype=torch.long)
+        action = torch.tensor(action.value, dtype=torch.long)
         reward = torch.tensor(reward, dtype=torch.float)
         # (n, x)
 
