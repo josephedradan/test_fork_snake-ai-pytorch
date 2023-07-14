@@ -25,13 +25,13 @@ from typing import Union
 
 import numpy as np
 
-from agent.temp import get_bool_wrapper_from_chunk_that_collided
+from utility import get_bool_wrapper_from_chunk_that_collided
 from chunk import Chunk
 from constants import Action
 from constants import TYPE_GAME_STATE
 from game_state.generator_game_state import GeneratorGameState
 from player.player import Player
-from agent.data.data_game import DataGame
+from data.data_game import DataGame
 from wrapper.wrapper_food import WrapperFood
 
 

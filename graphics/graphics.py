@@ -26,7 +26,7 @@ from abc import abstractmethod
 
 from _settings import Settings
 from logic_game_snake import LogicGameSnake
-from agent.data.data_game import DataGame
+from data.data_game import DataGame
 
 
 class Graphics(ABC):

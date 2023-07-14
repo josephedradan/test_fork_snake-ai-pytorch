@@ -25,14 +25,16 @@ Reference:
             https://www.youtube.com/watch?v=GMBqjxcKogA
             https://github.com/baraltech/Menu-System-PyGame/blob/main/main.py
 """
+import random
 import sys
 from typing import Union
 
 import pygame
 
 from _settings import Settings
-from constants import Action
+from data.data_game import DataGame
 from constants import ColorRGB
+from constants import LIST_ACTION_CYCLE_CLOCKWISE
 from constants import TYPE_POSITION
 from game.game_snake import GameSnake
 from graphics.graphics_pygame import GraphicsPygame
@@ -40,7 +42,6 @@ from logic_game_snake import LogicGameSnake
 from player.player_ai_q_learning import PlayerAIQLearning
 from player.player_keyboard import PlayerKeyboard
 from pygame_abstraction.button import Button
-from agent.data.data_game import DataGame
 
 
 class GameSnakePygame(GameSnake):
@@ -75,6 +76,10 @@ class GameSnakePygame(GameSnake):
 
         pygame.display.set_caption('Snake logic_game_snake')
 
+        #####
+
+        self.player_ai_q_learning = PlayerAIQLearning()
+
     def run(self):
         button_play = Button(
             "Play",
@@ -104,13 +109,10 @@ class GameSnakePygame(GameSnake):
         amount_of_block_width = (self.settings.width - self.settings.block_size) // self.settings.block_size
         amount_of_block_height = (self.settings.height - self.settings.block_size) // self.settings.block_size
 
-
-        ##########
+        ####################
         position_mouse: TYPE_POSITION = pygame.mouse.get_pos()
-        ##########
 
         """
-        
         IMPORTANT NOTES:
             Do not double draw on the same location, whatever drew first will take priority...
             
@@ -120,24 +122,18 @@ class GameSnakePygame(GameSnake):
             # Clear screen because so old data
             self.pygame_surface_main.fill(ColorRGB.BLACK)
 
-            # print(position_mouse)
-
-            #########################
-            # Buttons
-            #########################
-
             # TODO: Find better menu displaying solution, button to a new loop seems kind of cringe
             for event in pygame.event.get():
                 position_mouse = pygame.mouse.get_pos()
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                    exit(0)
 
                 # Play button
                 if button_play.is_position_colliding(position_mouse):
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
-
                         data_game = self._menu_play(amount_of_block_width, amount_of_block_height)
 
                         button_play.draw(self.pygame_surface_main)
@@ -149,6 +145,8 @@ class GameSnakePygame(GameSnake):
                         pygame.quit()
                         sys.exit()
 
+            #########################
+            # Drawing
             #########################
 
             # Play button
@@ -165,11 +163,7 @@ class GameSnakePygame(GameSnake):
             else:
                 button_quit.draw(self.pygame_surface_main)
 
-
-            #########################
             # Text post game data
-            #########################
-
             if data_game:
                 for index, player in enumerate(data_game.list_player):
                     surface_text = self.pygame_font_text.render(
@@ -234,7 +228,6 @@ class GameSnakePygame(GameSnake):
                 if button_play_keyboard.is_position_colliding(position_mouse):
                     clock = pygame.time.Clock()
                     if event.type == pygame.MOUSEBUTTONDOWN:
-
                         # Make new logic_game_snake
                         logic_game_snake = LogicGameSnake(
                             [PlayerKeyboard()],
@@ -261,12 +254,13 @@ class GameSnakePygame(GameSnake):
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
 
-                        player_ai_q_learning = PlayerAIQLearning()
+                        # Set initial Action because the AI will crash without it
+                        action_random = random.choice(LIST_ACTION_CYCLE_CLOCKWISE)
 
-                        player_ai_q_learning.set_action(Action.RIGHT)  # Set initial Action so no crash for AI  # TODO FIX
+                        self.player_ai_q_learning.set_action(action_random)
 
                         logic_game_snake = LogicGameSnake(
-                            [player_ai_q_learning],
+                            [self.player_ai_q_learning],
                             self.settings,
                             amount_of_block_width,
                             amount_of_block_height
@@ -290,6 +284,8 @@ class GameSnakePygame(GameSnake):
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         return None
 
+            #########################
+            # Drawing
             #########################
 
             # Play button

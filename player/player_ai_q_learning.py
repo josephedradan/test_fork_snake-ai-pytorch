@@ -1,32 +1,25 @@
-from typing import Tuple
+from typing import Type
 from typing import Type
 from typing import Union
 
-import numpy as np
-
 from agent.agent_q_learning import AgentQLearning
 from constants import Action
-from constants import DICT_K_ACTION_V_INDEX_ACTION_CYCLE_CLOCKWISE
-from constants import LIST_ACTION_CYCLE_CLOCKWISE
 from constants import TYPE_ACTION_POSSIBLE
 from constants import TYPE_GAME_STATE
-from constants import TYPE_TUPLE_ACTION_RELATIVE
+from constants import TYPE_TUPLE_INT_ACTION
+from data.data_game import DataGame
+from data.data_player import DataPlayer
 from game_state.generator_game_state import GeneratorGameState
 from game_state.generator_game_state_food_single import GeneratorGameStateFoodSingle
 from helper import plot
 from player.player import Player
-from agent.data.data_game import DataGame
-from agent.data.data_player import DataPlayer
+# def get_action_new
+from utility import get_action_from_tuple_int_action_relative
+
 
 # pygame.init()
 # font = pygame.font.Font('../arial.ttf', 25)
 
-TUPLE_ACTION_SAME = (1, 0, 0)
-TUPLE_ACTION_RIGHT = (0, 1, 0)
-TUPLE_ACTION_LEFT = (0, 0, 1)
-
-
-# def get_action_new
 
 class PlayerAIQLearning(Player):
     window_width: int
@@ -50,7 +43,7 @@ class PlayerAIQLearning(Player):
         """
 
         self.game_state_current: Union[TYPE_GAME_STATE, None] = None
-        self.tuple_action_relative_current: Union[TYPE_TUPLE_ACTION_RELATIVE, None] = None
+        self.tuple_action_relative_current: Union[TYPE_TUPLE_INT_ACTION, None] = None
 
         #####
 
@@ -99,17 +92,21 @@ class PlayerAIQLearning(Player):
 
     def get_action_new(self, data_game: DataGame) -> TYPE_ACTION_POSSIBLE:
 
+        # Get game game_state based on DataGame
         self.game_state_current = self.generator_game_state.get_game_state(data_game, self)
 
-        self.tuple_action_relative_current = self.agent_q_learning.get_tuple_action_relative(self.game_state_current)
-        print("#"*20, self.tuple_action_relative_current)
+        # Get a custom torch_tensor_action representation from the agent
+        self.tuple_action_relative_current = self.agent_q_learning.get_tuple_int_action_relative(self.game_state_current)
 
-        return self.get_action_from_tuple_action_relative(self.tuple_action_relative_current)
+        # Return the the correct Action object based on the custom torch_tensor_action representation
+        self.action = get_action_from_tuple_int_action_relative(self.action, self.tuple_action_relative_current)
 
-    def send_feedback_play_step(self,
-                                data_game: DataGame,
-                                data_player: DataPlayer,
-                                ):
+        return self.action
+
+    def send_feedback_of_step(self,
+                              data_game: DataGame,
+                              data_player: DataPlayer,
+                              ):
 
         game_state_new = self.generator_game_state.get_game_state(data_game, self)
 
@@ -118,7 +115,7 @@ class PlayerAIQLearning(Player):
             self.get_action_current(),
             data_player.reward,
             game_state_new,
-            data_player.bool_snake_died,
+            data_player.bool_dead,
         )
 
         self.agent_q_learning.remember(
@@ -126,16 +123,21 @@ class PlayerAIQLearning(Player):
             self.get_action_current(),
             data_player.reward,
             game_state_new,
-            data_player.bool_snake_died,
+            data_player.bool_dead,
         )
 
-        if data_player.bool_snake_died:
+        print("####### data_player.bool_dead", data_player.bool_dead)
+
+        if data_player.bool_dead:
 
             self.agent_q_learning.amount_games += 1
             self.agent_q_learning.train_long_memory()
 
             if self.score > self.score_highest:
                 self.score_highest = self.score
+
+                print("SAVE CALLED")
+                # Save
                 self.agent_q_learning.model.save()
 
             self.plot_scores.append(self.score)
@@ -151,7 +153,7 @@ class PlayerAIQLearning(Player):
     #     if self.food in self.list_point_snake:
     #         self._place_food()
     #
-    # def play_step(self, action):  # FIXME: ACTION IS IN FORMAT [0,0,0]
+    # def play_step(self, torch_tensor_action):  # FIXME: ACTION IS IN FORMAT [0,0,0]
     #     self.frame_iteration += 1
     #
     #     # 1. collect user input
@@ -161,21 +163,21 @@ class PlayerAIQLearning(Player):
     #             quit()
     #
     #     # 2. move
-    #     self._move(action)  # draw the chunk_head
+    #     self._move(torch_tensor_action)  # draw the chunk_head
     #     self.list_point_snake.insert(0, self.head)
     #
     #     # 3. check if logic_game_snake over
-    #     reward = 0
+    #     torch_tensor_reward = 0
     #     game_over = False
     #     if self.is_collision() or self.frame_iteration > 100 * len(self.list_point_snake):
     #         game_over = True
-    #         reward = -10
-    #         return reward, game_over, self.score
+    #         torch_tensor_reward = -10
+    #         return torch_tensor_reward, game_over, self.score
     #
     #     # 4. place new chunk_food or just move
     #     if self.head == self.food:
     #         self.score += 1
-    #         reward = 10
+    #         torch_tensor_reward = 10
     #         self._place_food()
     #     else:
     #         self.list_point_snake.pop_chunk_last()
@@ -185,7 +187,7 @@ class PlayerAIQLearning(Player):
     #     self.clock.tick(FPS)
     #
     #     # 6. return logic_game_snake over and score
-    #     return reward, game_over, self.score
+    #     return torch_tensor_reward, game_over, self.score
     #
     # def is_collision(self, pt=None):
     #     if pt is None:
@@ -214,20 +216,20 @@ class PlayerAIQLearning(Player):
     #     self.display.blit(text, [0, 0])
     #     pygame.display.flip()
     #
-    # def _move(self, action):  # FIXME: ACTION IS IN FORMAT [0,0,0]
+    # def _move(self, torch_tensor_action):  # FIXME: ACTION IS IN FORMAT [0,0,0]
     #     """
-    #     action is a List of 3 ints representing [straight, right, left] WHICH IS [0,0,0]
+    #     torch_tensor_action is a List of 3 ints representing [straight, right, left] WHICH IS [0,0,0]
     #
-    #     :param action:
+    #     :param torch_tensor_action:
     #     :return:
     #     """
     #
     #     clock_wise = [Action.RIGHT, Action.DOWN, Action.LEFT, Action.UP]
     #     idx = clock_wise.index(self.direction)
     #
-    #     if np.array_equal(action, [1, 0, 0]):
+    #     if np.array_equal(torch_tensor_action, [1, 0, 0]):
     #         new_dir: Action = clock_wise[idx]  # no change
-    #     elif np.array_equal(action, [0, 1, 0]):
+    #     elif np.array_equal(torch_tensor_action, [0, 1, 0]):
     #         next_idx = (idx + 1) % 4
     #         new_dir: Action = clock_wise[next_idx]  # right turn r -> d -> l -> u
     #     else:  # [0, 0, 1]
@@ -248,32 +250,3 @@ class PlayerAIQLearning(Player):
     #         y -= BLOCK_SIZE
     #
     #     self.head = Chunk(x, y)
-
-    def get_action_from_tuple_action_relative(self,
-                                              tuple_action_relative: Tuple[int, int, int]) -> TYPE_ACTION_POSSIBLE:
-
-        index_action_cycle_clockwise = DICT_K_ACTION_V_INDEX_ACTION_CYCLE_CLOCKWISE.get(self.action)
-
-
-        if index_action_cycle_clockwise is None:
-
-            return self.action
-
-        if np.array_equal(tuple_action_relative, TUPLE_ACTION_SAME):
-            # Action is the same so no change is needed
-            # self.action = LIST_ACTION_CYCLE_CLOCKWISE[index_action_cycle_clockwise]
-            pass
-
-        elif np.array_equal(tuple_action_relative, TUPLE_ACTION_RIGHT):
-            next_idx = (index_action_cycle_clockwise + 1) % 4
-
-            # Action will turn right relative to current Action (r -> d -> l -> u)
-            self.action = LIST_ACTION_CYCLE_CLOCKWISE[next_idx]
-
-        elif np.array_equal(tuple_action_relative, TUPLE_ACTION_LEFT):  # [0, 0, 1]
-            next_idx = (index_action_cycle_clockwise - 1) % 4
-
-            # Action will turn left relative to current Action (r -> u -> l -> d)
-            self.action = LIST_ACTION_CYCLE_CLOCKWISE[next_idx]
-
-        return self.action

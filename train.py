@@ -56,7 +56,7 @@ def train(game_snake: GameSnake, settings: Settings,
         # state_old = agent.get_state(game)
 
         # get move
-        final_move = agent.get_tuple_action_relative(state_old)  # TODO GET ACTIOn
+        final_move = agent.get_tuple_int_action_relative(state_old)  # TODO GET ACTIOn
 
         # perform move and get new game_state_current
         reward, done, score = game.play_step(final_move) # TODO DO ACTION, GET SHIT FROM IT

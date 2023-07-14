@@ -28,8 +28,8 @@ from typing import Union
 
 from chunk import Chunk
 from constants import TYPE_ACTION_POSSIBLE
-from agent.data.data_game import DataGame
-from agent.data.data_player import DataPlayer
+from data.data_game import DataGame
+from data.data_player import DataPlayer
 from wrapper.wrapper import Wrapper
 
 
@@ -63,10 +63,10 @@ class Player(ABC):
     def get_wrapper(self) -> Wrapper:
         return self.wrapper
 
-    def send_feedback_play_step(self,
-                                data_game: DataGame,
-                                data_player: DataPlayer,
-                                ):
+    def send_feedback_of_step(self,
+                              data_game: DataGame,
+                              data_player: DataPlayer,
+                              ):
         """
         Essentially a callback that receives feedback after a play step has happened
 

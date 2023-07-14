@@ -30,13 +30,13 @@ from typing import Tuple
 from typing import Union
 
 from _settings import Settings
-from agent.temp import get_wrapper_from_chunk_that_collided
+from utility import get_wrapper_from_chunk_that_collided
 from chunk import Chunk
 from constants import Action
 from container_chunk.container_chunk_snake import ContainerChunkSnake
 from player.player import Player
-from agent.data.data_game import DataGame
-from agent.data.data_player import DataPlayer
+from data.data_game import DataGame
+from data.data_player import DataPlayer
 from wrapper.wrapper import Wrapper
 from wrapper.wrapper_food import WrapperFood
 from wrapper.wrapper_snake import WrapperSnake
@@ -102,11 +102,9 @@ class LogicGameSnake:
 
         for player in list_player:
 
-            wrapper_snake: WrapperSnake = WrapperSnake(  # TODO: REUSE OBJECTS
+            wrapper_snake: WrapperSnake = WrapperSnake(
                 [Chunk(self.settings.width // 2, self.settings.height // 2)]  # Initial position_center
             )
-
-            # player: Player = PlayerKeyboard()  # TODO: REUSE OBJECTS
 
             player.set_wrapper(wrapper_snake)
 
@@ -118,14 +116,15 @@ class LogicGameSnake:
 
         ##########
 
-        wrapper_food: WrapperFood = WrapperFood()  # TODO: REUSE OBJECTS
+        wrapper_food: WrapperFood = WrapperFood()
 
         self.data_game.list_wrapper_food.append(wrapper_food)
 
         for wrapper_food in self.data_game.list_wrapper_food:
             self._place_food(wrapper_food)
 
-    def _place_food(self, wrapper_food: WrapperFood,
+    def _place_food(self,
+                    wrapper_food: WrapperFood,
                     chunk_that_collided_with_wrapper: Union[Chunk, None] = None) -> Chunk:
         """
         Place food by reusing the same food object
@@ -181,7 +180,7 @@ class LogicGameSnake:
 
         self.data_game.index_frame += 1
 
-        self.data_player.bool_snake_died = False
+        self.data_player.bool_dead = False
         self.data_player.wrapper_object_that_collided = None
         self.data_player.reward = 0
 
@@ -206,6 +205,9 @@ class LogicGameSnake:
             chunk_snake_to_move_possible
         )
 
+        # Move the player by placing chunk_snake_to_move_possible at the front of container_chunk_snake
+        container_chunk_snake.add_new_chunk_front(chunk_snake_to_move_possible)
+
         # Check collision player with food
         if isinstance(wrapper_object_that_collided, WrapperFood):
             player.add_to_score(1)
@@ -220,7 +222,7 @@ class LogicGameSnake:
 
         # Collision player with player (Does not care about which player)
         if isinstance(wrapper_object_that_collided, WrapperSnake):
-            self.data_player.bool_snake_died = True
+            self.data_player.bool_dead = True
             self.data_player.wrapper_object_that_collided = wrapper_object_that_collided
             self.data_player.reward = -1
             print("Hit Snake")
@@ -229,17 +231,13 @@ class LogicGameSnake:
 
         # Check collision player with wall
         if isinstance(wrapper_object_that_collided, WrapperWall):
-            self.data_player.bool_snake_died = True
+            self.data_player.bool_dead = True
             self.data_player.wrapper_object_that_collided = wrapper_object_that_collided
             self.data_player.reward = -1
 
             print("Hit wall")
             return self.data_player
 
-        # Move the player by placing chunk_snake_to_move_possible at the front of container_chunk_snake
-        container_chunk_snake.add_new_chunk_front(chunk_snake_to_move_possible)
-
-        # 6. return logic_game_snake over and score
         return self.data_player
 
     def get_chunk_snake_to_move_possible(self,
@@ -341,11 +339,12 @@ class LogicGameSnake:
                 action_from_player
             )
 
-            if data_player.bool_snake_died is True:
+            # This call must be made before the continue
+            player.send_feedback_of_step(self.data_game, data_player)
+
+            if data_player.bool_dead is True:
                 # Continue will skip re-adding player back to the deque
                 continue
-
-            player.send_feedback_play_step(self.data_game, data_player)
 
             self.data_game.deque_player.append(player)
 
@@ -365,11 +364,11 @@ class LogicGameSnake:
         #
         #     callback_for_iteration_end()
         #
-        #     if data_player.bool_snake_died is True:
+        #     if data_player.bool_dead is True:
         #         # Continue will skip re-adding deque_player back
         #         continue
         #
-        #     player.send_feedback_play_step(self.data_game, data_player)
+        #     player.send_feedback_of_step(self.data_game, data_player)
         #
         #     yield self.data_game
 

@@ -2,7 +2,7 @@ from typing import Dict
 
 import pygame
 
-from agent.data.data_game import DataGame
+from data.data_game import DataGame
 from player.player import Player
 from constants import Action
 from constants import DICT_K_ACTION_V_ACTION_REVERSE
@@ -80,11 +80,11 @@ class PlayerKeyboard(Player):
                 action_selected = DICT_K_PYGAME_EVENT_KEY_V_ACTION.get(event.key, None)
 
                 """
-                If the action_selected is not self.action and action_selected is not None
+                If the action_selected is not self.torch_tensor_action and action_selected is not None
                 
                 Notes:
                     This should prevent moving back into yourself and 
-                    not reassigning a unregistered action to self.action
+                    not reassigning a unregistered torch_tensor_action to self.torch_tensor_action
                     
                     Returning immediately will prevent an following events from being processed
                     e.g holding down 2 keys at the sametime

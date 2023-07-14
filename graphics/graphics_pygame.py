@@ -33,7 +33,7 @@ from constants import FONT_SIZE
 from constants import FPS
 from graphics.graphics import Graphics
 from logic_game_snake import LogicGameSnake
-from agent.data.data_game import DataGame
+from data.data_game import DataGame
 
 
 class GraphicsPygame(Graphics):

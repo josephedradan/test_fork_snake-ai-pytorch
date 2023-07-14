@@ -26,7 +26,7 @@ from abc import abstractmethod
 
 from player.player import Player
 from constants import TYPE_GAME_STATE
-from agent.data.data_game import DataGame
+from data.data_game import DataGame
 
 
 class GeneratorGameState(ABC):

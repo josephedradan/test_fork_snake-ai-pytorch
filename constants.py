@@ -21,26 +21,35 @@ Contributors:
 Reference:
 
 """
-import itertools
-from collections import deque
-from enum import Enum
+
+from enum import IntEnum
 from enum import auto
 from typing import Callable
 from typing import Dict
-from typing import Iterable
 from typing import List
-from typing import Set
 from typing import Tuple
 from typing import TypeVar
 from typing import Union
-from typing import Union
+
+import numpy as np
+import torch
 
 from wrapper.wrapper import Wrapper
-from wrapper.wrapper import Wrapper
-from wrapper.wrapper import Wrapper
+
+TYPE_TUPLE_INT_ACTION = Tuple[int, int, int]
+
+TUPLE_INT_ACTION_FORWARD: TYPE_TUPLE_INT_ACTION = (1, 0, 0)
+TUPLE_INT_ACTION_RIGHT: TYPE_TUPLE_INT_ACTION = (0, 1, 0)
+TUPLE_INT_ACTION_LEFT: TYPE_TUPLE_INT_ACTION = (0, 0, 1)
+
+LIST_TUPLE_INT_ACTION_ORDERED: List[TYPE_TUPLE_INT_ACTION] = [
+    TUPLE_INT_ACTION_FORWARD,
+    TUPLE_INT_ACTION_RIGHT,
+    TUPLE_INT_ACTION_LEFT
+]
 
 
-class Action(Enum):
+class Action(IntEnum):
     RIGHT = auto()
     LEFT = auto()
     UP = auto()
@@ -55,7 +64,6 @@ DICT_K_ACTION_V_INDEX_ACTION_CYCLE_CLOCKWISE: Dict[Action, int] = {
 
 TYPE_ACTION_POSSIBLE = Union[Action, None]
 
-
 DICT_K_ACTION_V_ACTION_REVERSE: Dict[Action, Action] = {
     Action.UP: Action.DOWN,
     Action.DOWN: Action.UP,
@@ -65,13 +73,12 @@ DICT_K_ACTION_V_ACTION_REVERSE: Dict[Action, Action] = {
 
 TYPE_POSITION = Tuple[int, int]
 
-TYPE_GAME_STATE = Tuple[int, ...]
+TYPE_GAME_STATE = Union[Tuple[int, ...], np.ndarray, torch.Tensor]
 
 TYPE_BOOL_SNAKE_DIED = bool
 TYPE_WRAPPER_POSSIBLE = Union[Wrapper, None]
 TYPE_CALLABLE_FOR_ITERATION_END = Callable[[TYPE_BOOL_SNAKE_DIED, TYPE_WRAPPER_POSSIBLE], None]
 
-TYPE_TUPLE_ACTION_RELATIVE = Tuple[int, int, int]
 
 class ColorRGB(Tuple[int, int, int]):
     WHITE = (255, 255, 255)
@@ -92,60 +99,3 @@ FONT_SIZE = 20
 TEXT_LINE_SPACING_AMOUNT = FONT_SIZE + 5
 
 T = TypeVar('T')
-
-
-class DequeFastLookUp(deque[T]):
-    """
-
-    Notes:
-        Since self.set_ uses hashing, if an object is added to this object
-        then the object added to self.set_ will be overwritten
-    """
-    set_: Set[T]
-
-    def __init__(self, iterable: Iterable, maxlen: Union[int, None] = None):
-        super().__init__(iterable, maxlen)
-
-        self.set_ = set()
-
-        self.set_.update(iterable)
-
-    def append(self, x: T) -> None:
-        super().append(x)
-        self.set_.add(x)
-
-    def appendleft(self, x: T) -> None:
-        super().appendleft(x)
-        self.set_.add(x)
-
-    def copy(self) -> deque[[T]]:
-        return DequeFastLookUp(self)
-
-    def clear(self) -> None:
-        super().clear()
-        self.set_.clear()
-
-    def extend(self, iterable: Iterable[T]) -> None:
-        super().extend(iterable)
-        self.set_.update(iterable)
-
-    def extendleft(self, iterable: Iterable[T]) -> None:
-        super().extendleft(iterable)
-        self.set_.update(iterable)
-
-    def insert(self, i: int, x: T) -> None:
-        super().insert(i, x)
-        self.set_.update(x)
-
-    def pop(self) -> T:
-        self.set_.pop()
-        return super(DequeFastLookUp, self).pop()
-
-    def popleft(self) -> T:
-        self.set_.pop()
-        return super(DequeFastLookUp, self).popleft()
-
-    def __contains__(self, item: T):
-        return item in self.set_
-
-
