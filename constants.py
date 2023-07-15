@@ -89,6 +89,20 @@ class ColorRGB(Tuple[int, int, int]):
     GRAY = (168, 168, 168)
     GREEN = (0, 255, 0)
     GREEN_KELLY = (76, 187, 23)
+    LIGHT_GOLDEN_ROD_YELLOW = (250, 250, 210)
+    GOLD = (255, 215, 0)
+
+
+class Condition(IntEnum):
+    """
+    Generic state container
+
+    Notes:
+        Basically when a boolean is not enough
+    """
+    STATE_1 = auto()
+    STATE_2 = auto()
+    STATE_3 = auto()
 
 
 BLOCK_SIZE = 20

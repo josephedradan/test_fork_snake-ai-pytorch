@@ -120,8 +120,8 @@ class GraphicsPygame(Graphics):
                     )
                 )
 
-                # Inner color
-                # pygame.draw.rectangle_button(
+                # Inner color_text
+                # pygame.draw.pygame_rect_positioning(
                 #     self.pygame_surface_main,
                 #     ColorRGB.BLUE_2,
                 #     pygame.Rect(chunk.x + 4, chunk.y + 4, 12, 12)

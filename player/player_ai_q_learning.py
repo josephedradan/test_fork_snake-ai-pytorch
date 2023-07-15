@@ -18,7 +18,7 @@ from utility import get_action_from_tuple_int_action_relative
 
 
 # pygame.init()
-# font = pygame.font.Font('../arial.ttf', 25)
+# font_text = pygame.font_text.Font('../arial.ttf', 25)
 
 
 class PlayerAIQLearning(Player):
@@ -212,7 +212,7 @@ class PlayerAIQLearning(Player):
     #
     #     pygame.draw.rect(self.display, ColorRGB.RED, pygame.Rect(self.food.x, self.food.y, BLOCK_SIZE, BLOCK_SIZE))
     #
-    #     text = font.render("Score: " + str(self.score), True, ColorRGB.WHITE)
+    #     text = font_text.render("Score: " + str(self.score), True, ColorRGB.WHITE)
     #     self.display.blit(text, [0, 0])
     #     pygame.display.flip()
     #

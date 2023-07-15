@@ -9,7 +9,7 @@ from constants import DICT_K_ACTION_V_ACTION_REVERSE
 
 pygame.init()
 
-# font = pygame.font.Font('../arial.ttf', 25)
+# font_text = pygame.font_text.Font('../arial.ttf', 25)
 
 # pygame_font_text = pygame.pygame_font_text.SysFont('arial', 25)
 
@@ -49,7 +49,7 @@ class PlayerKeyboard(Player):
     #     ####################
     #     """
     #
-    #     # Initialize PlayerKeyboard State
+    #     # Initialize PlayerKeyboard Condition
     #     self.action_current: Action = Action.RIGHT
     #
     #     self.chunk_head: Chunk = Chunk(640 / 2, 480 / 2)
@@ -141,10 +141,10 @@ class PlayerKeyboard(Player):
 #         self.pygame_surface_main.fill(ColorRGB.BLACK)
 #
 #         for pt in self.list_point_snake:
-#             pygame.draw.rectangle_button(self.pygame_surface_main, ColorRGB.BLUE_1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
-#             pygame.draw.rectangle_button(self.pygame_surface_main, ColorRGB.BLUE_2, pygame.Rect(pt.x + 4, pt.y + 4, 12, 12))
+#             pygame.draw.pygame_rect_positioning(self.pygame_surface_main, ColorRGB.BLUE_1, pygame.Rect(pt.x, pt.y, BLOCK_SIZE, BLOCK_SIZE))
+#             pygame.draw.pygame_rect_positioning(self.pygame_surface_main, ColorRGB.BLUE_2, pygame.Rect(pt.x + 4, pt.y + 4, 12, 12))
 #
-#         pygame.draw.rectangle_button(self.pygame_surface_main, ColorRGB.RED, pygame.Rect(self.chunk_food.x, self.chunk_food.y, BLOCK_SIZE, BLOCK_SIZE))
+#         pygame.draw.pygame_rect_positioning(self.pygame_surface_main, ColorRGB.RED, pygame.Rect(self.chunk_food.x, self.chunk_food.y, BLOCK_SIZE, BLOCK_SIZE))
 #
 #         text = pygame_font_text.render("Score: " + str(self.score), True, ColorRGB.WHITE)
 #         self.pygame_surface_main.blit(text, [0, 0])
