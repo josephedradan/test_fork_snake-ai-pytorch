@@ -29,7 +29,13 @@ Reference:
         Reference:
             https://www.geeksforgeeks.org/how-to-create-a-text-input-box-with-pygame/
 
+    Show GAME_SPEED in Pygame
+        Reference:
+            https://stackoverflow.com/questions/67946230/show-fps-in-pygame
+
+
 """
+import random
 from typing import Union
 
 import pygame
@@ -37,6 +43,7 @@ import pygame
 from _settings import Settings
 from constants import ColorRGB
 from constants import Condition
+from constants import LIST_ACTION_CYCLE_CLOCKWISE
 from constants import TYPE_POSITION
 from data.data_game import DataGame
 from game.game_snake import GameSnake
@@ -78,7 +85,7 @@ class GameSnakePygame(GameSnake):
             (self.settings.width, self.settings.height)
         )
 
-        pygame.display.set_caption('Snake logic_game_snake')
+        pygame.display.set_caption('Snake')
 
         #####
 
@@ -109,11 +116,8 @@ class GameSnakePygame(GameSnake):
         #################### 
         """
 
-        # Amount of blocks available for width and height
-        amount_of_block_width = (self.settings.width - self.settings.block_size) // self.settings.block_size
-        amount_of_block_height = (self.settings.height - self.settings.block_size) // self.settings.block_size
-
         ####################
+
         position_mouse: TYPE_POSITION = pygame.mouse.get_pos()
 
         """
@@ -123,7 +127,7 @@ class GameSnakePygame(GameSnake):
         """
         while True:
 
-            # Clear screen because so old data
+            # Clear screen because of old data
             self.pygame_surface_main.fill(ColorRGB.BLACK)
 
             # TODO: Find better menu displaying solution, button to a new loop seems kind of cringe
@@ -136,16 +140,14 @@ class GameSnakePygame(GameSnake):
                     pygame.quit()
                     exit(0)
 
-                # Play button
+                # Button Play
                 if button_play.is_position_colliding(position_mouse):
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        data_game = self._menu_play(amount_of_block_width, amount_of_block_height)
+                        data_game = self._menu_play()
 
-                        button_play.draw(self.pygame_surface_main)
-
-                # Quit button
-                if button_quit.is_position_colliding(position_mouse):
+                # Button Quit
+                elif button_quit.is_position_colliding(position_mouse):
 
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         pygame.quit()
@@ -155,14 +157,13 @@ class GameSnakePygame(GameSnake):
             # Drawing
             #########################
 
-            # Play button
+            # Button Play
             if button_play.is_position_colliding(position_mouse):
                 button_play.draw_hover(self.pygame_surface_main)
-
             else:
                 button_play.draw(self.pygame_surface_main)
 
-            # Quit button
+            # Button Quit
             if button_quit.is_position_colliding(position_mouse):
                 button_quit.draw_hover(self.pygame_surface_main)
 
@@ -189,7 +190,7 @@ class GameSnakePygame(GameSnake):
 
             pygame.display.flip()
 
-    def _menu_play(self, amount_of_block_width, amount_of_block_height):
+    def _menu_play(self):
 
         #####
 
@@ -201,7 +202,7 @@ class GameSnakePygame(GameSnake):
             ColorRGB.GREEN
         )
 
-        button_play_ai = TextButton(
+        button_ai = TextButton(
             "AI",
             (self.settings.width // 2, ((self.settings.height // 2) + self.settings.text_line_spacing_amount)),
             self.pygame_font_text,
@@ -232,10 +233,18 @@ class GameSnakePygame(GameSnake):
                     pygame.quit()
                     exit(0)
 
-                # Play using keyboard
+                # Button Keyboard
                 if button_play_keyboard.is_position_colliding(position_mouse):
-                    clock = pygame.time.Clock()
+
                     if event.type == pygame.MOUSEBUTTONDOWN:
+                        # Amount of blocks available for width and height
+                        amount_of_block_width = (
+                                (self.settings.width - self.settings.block_size) // self.settings.block_size
+                        )
+                        amount_of_block_height = (
+                                (self.settings.height - self.settings.block_size) // self.settings.block_size
+                        )
+
                         # Make new logic_game_snake
                         logic_game_snake = LogicGameSnake(
                             [PlayerKeyboard()],
@@ -253,41 +262,15 @@ class GameSnakePygame(GameSnake):
                             self.pygame_font_fps,
                         )
 
-                        data_game = graphics_pygame.run_loop()
+                        data_game = graphics_pygame.run_loop(bool_fps_bound=False)
 
                         return data_game
 
-                # Play using AI
-                if button_play_ai.is_position_colliding(position_mouse):
-                    self._menu_ai_deep_q_learning()
+                # Button AI
+                if button_ai.is_position_colliding(position_mouse):
+                    return self._menu_ai_deep_q_learning()
 
-                    # if event.type == pygame.MOUSEBUTTONDOWN:
-                    #     # Set initial Action because the AI will crash without it
-                    #     action_random = random.choice(LIST_ACTION_CYCLE_CLOCKWISE)
-                    #
-                    #     self.player_ai_q_learning.set_action(action_random)
-                    #
-                    #     logic_game_snake = LogicGameSnake(
-                    #         [self.player_ai_q_learning],
-                    #         self.settings,
-                    #         amount_of_block_width,
-                    #         amount_of_block_height
-                    #     )
-                    #
-                    #     # Make pygame graphics for the logic_game_snake
-                    #     graphics_pygame = GraphicsPygame(
-                    #         self.settings,
-                    #         logic_game_snake,
-                    #         self.pygame_surface_main,
-                    #         self.pygame_font_text,
-                    #         self.pygame_font_fps,
-                    #     )
-                    #
-                    #     data_game = graphics_pygame.run_loop()
-                    #
-                    #     return data_game
-
-                # Go back
+                # Button Back
                 if button_play_back.is_position_colliding(position_mouse):
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         return None
@@ -296,29 +279,28 @@ class GameSnakePygame(GameSnake):
             # Drawing
             #########################
 
-            # Play button
+            # Button Keyboard
             if button_play_keyboard.is_position_colliding(position_mouse):
                 button_play_keyboard.draw_hover(self.pygame_surface_main)
-
             else:
                 button_play_keyboard.draw(self.pygame_surface_main)
 
-            # AI button
-            if button_play_ai.is_position_colliding(position_mouse):
-                button_play_ai.draw_hover(self.pygame_surface_main)
+            # Button AI
+            if button_ai.is_position_colliding(position_mouse):
+                button_ai.draw_hover(self.pygame_surface_main)
             else:
-                button_play_ai.draw(self.pygame_surface_main)
+                button_ai.draw(self.pygame_surface_main)
 
-            # Quit button
+            # Button Back
             if button_play_back.is_position_colliding(position_mouse):
                 button_play_back.draw_hover(self.pygame_surface_main)
-
             else:
                 button_play_back.draw(self.pygame_surface_main)
 
             pygame.display.flip()
 
-    def _menu_ai_deep_q_learning(self):
+    def _menu_ai_deep_q_learning(self
+                                 ):
 
         button_play_ai = TextButton(
             "Play AI (Deep Q Learning)",
@@ -347,6 +329,8 @@ class GameSnakePygame(GameSnake):
 
         #####
 
+        clock = pygame.time.Clock()
+
         position_mouse: TYPE_POSITION = pygame.mouse.get_pos()
         while True:
             self.pygame_surface_main.fill(ColorRGB.BLACK)
@@ -369,6 +353,7 @@ class GameSnakePygame(GameSnake):
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
 
+                    # Handling bool_amount_run
                     if text_box.is_position_colliding(position_mouse):
 
                         # Setting bool_amount_run to True
@@ -381,6 +366,44 @@ class GameSnakePygame(GameSnake):
 
                     else:
                         bool_amount_run = False
+
+                # Button Play AI
+                if button_play_ai.is_position_colliding(position_mouse):
+
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+
+                        # Amount of blocks available for width and height
+                        amount_of_block_width = (
+                                (self.settings.width - self.settings.block_size) // self.settings.block_size
+                        )
+                        amount_of_block_height = (
+                                (self.settings.height - self.settings.block_size) // self.settings.block_size
+                        )
+
+                        # Set initial Action because the AI will crash without it
+                        action_random = random.choice(LIST_ACTION_CYCLE_CLOCKWISE)
+
+                        self.player_ai_q_learning.set_action(action_random)
+
+                        logic_game_snake = LogicGameSnake(
+                            [self.player_ai_q_learning],
+                            self.settings,
+                            amount_of_block_width,
+                            amount_of_block_height
+                        )
+
+                        # Make pygame graphics for the logic_game_snake
+                        graphics_pygame = GraphicsPygame(
+                            self.settings,
+                            logic_game_snake,
+                            self.pygame_surface_main,
+                            self.pygame_font_text,
+                            self.pygame_font_fps,
+                        )
+
+                        data_game = graphics_pygame.run_loop()
+
+                        return data_game
 
                 if event.type == pygame.KEYDOWN:
 
@@ -404,6 +427,13 @@ class GameSnakePygame(GameSnake):
             # Drawing
             #########################
 
+            # Button Play AI
+            if button_play_ai.is_position_colliding(position_mouse):
+                button_play_ai.draw_hover(self.pygame_surface_main)
+            else:
+                button_play_ai.draw(self.pygame_surface_main)
+
+            # amount_run
             if condition_amount_run == Condition.STATE_1:
                 text_box.draw(self.pygame_surface_main)
 
@@ -414,3 +444,6 @@ class GameSnakePygame(GameSnake):
                 text_box.draw_active(self.pygame_surface_main)
 
             pygame.display.flip()
+
+            clock.tick()
+            print(clock.get_fps())

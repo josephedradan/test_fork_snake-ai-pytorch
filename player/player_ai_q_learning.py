@@ -95,10 +95,10 @@ class PlayerAIQLearning(Player):
         # Get game game_state based on DataGame
         self.game_state_current = self.generator_game_state.get_game_state(data_game, self)
 
-        # Get a custom torch_tensor_action representation from the agent
+        # Get a custom action representation from the agent
         self.tuple_action_relative_current = self.agent_q_learning.get_tuple_int_action_relative(self.game_state_current)
 
-        # Return the the correct Action object based on the custom torch_tensor_action representation
+        # Return the the correct Action object based on the custom action representation
         self.action = get_action_from_tuple_int_action_relative(self.action, self.tuple_action_relative_current)
 
         return self.action
@@ -184,7 +184,7 @@ class PlayerAIQLearning(Player):
     #
     #     # 5. draw ui and clock
     #     self._update_ui()
-    #     self.clock.tick(FPS)
+    #     self.clock.tick(GAME_SPEED)
     #
     #     # 6. return logic_game_snake over and score
     #     return torch_tensor_reward, game_over, self.score

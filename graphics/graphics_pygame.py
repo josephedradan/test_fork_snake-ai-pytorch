@@ -22,6 +22,8 @@ Reference:
 
 """
 import itertools
+import time
+import traceback
 
 import pygame
 
@@ -30,10 +32,9 @@ from constants import BLOCK_SIZE
 from constants import BLOCK_SIZE_OFFSET
 from constants import ColorRGB
 from constants import FONT_SIZE
-from constants import FPS
+from data.data_game import DataGame
 from graphics.graphics import Graphics
 from logic_game_snake import LogicGameSnake
-from data.data_game import DataGame
 
 
 class GraphicsPygame(Graphics):
@@ -76,7 +77,6 @@ class GraphicsPygame(Graphics):
 
         :return:
         """
-        self.clock.tick(FPS)  # Sets the FPS of the game
 
         self.pygame_display.fill(ColorRGB.BLACK)
 
@@ -109,6 +109,7 @@ class GraphicsPygame(Graphics):
                     wrapper_from_player.get_container_chunk(),
                     1,
                     len(wrapper_from_player.get_container_chunk())):
+
                 pygame.draw.rect(
                     self.pygame_display,
                     ColorRGB.GREEN,
@@ -127,15 +128,14 @@ class GraphicsPygame(Graphics):
                 #     pygame.Rect(chunk.x + 4, chunk.y + 4, 12, 12)
                 # )
 
-            # Create text score
-            text = self.font_text.render(
+            surface_text_scores = self.font_text.render(
                 f"P{index} Score: {player.score}",
                 True,
                 ColorRGB.GREEN
             )
 
-            # Draw text score
-            self.pygame_display.blit(text, (0, FONT_SIZE * (index + 1)))  # Offset scores
+            # Draw surface_text_scores
+            self.pygame_display.blit(surface_text_scores, (0, FONT_SIZE * (index + 1)))  # Offset scores
 
         # Draw food
         for wrapper_food in self.logic_game_snake.data_game.list_wrapper_food:
@@ -160,23 +160,56 @@ class GraphicsPygame(Graphics):
 
         pygame.display.flip()  # Draw on screen
 
-    def run_loop(self) -> DataGame:
+    def run_loop(self, bool_fps_bound=True) -> DataGame:
 
         generator_run_step = self.logic_game_snake.get_generator_run_step()
 
         self.logic_game_snake.data_game.list_pygame_event = pygame.event.get()
 
-        for data_game in generator_run_step:
+        if bool_fps_bound:
+            for data_game in generator_run_step:
+                list_pygame_event = pygame.event.get()
 
-            list_pygame_event = pygame.event.get()
+                data_game.list_pygame_event = list_pygame_event
 
-            data_game.list_pygame_event = list_pygame_event
+                # This loop prevents the pygame window from hanging
+                for event in list_pygame_event:
+                    pass
 
-            # This loop prevents the pygame window from hanging
-            for event in list_pygame_event:
-                pass
+                self.draw_graphics()
+                self.clock.tick(self.settings.fps)
 
+        else:  # Non FPS bound game
+            time_previous = time.perf_counter()
+            game_speed = 1 / self.settings.fps
+            while True:
+                time_now = time.perf_counter()
 
-            self.draw_graphics()
+                list_pygame_event = pygame.event.get()
+
+                # Update the data_game.list_pygame_event
+                self.logic_game_snake.data_game.list_pygame_event = list_pygame_event
+
+                # This loop prevents the pygame window from hanging
+                for event in list_pygame_event:
+                    pass
+
+                if time_now - time_previous > game_speed:
+                    try:
+                        data_game = next(generator_run_step)
+
+                        time_previous = time_now
+
+                    # Game over
+                    except StopIteration as e:
+                        break
+
+                    except Exception as e:
+                        traceback.print_exc()
+                        exit(1)
+
+                self.draw_graphics()
+                self.clock.tick()
+                # print("FPS:", self.clock.get_fps())
 
         return self.logic_game_snake.data_game

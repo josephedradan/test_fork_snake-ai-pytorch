@@ -24,7 +24,7 @@ Reference:
 from constants import BLOCK_SIZE
 from constants import BLOCK_SIZE_OFFSET
 from constants import FONT_SIZE
-from constants import FPS
+from constants import GAME_SPEED
 
 
 def get_dimension_corrected(block_size: int, dimension: int):
@@ -48,7 +48,7 @@ class Settings:
                  height=480,
                  block_size=BLOCK_SIZE,
                  block_size_offset=BLOCK_SIZE_OFFSET,
-                 fps=FPS,
+                 fps=GAME_SPEED,
                  font_size=FONT_SIZE,
                  text_line_spacing_offset=5,
                  ):

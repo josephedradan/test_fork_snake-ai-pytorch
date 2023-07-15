@@ -1,6 +1,53 @@
+"""
+Date created: 5/19/2023
+
+Purpose:
+
+Details:
+
+Description:
+
+Notes:
+
+IMPORTANT NOTES:
+
+Explanation:
+
+Tags:
+
+Contributors:
+    https://github.com/josephedradan
+
+Reference:
+    How to efficiently hold a key in Pygame?
+        Notes:
+            event.get() VS key.get_pressed()
+
+            Checkout
+                pygame.key.set_repeat()  # Will register keys held down repeatedly as events
+
+        IMPORTANT NOTES:
+            pygame.key.set_repeat() IS NOT GOOD FOR MOVEMENT
+
+        Reference:
+            https://stackoverflow.com/questions/22093662/how-to-efficiently-hold-a-key-in-pygame
+
+    pygame key.set_repeat not working
+        Notes:
+            "
+            But note that you should not use set_repeat and the pygame.KEYDOWN event to implement movement.
+            If you do, you won't be able to observe real single key strokes,
+            since if the player presses a key, a whole bunch of pygame.KEYDOWN events would be created.
+
+            Better use pygame.key.get_pressed().
+            "
+        Reference:
+            https://stackoverflow.com/a/18998475
+"""
 from typing import Dict
 
 import pygame
+from pygame.key import ScancodeWrapper
 
 from data.data_game import DataGame
 from player.player import Player
@@ -19,6 +66,8 @@ DICT_K_PYGAME_EVENT_KEY_V_ACTION: Dict[int, Action] = {
     pygame.K_w: Action.UP,
     pygame.K_s: Action.DOWN,
 }
+
+LIST_K_PYGAME_EVENT_KEY = DICT_K_PYGAME_EVENT_KEY_V_ACTION.keys()
 
 
 class PlayerKeyboard(Player):
@@ -71,21 +120,50 @@ class PlayerKeyboard(Player):
     #     if self.chunk_food in self.list_point_snake:
     #         self._place_food()
 
+    # def get_action_new(self, data_game: DataGame) -> Action:  # FIXME HEAVILY TIED TO PYGAME
+    #
+    #     for event in data_game.list_pygame_event:
+    #
+    #         if event.type == pygame.KEYDOWN:
+    #
+    #             action_selected = DICT_K_PYGAME_EVENT_KEY_V_ACTION.get(event.key, None)
+    #
+    #             """
+    #             If the action_selected is not self.action and action_selected is not None
+    #
+    #             Notes:
+    #                 This should prevent moving back into yourself and
+    #                 not reassigning a unregistered action to self.action
+    #
+    #                 Returning immediately will prevent an following events from being processed
+    #                 e.g holding down 2 keys at the sametime
+    #             """
+    #             if DICT_K_ACTION_V_ACTION_REVERSE.get(action_selected) != self.action and action_selected is not None:
+    #                 self.action = action_selected
+    #                 return self.action
+    #
+    #     pygame.key.get_pressed()
+    #
+    #     return self.action
+
     def get_action_new(self, data_game: DataGame) -> Action:  # FIXME HEAVILY TIED TO PYGAME
 
-        for event in data_game.list_pygame_event:
+        scan_code_wrapper_keys: ScancodeWrapper = pygame.key.get_pressed()
 
-            if event.type == pygame.KEYDOWN:
+        # Order of events in LIST_K_PYGAME_EVENT_KEY determines priority
+        for pygame_event_key in LIST_K_PYGAME_EVENT_KEY:
 
-                action_selected = DICT_K_PYGAME_EVENT_KEY_V_ACTION.get(event.key, None)
+            if scan_code_wrapper_keys[pygame_event_key]:
+
+                action_selected = DICT_K_PYGAME_EVENT_KEY_V_ACTION.get(pygame_event_key, None)
 
                 """
-                If the action_selected is not self.torch_tensor_action and action_selected is not None
-                
+                If the action_selected is not self.action and action_selected is not None
+        
                 Notes:
-                    This should prevent moving back into yourself and 
-                    not reassigning a unregistered torch_tensor_action to self.torch_tensor_action
-                    
+                    This should prevent moving back into yourself and
+                    not reassigning a unregistered action to self.action
+        
                     Returning immediately will prevent an following events from being processed
                     e.g holding down 2 keys at the sametime
                 """
@@ -95,6 +173,7 @@ class PlayerKeyboard(Player):
 
         return self.action
 
+# Old style
 #     def play_step_player(self):
 #
 #         # 1. collect user input
@@ -132,7 +211,7 @@ class PlayerKeyboard(Player):
 #
 #         # 5. draw ui and clock
 #         self.draw_graphics()
-#         self.clock.tick(FPS)w
+#         self.clock.tick(GAME_SPEED)w
 #
 #         # 6. return logic_game_snake over and score
 #         return game_over, self.score
