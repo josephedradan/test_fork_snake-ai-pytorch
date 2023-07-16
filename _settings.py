@@ -51,6 +51,7 @@ class Settings:
                  fps=GAME_SPEED,
                  font_size=FONT_SIZE,
                  text_line_spacing_offset=5,
+                 amount_food=1
                  ):
         """
         Settings files, pass this file around and it will be used throughout the application most likely
@@ -73,5 +74,10 @@ class Settings:
         self.font_size = font_size
 
         #####
+
         self.text_line_spacing_offset = text_line_spacing_offset
         self.text_line_spacing_amount = self.font_size + self.text_line_spacing_offset
+
+        #####
+        self.amount_food = amount_food
+

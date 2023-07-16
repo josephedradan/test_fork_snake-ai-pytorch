@@ -94,7 +94,7 @@ class PlayerKeyboard(Player):
     #
     #     """
     #     ####################
-    #     PlayerKeyboard game_state_current related stuff
+    #     PlayerKeyboard game_state related stuff
     #     ####################
     #     """
     #
@@ -129,22 +129,22 @@ class PlayerKeyboard(Player):
     #             action_selected = DICT_K_PYGAME_EVENT_KEY_V_ACTION.get(event.key, None)
     #
     #             """
-    #             If the action_selected is not self.action and action_selected is not None
+    #             If the action_selected is not self.tuple_int_action and action_selected is not None
     #
     #             Notes:
     #                 This should prevent moving back into yourself and
-    #                 not reassigning a unregistered action to self.action
+    #                 not reassigning a unregistered tuple_int_action to self.tuple_int_action
     #
     #                 Returning immediately will prevent an following events from being processed
     #                 e.g holding down 2 keys at the sametime
     #             """
-    #             if DICT_K_ACTION_V_ACTION_REVERSE.get(action_selected) != self.action and action_selected is not None:
-    #                 self.action = action_selected
-    #                 return self.action
+    #             if DICT_K_ACTION_V_ACTION_REVERSE.get(action_selected) != self.tuple_int_action and action_selected is not None:
+    #                 self.tuple_int_action = action_selected
+    #                 return self.tuple_int_action
     #
     #     pygame.key.get_pressed()
     #
-    #     return self.action
+    #     return self.tuple_int_action
 
     def get_action_new(self, data_game: DataGame) -> Action:  # FIXME HEAVILY TIED TO PYGAME
 
@@ -158,11 +158,11 @@ class PlayerKeyboard(Player):
                 action_selected = DICT_K_PYGAME_EVENT_KEY_V_ACTION.get(pygame_event_key, None)
 
                 """
-                If the action_selected is not self.action and action_selected is not None
+                If the action_selected is not self.tuple_int_action and action_selected is not None
         
                 Notes:
                     This should prevent moving back into yourself and
-                    not reassigning a unregistered action to self.action
+                    not reassigning a unregistered tuple_int_action to self.tuple_int_action
         
                     Returning immediately will prevent an following events from being processed
                     e.g holding down 2 keys at the sametime

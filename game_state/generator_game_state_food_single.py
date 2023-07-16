@@ -25,13 +25,13 @@ from typing import Union
 
 import numpy as np
 
-from utility import get_bool_wrapper_from_chunk_that_collided
 from chunk import Chunk
 from constants import Action
 from constants import TYPE_GAME_STATE
+from data.data_game import DataGame
 from game_state.generator_game_state import GeneratorGameState
 from player.player import Player
-from data.data_game import DataGame
+from utility import get_bool_wrapper_from_chunk_that_collided
 from wrapper.wrapper_food import WrapperFood
 
 
@@ -46,10 +46,10 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
         chunk_possible_up = Chunk(chunk_snake_head.x, chunk_snake_head.y - data_game.settings.block_size)
         chunk_possible_down = Chunk(chunk_snake_head.x, chunk_snake_head.y + data_game.settings.block_size)
 
-        bool_action_left = player.get_action_current() == Action.LEFT
-        bool_action_right = player.get_action_current() == Action.RIGHT
-        bool_action_up = player.get_action_current() == Action.UP
-        bool_action_down = player.get_action_current() == Action.DOWN
+        bool_action_left = player.get_action() == Action.LEFT
+        bool_action_right = player.get_action() == Action.RIGHT
+        bool_action_up = player.get_action() == Action.UP
+        bool_action_down = player.get_action() == Action.DOWN
 
         #####
 
@@ -117,9 +117,23 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
             chunk_food.x > chunk_snake_head.x if chunk_food is not None else False,
             chunk_food.y < chunk_snake_head.y if chunk_food is not None else False,
             chunk_food.y > chunk_snake_head.y if chunk_food is not None else False,
+            # chunk_food.x == chunk_snake_head.x if chunk_food is not None else False,
+            # chunk_food.y == chunk_snake_head.y if chunk_food is not None else False,
+
         ]
 
-        print("Staet print")
-        print(state)
+        print("*** DEBUG STATE ****")
+        print("F Collide", state[0])
+        print("R Collide", state[1])
+        print("L Collide", state[2])
+        print("L Going", state[3])
+        print("R Going", state[4])
+        print("U Going", state[5])
+        print("D Going", state[6])
+        print("FOOD X < HEAD X", state[7])
+        print("FOOD X > HEAD X", state[8])
+        print("FOOD Y < HEAD Y", state[9])
+        print("FOOD Y > HEAD Y", state[10])
+        print()
 
         return np.array(state, dtype=int)

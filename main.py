@@ -26,7 +26,8 @@ from game.game_snake_pygame import GameSnakePygame
 
 
 def main():
-    settings = Settings(800, 600)
+    # settings = Settings(800, 600, amount_food=1)
+    settings = Settings(400, 400, amount_food=1)
 
     game = GameSnakePygame(settings)
 

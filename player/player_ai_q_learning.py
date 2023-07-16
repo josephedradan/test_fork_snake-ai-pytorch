@@ -13,7 +13,6 @@ from game_state.generator_game_state import GeneratorGameState
 from game_state.generator_game_state_food_single import GeneratorGameStateFoodSingle
 from helper import plot
 from player.player import Player
-# def get_action_new
 from utility import get_action_from_tuple_int_action_relative
 
 
@@ -42,8 +41,8 @@ class PlayerAIQLearning(Player):
         ####################
         """
 
-        self.game_state_current: Union[TYPE_GAME_STATE, None] = None
-        self.tuple_action_relative_current: Union[TYPE_TUPLE_INT_ACTION, None] = None
+        self.game_state: Union[TYPE_GAME_STATE, None] = None
+        self.tuple_int_action_relative: Union[TYPE_TUPLE_INT_ACTION, None] = None
 
         #####
 
@@ -67,14 +66,14 @@ class PlayerAIQLearning(Player):
         #
         # """
         # ####################
-        # PlayerKeyboard game_state_current related stuff
+        # PlayerKeyboard game_state related stuff
         # ####################
         # """
         #
         # self._initialize()
 
     # def _initialize(self):
-    #     # init logic_game_snake game_state_current
+    #     # init logic_game_snake game_state
     #     self.action_current = Action.RIGHT
     #
     #     self.head = Chunk(self.window_width / 2, self.window_height / 2)
@@ -93,13 +92,13 @@ class PlayerAIQLearning(Player):
     def get_action_new(self, data_game: DataGame) -> TYPE_ACTION_POSSIBLE:
 
         # Get game game_state based on DataGame
-        self.game_state_current = self.generator_game_state.get_game_state(data_game, self)
+        self.game_state = self.generator_game_state.get_game_state(data_game, self)
 
-        # Get a custom action representation from the agent
-        self.tuple_action_relative_current = self.agent_q_learning.get_tuple_int_action_relative(self.game_state_current)
+        # Get a custom tuple_int_action representation from the agent
+        self.tuple_int_action_relative = self.agent_q_learning.get_tuple_int_action_relative(self.game_state)
 
-        # Return the the correct Action object based on the custom action representation
-        self.action = get_action_from_tuple_int_action_relative(self.action, self.tuple_action_relative_current)
+        # Return the the correct Action object based on the custom tuple_int_action representation
+        self.action = get_action_from_tuple_int_action_relative(self.action, self.tuple_int_action_relative)
 
         return self.action
 
@@ -111,22 +110,20 @@ class PlayerAIQLearning(Player):
         game_state_new = self.generator_game_state.get_game_state(data_game, self)
 
         self.agent_q_learning.train_short_memory(
-            self.game_state_current,
-            self.get_action_current(),
+            self.game_state,
+            self.tuple_int_action_relative,
             data_player.reward,
             game_state_new,
             data_player.bool_dead,
         )
 
         self.agent_q_learning.remember(
-            self.game_state_current,
-            self.get_action_current(),
+            self.game_state,
+            self.tuple_int_action_relative,
             data_player.reward,
             game_state_new,
             data_player.bool_dead,
         )
-
-        print("####### data_player.bool_dead", data_player.bool_dead)
 
         if data_player.bool_dead:
 
@@ -140,8 +137,8 @@ class PlayerAIQLearning(Player):
                 # Save
                 self.agent_q_learning.model.save()
 
-            self.plot_scores.append(self.score)
-            self.score_total += self.score
+            self.plot_scores.append(self.score)  # BLUE LINE
+            self.score_total += self.score  # ORANGE LINE
             score_mean = self.score_total / self.agent_q_learning.amount_games
             self.plot_scores_mean.append(score_mean)
             plot(self.plot_scores, self.plot_scores_mean)

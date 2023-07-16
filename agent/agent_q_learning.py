@@ -1,19 +1,18 @@
 import random
 from collections import deque
 from typing import Deque
+from typing import List
 from typing import Tuple
 
+import numpy as np
 import torch
 from torch import nn
 
-from constants import Action
 from constants import LIST_TUPLE_INT_ACTION_ORDERED
 from constants import TYPE_GAME_STATE
 from constants import TYPE_TUPLE_INT_ACTION
 from model import LinearQNet
 from model import QTrainer
-
-import numpy as np
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -27,14 +26,22 @@ class AgentQLearning:
         self.amount_games: int = 0
         self.epsilon: float = 0  # randomness
         self.gamma: float = 0.9  # discount rate (Must be smaller than 1)
-        self.deque_memory: Deque[Tuple[TYPE_GAME_STATE, Action, int, TYPE_GAME_STATE, bool]] = deque(maxlen=MAX_MEMORY)
-        self.model: nn.Module = LinearQNet(11, 256, 3)
+        self.deque_memory: Deque[Tuple[TYPE_GAME_STATE, TYPE_TUPLE_INT_ACTION, int, TYPE_GAME_STATE, bool]] = (
+            deque(maxlen=MAX_MEMORY)
+        )
+
+        self.model: nn.Module = LinearQNet(11, 256, 3)  # FIXME MODEL INPUT MAKE IT DYNAMIC
         self.trainer = QTrainer(self.model, learning_rate=LR, gamma=self.gamma)
 
-    def remember(self, game_state: TYPE_GAME_STATE, action: Action, reward: int, game_state_next: TYPE_GAME_STATE,
+    def remember(self,
+                 game_state: TYPE_GAME_STATE,
+                 action: TYPE_TUPLE_INT_ACTION,
+                 reward: int,
+                 game_state_next: TYPE_GAME_STATE,
                  done: bool):
         """
-        Deque that stores the game game_state_current essentially and will pop old game states when more game states are added
+        Deque that stores the game game_state essentially and will pop old game states when more game states
+        are added
 
         Notes:
             Used to train long memory
@@ -46,36 +53,45 @@ class AgentQLearning:
         )
 
     def train_long_memory(self):
+
         if len(self.deque_memory) > BATCH_SIZE:
             mini_sample = random.sample(self.deque_memory, BATCH_SIZE)  # list of tuples
         else:
             mini_sample = self.deque_memory
 
-        game_states, tuple_action, tuple_reward, game_states_next, tuple_bool_player_dead = zip(*mini_sample)
+        list_game_state: List[TYPE_GAME_STATE]
+        list_tuple_int_action: List[TYPE_TUPLE_INT_ACTION]
+        list_reward: List[int]
+        list_game_states_next: List[TYPE_GAME_STATE]
+        list_tuple_bool_player_dead: List[bool]
 
-        np_ndarray_game_states = np.array(game_states)
-        np_ndarray_game_states_next = np.array(game_states_next)
+        list_game_state, list_tuple_int_action, list_reward, list_game_states_next, list_tuple_bool_player_dead = (
+            zip(*mini_sample)
+        )
+
+        np_ndarray_game_states = np.array(list_game_state)
+        np_ndarray_game_states_next = np.array(list_game_states_next)
 
         self.trainer.train_step_input_multiple(
             np_ndarray_game_states,
-            tuple_action,
-            tuple_reward,
+            list_tuple_int_action,
+            list_reward,
             np_ndarray_game_states_next,
-            tuple_bool_player_dead
+            list_tuple_bool_player_dead
         )
 
-        # for game_state_current, torch_tensor_action, torch_tensor_reward, nexrt_state, sequence_bool_player_dead in mini_sample:
-        #    self.trainer.train_step_input_single(game_state_current, torch_tensor_action, torch_tensor_reward, torch_tensor_game_states_next, sequence_bool_player_dead)
+        # for game_state, torch_tensor_action, torch_tensor_reward, nexrt_state, sequence_bool_player_dead in mini_sample:
+        #    self.trainer.train_step_input_single(game_state, torch_tensor_action, torch_tensor_reward, torch_tensor_game_states_next, sequence_bool_player_dead)
 
     def train_short_memory(self,
                            game_state: TYPE_GAME_STATE,
-                           action: Action,
+                           tuple_int_action: TYPE_TUPLE_INT_ACTION,
                            reward: int,
                            game_state_next: TYPE_GAME_STATE,
                            done: bool
                            ):
 
-        self.trainer.train_step_input_single(game_state, action, reward, game_state_next, done)
+        self.trainer.train_step_input_single(game_state, tuple_int_action, reward, game_state_next, done)
 
     def get_tuple_int_action_relative(self, game_state: TYPE_GAME_STATE) -> TYPE_TUPLE_INT_ACTION:
         """
@@ -93,11 +109,13 @@ class AgentQLearning:
             tuple_int_action = random.choice(LIST_TUPLE_INT_ACTION_ORDERED)
 
         else:  # Exploitation
-            state0 = torch.tensor(game_state, dtype=torch.float)
-            prediction = self.model(state0)  # Prediction (tensorflow would be model.predict)
+            torch_tensor_game_state = torch.tensor(game_state, dtype=torch.float)
 
-            index_move = torch.argmax(prediction).item()
+            # Prediction (tensorflow would be model.predict)
+            torch_tensor_action_prediction = self.model(torch_tensor_game_state)
 
-            tuple_int_action = LIST_TUPLE_INT_ACTION_ORDERED[index_move]
+            index_action_to_take = torch.argmax(torch_tensor_action_prediction).item()
+
+            tuple_int_action = LIST_TUPLE_INT_ACTION_ORDERED[index_action_to_take]
 
         return tuple_int_action  # FIXME FIGURE OUT TYPE LATER IDK

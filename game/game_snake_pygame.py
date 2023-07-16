@@ -41,6 +41,7 @@ from typing import Union
 import pygame
 
 from _settings import Settings
+from constants import Action
 from constants import ColorRGB
 from constants import Condition
 from constants import LIST_ACTION_CYCLE_CLOCKWISE
@@ -388,7 +389,8 @@ class GameSnakePygame(GameSnake):
                             # Get a random Action because the AI will crash without it
                             action_random = random.choice(LIST_ACTION_CYCLE_CLOCKWISE)
 
-                            self.player_ai_q_learning.set_action(action_random)
+                            self.player_ai_q_learning.set_action(Action.RIGHT)
+                            self.player_ai_q_learning.reset_score()
 
                             logic_game_snake = LogicGameSnake(
                                 [self.player_ai_q_learning],

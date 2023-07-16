@@ -93,7 +93,7 @@ def get_action_from_tuple_int_action_relative(action: Action,
         # Action will turn right relative to current Action (r -> d -> l -> u)
         action = LIST_ACTION_CYCLE_CLOCKWISE[next_idx]
 
-    elif np.array_equal(tuple_int_action_relative, TUPLE_INT_ACTION_LEFT):  # [0, 0, 1]
+    elif np.array_equal(tuple_int_action_relative, TUPLE_INT_ACTION_LEFT):  # (0, 0, 1)
         next_idx = (index_action_cycle_clockwise - 1) % 4
 
         # Action will turn left relative to current Action (r -> u -> l -> d)

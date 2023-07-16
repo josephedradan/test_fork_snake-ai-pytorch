@@ -43,9 +43,9 @@ class DataGame:
     A lite container of the variables in LogicGameSnake
 
     Notes:
-        It's all the data that can be used to make the game game_state_current.
+        It's all the data that can be used to make the game game_state.
         This object exists because different AI agents have different interpretations of
-        what a game game_state_current is.
+        what a game game_state is.
 
     """
     settings: Settings

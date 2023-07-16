@@ -30,13 +30,13 @@ from typing import Tuple
 from typing import Union
 
 from _settings import Settings
-from utility import get_wrapper_from_chunk_that_collided
 from chunk import Chunk
 from constants import Action
 from container_chunk.container_chunk_snake import ContainerChunkSnake
-from player.player import Player
 from data.data_game import DataGame
 from data.data_player import DataPlayer
+from player.player import Player
+from utility import get_wrapper_from_chunk_that_collided
 from wrapper.wrapper import Wrapper
 from wrapper.wrapper_food import WrapperFood
 from wrapper.wrapper_snake import WrapperSnake
@@ -101,9 +101,9 @@ class LogicGameSnake:
         self.data_game.list_wrapper_wall.append(wrapper_wall_border)
 
         ##########
+        # Create players
 
         for player in list_player:
-
             wrapper_snake: WrapperSnake = WrapperSnake(
                 [Chunk(self.settings.width // 2, self.settings.height // 2)]  # Initial position_center
             )
@@ -117,10 +117,12 @@ class LogicGameSnake:
         self.data_game.deque_player = deque(self.data_game.list_player)
 
         ##########
+        # Create food
 
-        wrapper_food: WrapperFood = WrapperFood()
+        for i in range(self.settings.amount_food):
+            wrapper_food: WrapperFood = WrapperFood()
 
-        self.data_game.list_wrapper_food.append(wrapper_food)
+            self.data_game.list_wrapper_food.append(wrapper_food)
 
         for wrapper_food in self.data_game.list_wrapper_food:
             self._place_food(wrapper_food)
@@ -214,6 +216,8 @@ class LogicGameSnake:
         if isinstance(wrapper_object_that_collided, WrapperFood):
             player.add_to_score(1)
 
+            self.data_player.reward = 108
+
             self._place_food(wrapper_object_that_collided, chunk_snake_to_move_possible)
 
             # Extend the current player
@@ -221,12 +225,13 @@ class LogicGameSnake:
                 Chunk(x_chunk_snake_last_old, y_chunk_snake_last_old)
 
             )
+            return self.data_player
 
         # Collision player with player (Does not care about which player)
         if isinstance(wrapper_object_that_collided, WrapperSnake):
             self.data_player.bool_dead = True
             self.data_player.wrapper_object_that_collided = wrapper_object_that_collided
-            self.data_player.reward = -1
+            self.data_player.reward = -10  # FIXME: MODEL IS VERY SENSITIVE TO HIGH REQARD
             print("Hit Snake")
 
             return self.data_player
@@ -235,7 +240,7 @@ class LogicGameSnake:
         if isinstance(wrapper_object_that_collided, WrapperWall):
             self.data_player.bool_dead = True
             self.data_player.wrapper_object_that_collided = wrapper_object_that_collided
-            self.data_player.reward = -1
+            self.data_player.reward = -10
 
             print("Hit wall")
             return self.data_player
@@ -352,7 +357,6 @@ class LogicGameSnake:
 
             yield self.data_game
 
-
         # for player in self.data_game.list_player:
         #
         #     action_from_player: Action = player.get_action_new(self.data_game)
@@ -374,14 +378,7 @@ class LogicGameSnake:
         #
         #     yield self.data_game
 
-
-
-
-
-
-
         # return self.data_game
-
 
 # def main():
 #     game = LogicGameSnake()

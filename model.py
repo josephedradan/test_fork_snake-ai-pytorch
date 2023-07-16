@@ -11,6 +11,7 @@ from torch.optim import Optimizer
 
 from constants import Action
 from constants import TYPE_GAME_STATE
+from constants import TYPE_TUPLE_INT_ACTION
 
 
 class LinearQNet(nn.Module):
@@ -43,7 +44,7 @@ class QTrainer:
 
     def train_step_input_multiple(self,
                                   np_ndarray_game_states: np.ndarray,
-                                  sequence_action: Sequence[Action],
+                                  sequence_action: Sequence[TYPE_TUPLE_INT_ACTION],
                                   sequence_reward: Sequence[int],
                                   np_ndarray_game_states_next: np.ndarray,
                                   sequence_bool_player_dead: Sequence[bool],
@@ -91,6 +92,10 @@ class QTrainer:
                     Go left relative to current direction
                 )
         
+        IMPORTANT NOTES:
+            NOTICE THAT SHAPE OF torch_tensor_game_states IS (n, 3) SO THE SHAPE OF
+            torch_tensor_actions_prediction is (n, 3)
+        
         """
         torch_tensor_actions_prediction: torch.Tensor = self.model(torch_tensor_game_states)
 
@@ -102,10 +107,10 @@ class QTrainer:
                 newQ(s, a) = Q(s, a) + alpha * (Reward(s, a) + gamma * max(q'(s', a')) - Q(s, a))
                 
                 s = game state
-                a = action
+                a = tuple_int_action
                 
                 s' = future game state
-                a' = future action 
+                a' = future tuple_int_action 
                 
                 alpha = learning rate
                 gamma = discount rate
@@ -113,7 +118,6 @@ class QTrainer:
 
             
         """
-
         for index in range(len(sequence_bool_player_dead)):
             q_new = torch_tensor_reward[index]
 
@@ -126,29 +130,40 @@ class QTrainer:
                         q_new(s, a) = Reward(s, a) + gamma * max(q'(s', a'))     
                         
                             s = game state
-                            a = action
+                            a = tuple_int_action
                             
                             q' = future quality value
                             s' = future game state
-                            a' = future action 
+                            a' = future tuple_int_action 
                             
                             alpha = learning rate
                             gamma = discount rate
                     
                 """
+                # 2: q_new = r + y * max(next_predicted Q value) -> only do this if not sequence_bool_player_dead
+
                 q_new = (
                         torch_tensor_reward[index] +
-                        self.gamma * torch.max(self.model(torch_tensor_game_states_next[index]))
+                        (self.gamma * torch.max(self.model(torch_tensor_game_states_next[index])))
                 )
 
+
+            # print("q_new", q_new)
+            # print("INDEX", index)
+            # print("torch_tensor_action[index]", torch_tensor_action[index])
+            # print("torch.argmax(torch_tensor_action[index]).item()", torch.argmax(torch_tensor_action[index]).item())
+            # print(torch_tensor_actions_target)
+            # print(torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()])
             torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()] = q_new
+            # print(torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()])
+            # print(torch_tensor_actions_target)
+            # print("AAAA")
+            # print(torch_tensor_actions_target[index])
 
-        # 2: q_new = r + y * max(next_predicted Q value) -> only do this if not sequence_bool_player_dead
 
-
-        print("FFFFFFFFFFFFF")
-        print(torch_tensor_actions_target)
-        print(torch_tensor_actions_prediction)
+        # print("FFFFFFFFFFFFF")
+        # print(torch_tensor_actions_target)
+        # print(torch_tensor_actions_prediction)
 
         # torch_tensor_actions_prediction.clone()
         # preds[argmax(torch_tensor_action)] = q_new
@@ -160,7 +175,7 @@ class QTrainer:
 
     def train_step_input_single(self,
                                 game_state: TYPE_GAME_STATE,
-                                action: Action,
+                                tuple_int_action: TYPE_TUPLE_INT_ACTION,
                                 reward: int,
                                 game_state_next: TYPE_GAME_STATE,
                                 done: bool
@@ -168,13 +183,13 @@ class QTrainer:
 
         print("TRAIN STEP IN")
         print("game_state", game_state)
-        print("action", action)
+        print("tuple_int_action", tuple_int_action)
         print("reward", reward)
         print("game_state_next", game_state_next)
         print("sequence_bool_player_dead", done)
 
         torch_tensor_game_state = torch.tensor(game_state, dtype=torch.float)
-        torch_tensor_action = torch.tensor(action, dtype=torch.long)
+        torch_tensor_action = torch.tensor(tuple_int_action, dtype=torch.long)
         torch_tensor_reward = torch.tensor(reward, dtype=torch.float)
         torch_tensor_game_state_next = torch.tensor(game_state_next, dtype=torch.float)
         # (n, x)  # This is a shape
@@ -209,7 +224,7 @@ class QTrainer:
         )
 
         # print()
-        # # 1: predicted Q values with current game_state_current
+        # # 1: predicted Q values with current game_state
         # pred: torch.Tensor = self.model(torch_tensor_game_state)
         #
         # target = pred.clone()

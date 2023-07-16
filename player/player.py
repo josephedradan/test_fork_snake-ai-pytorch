@@ -51,10 +51,13 @@ class Player(ABC):
     def add_to_score(self, value: int):
         self.score += value
 
+    def reset_score(self):
+        self.score = 0
+
     def set_action(self, action: TYPE_ACTION_POSSIBLE):
         self.action = action
 
-    def get_action_current(self) -> TYPE_ACTION_POSSIBLE:
+    def get_action(self) -> TYPE_ACTION_POSSIBLE:
         return self.action
 
     def set_wrapper(self, wrapper: Wrapper):
@@ -86,7 +89,7 @@ class Player(ABC):
         subclasses might interpret the LogicGameSnake differently.
 
         Notes:
-            You probably want to make a game game_state_current of some kind given LogicGameSnake
+            You probably want to make a game game_state of some kind given LogicGameSnake
 
         :param data_game:
         :return:
@@ -100,12 +103,13 @@ class Player(ABC):
     #           ):
     #     self.set_action(action_initial)
     #
-    #     self.wrapper.reset([chunk_initial, *iterable_chunk_additional])
+    #     if self.wrapper is not None:
+    #         self.wrapper.reset([chunk_initial, *iterable_chunk_additional])
     #
     #     self.score = 0
 
     # def _initialize(self, action_initial: Action, x_initial: int, y_initial: int):
-    #     # init logic_game_snake game_state_current
+    #     # init logic_game_snake game_state
     #     self.action_current = action_initial
     #
     #     self.head = Chunk(x_initial, y_initial)
