@@ -22,6 +22,7 @@ Reference:
 
 """
 from typing import List
+from typing import Sequence
 from typing import Union
 
 import pygame
@@ -57,11 +58,11 @@ class TextBox(Text):
         self.color_text_active = color_text_active
         self.color_background_active = color_background_active
 
-        self.list_char_input_amount_run: List[str] = [*self.text]
+        self.list_char: List[str] = []
 
         #####
 
-        self.surface_text = self.font_text.render("".join(self.list_char_input_amount_run),
+        self.surface_text = self.font_text.render(f"{self.text}{''.join(self.list_char)}",
                                                   True,
                                                   self.color_text
                                                   )
@@ -106,7 +107,7 @@ class TextBox(Text):
                      color_foreground: ColorRGB,
                      color_background: ColorRGB
                      ):
-        self.surface_text = self.font_text.render("".join(self.list_char_input_amount_run),
+        self.surface_text = self.font_text.render(f"{self.text}{''.join(self.list_char)}",
                                                   True,
                                                   color_foreground
                                                   )
@@ -123,13 +124,16 @@ class TextBox(Text):
 
         surface.blit(self.surface_text, self.pygame_rect_positioning)
 
-    def add_list_char_input_amount_run(self, char: str):
-        self.list_char_input_amount_run.append(char)
+    def append_to_list_char(self, char: str):
+        self.list_char.append(char)
 
-    def get_list_char_input_amount_run(self) -> List[str]:
-        return self.list_char_input_amount_run
+    def extend_to_list_char(self, sequence: Sequence):
+        self.list_char.extend(sequence)
 
-    def pop_list_char_input_amount_run(self) -> Union[str, None]:
-        if self.list_char_input_amount_run:
-            return self.list_char_input_amount_run.pop()
+    def get_list_char(self) -> List[str]:
+        return self.list_char
+
+    def pop_list_char(self) -> Union[str, None]:
+        if self.list_char:
+            return self.list_char.pop()
         return None

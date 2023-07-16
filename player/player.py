@@ -93,15 +93,16 @@ class Player(ABC):
         """
         ...
 
-    def reset(self,
-              action_initial: TYPE_ACTION_POSSIBLE,
-              chunk_initial: Chunk,
-              iterable_chunk_additional: Union[Sequence[Chunk], None] = None
-              ):
-        self.set_action(action_initial)
-        self.score = 0
-
-        self.wrapper.reset([chunk_initial, *iterable_chunk_additional])
+    # def reset(self,
+    #           action_initial: TYPE_ACTION_POSSIBLE = None,
+    #           chunk_initial: Union[Chunk, None] = None,
+    #           iterable_chunk_additional: Union[Sequence[Chunk], None] = None
+    #           ):
+    #     self.set_action(action_initial)
+    #
+    #     self.wrapper.reset([chunk_initial, *iterable_chunk_additional])
+    #
+    #     self.score = 0
 
     # def _initialize(self, action_initial: Action, x_initial: int, y_initial: int):
     #     # init logic_game_snake game_state_current

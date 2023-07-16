@@ -72,6 +72,8 @@ class LogicGameSnake:
         """
 
         self.data_game = DataGame(self.settings)
+
+        # This is a data container about the current player
         self.data_player = DataPlayer()
 
         self._initialize(list_player)

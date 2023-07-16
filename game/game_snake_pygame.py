@@ -268,7 +268,8 @@ class GameSnakePygame(GameSnake):
 
                 # Button AI
                 if button_ai.is_position_colliding(position_mouse):
-                    return self._menu_ai_deep_q_learning()
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        return self._menu_ai_deep_q_learning()
 
                 # Button Back
                 if button_play_back.is_position_colliding(position_mouse):
@@ -304,14 +305,27 @@ class GameSnakePygame(GameSnake):
 
         button_play_ai = TextButton(
             "Play AI (Deep Q Learning)",
-            (self.settings.width // 2, ((self.settings.height // 2) + self.settings.text_line_spacing_amount)),
+            (self.settings.width // 2, ((self.settings.height // 2))),
             self.pygame_font_text,
             ColorRGB.WHITE,
             ColorRGB.GREEN
         )
 
-        text_box = TextBox(
-            "100",
+        text_box_amount_run = TextBox(
+            "Amount of runs: ",
+            (self.settings.width // 2, ((self.settings.height // 2) + (1 * self.settings.text_line_spacing_amount))),
+            self.pygame_font_text,
+            ColorRGB.WHITE,
+            ColorRGB.GREEN,
+            ColorRGB.BLACK,
+            ColorRGB.BLACK,
+            ColorRGB.GOLD,
+            ColorRGB.BLACK,
+        )
+        text_box_amount_run.extend_to_list_char(str(1000))
+
+        text_box_amount_fps = TextBox(
+            "FPS: ",
             (self.settings.width // 2, ((self.settings.height // 2) + (2 * self.settings.text_line_spacing_amount))),
             self.pygame_font_text,
             ColorRGB.WHITE,
@@ -321,11 +335,15 @@ class GameSnakePygame(GameSnake):
             ColorRGB.GOLD,
             ColorRGB.BLACK,
         )
+        text_box_amount_fps.extend_to_list_char(str(2000))
 
         #####
 
         condition_amount_run: Condition = Condition.STATE_1
         bool_amount_run = False
+
+        condition_amount_fps: Condition = Condition.STATE_1
+        bool_amount_fps = False
 
         #####
 
@@ -343,30 +361,6 @@ class GameSnakePygame(GameSnake):
                     pygame.quit()
                     exit(0)
 
-                # Handling bool_amount_run if NOT True
-                if not bool_amount_run:
-
-                    if text_box.is_position_colliding(position_mouse):
-                        condition_amount_run = Condition.STATE_2
-                    else:
-                        condition_amount_run = Condition.STATE_1
-
-                if event.type == pygame.MOUSEBUTTONDOWN:
-
-                    # Handling bool_amount_run
-                    if text_box.is_position_colliding(position_mouse):
-
-                        # Setting bool_amount_run to True
-                        if condition_amount_run == Condition.STATE_1 or condition_amount_run == Condition.STATE_2:
-                            condition_amount_run = Condition.STATE_3
-                            bool_amount_run = True
-                        else:
-                            condition_amount_run = Condition.STATE_2
-                            bool_amount_run = False
-
-                    else:
-                        bool_amount_run = False
-
                 # Button Play AI
                 if button_play_ai.is_position_colliding(position_mouse):
 
@@ -380,48 +374,116 @@ class GameSnakePygame(GameSnake):
                                 (self.settings.height - self.settings.block_size) // self.settings.block_size
                         )
 
-                        # Set initial Action because the AI will crash without it
-                        action_random = random.choice(LIST_ACTION_CYCLE_CLOCKWISE)
+                        ##########
 
-                        self.player_ai_q_learning.set_action(action_random)
+                        amount_run = int("".join(text_box_amount_run.get_list_char()))
+                        amount_fps = int("".join(text_box_amount_fps.get_list_char()))
 
-                        logic_game_snake = LogicGameSnake(
-                            [self.player_ai_q_learning],
-                            self.settings,
-                            amount_of_block_width,
-                            amount_of_block_height
-                        )
+                        self.settings.fps = amount_fps
 
-                        # Make pygame graphics for the logic_game_snake
-                        graphics_pygame = GraphicsPygame(
-                            self.settings,
-                            logic_game_snake,
-                            self.pygame_surface_main,
-                            self.pygame_font_text,
-                            self.pygame_font_fps,
-                        )
+                        ##########
 
-                        data_game = graphics_pygame.run_loop()
+                        for index_run in range(amount_run):
 
-                        return data_game
+                            # Get a random Action because the AI will crash without it
+                            action_random = random.choice(LIST_ACTION_CYCLE_CLOCKWISE)
+
+                            self.player_ai_q_learning.set_action(action_random)
+
+                            logic_game_snake = LogicGameSnake(
+                                [self.player_ai_q_learning],
+                                self.settings,
+                                amount_of_block_width,
+                                amount_of_block_height
+                            )
+
+                            # Make pygame graphics for the logic_game_snake
+                            graphics_pygame = GraphicsPygame(
+                                self.settings,
+                                logic_game_snake,
+                                self.pygame_surface_main,
+                                self.pygame_font_text,
+                                self.pygame_font_fps,
+                            )
+
+                            data_game = graphics_pygame.run_loop()
+
+
+                        return None
+
+                        # bool_amount_run if NOT True
+                if not bool_amount_run:
+
+                    if text_box_amount_run.is_position_colliding(position_mouse):
+                        condition_amount_run = Condition.STATE_2
+                    else:
+                        condition_amount_run = Condition.STATE_1
+
+                # bool_amount_fps if NOT True
+                if not bool_amount_fps:
+
+                    if text_box_amount_fps.is_position_colliding(position_mouse):
+                        bool_amount_fps = Condition.STATE_2
+                    else:
+                        bool_amount_fps = Condition.STATE_1
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+
+                    # bool_amount_run
+                    if text_box_amount_run.is_position_colliding(position_mouse):
+
+                        # bool_amount_run to True
+                        if condition_amount_run == Condition.STATE_1 or condition_amount_run == Condition.STATE_2:
+                            condition_amount_run = Condition.STATE_3
+                            bool_amount_run = True
+                        else:
+                            condition_amount_run = Condition.STATE_2
+                            bool_amount_run = False
+
+                    else:
+                        bool_amount_run = False
+
+                    # bool_amount_fps
+                    if text_box_amount_fps.is_position_colliding(position_mouse):
+
+                        # bool_amount_run to True
+                        if bool_amount_fps == Condition.STATE_1 or condition_amount_fps == Condition.STATE_2:
+                            condition_amount_fps = Condition.STATE_3
+                            bool_amount_fps = True
+                        else:
+                            condition_amount_fps = Condition.STATE_2
+                            bool_amount_fps = False
+                    else:
+                        bool_amount_fps = False
 
                 if event.type == pygame.KEYDOWN:
 
-                    # Handling bool_amount_run if True
+                    # bool_amount_run if True
                     if bool_amount_run:
 
                         # event.unicode only exists when event.type == pygame.KEYDOWN  # It's also a string
                         if event.unicode.isnumeric():
-                            text_box.add_list_char_input_amount_run(event.unicode)
+                            text_box_amount_run.append_to_list_char(event.unicode)
+
+                    # bool_amount_run if True
+                    elif bool_amount_fps:
+
+                        # event.unicode only exists when event.type == pygame.KEYDOWN  # It's also a string
+                        if event.unicode.isnumeric():
+                            text_box_amount_fps.append_to_list_char(event.unicode)
 
                     if event.key == pygame.K_BACKSPACE:
-                        text_box.pop_list_char_input_amount_run()
+                        if bool_amount_run:
+                            text_box_amount_run.pop_list_char()
+
+                        elif bool_amount_fps:
+                            text_box_amount_fps.pop_list_char()
 
             # # Using pygame.key than using event.key (This way can handle if the key is held down)
             # scan_code_wrapper_keys: ScancodeWrapper = pygame.key.get_pressed()
             # if condition_amount_run:
             #     if scan_code_wrapper_keys[pygame.K_BACKSPACE]:
-            #         text_box.pop_list_char_input_amount_run()
+            #         text_box_amount_run.pop_list_char()
 
             #########################
             # Drawing
@@ -435,13 +497,23 @@ class GameSnakePygame(GameSnake):
 
             # amount_run
             if condition_amount_run == Condition.STATE_1:
-                text_box.draw(self.pygame_surface_main)
+                text_box_amount_run.draw(self.pygame_surface_main)
 
             elif condition_amount_run == Condition.STATE_2:
-                text_box.draw_hover(self.pygame_surface_main)
+                text_box_amount_run.draw_hover(self.pygame_surface_main)
 
             elif condition_amount_run == Condition.STATE_3:
-                text_box.draw_active(self.pygame_surface_main)
+                text_box_amount_run.draw_active(self.pygame_surface_main)
+
+            # amount_fps
+            if condition_amount_fps == Condition.STATE_1:
+                text_box_amount_fps.draw(self.pygame_surface_main)
+
+            elif condition_amount_fps == Condition.STATE_2:
+                text_box_amount_fps.draw_hover(self.pygame_surface_main)
+
+            elif condition_amount_fps == Condition.STATE_3:
+                text_box_amount_fps.draw_active(self.pygame_surface_main)
 
             pygame.display.flip()
 
