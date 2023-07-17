@@ -148,17 +148,17 @@ class QTrainer:
                 )
 
 
-            # print("q_new", q_new)
-            # print("INDEX", index)
-            # print("torch_tensor_action[index]", torch_tensor_action[index])
-            # print("torch.argmax(torch_tensor_action[index]).item()", torch.argmax(torch_tensor_action[index]).item())
-            # print(torch_tensor_actions_target)
-            # print(torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()])
+            print("q_new", q_new)
+            print("INDEX", index)
+            print("torch_tensor_action[index]", torch_tensor_action[index])
+            print("torch.argmax(torch_tensor_action[index]).item()", torch.argmax(torch_tensor_action[index]).item())
+            print(torch_tensor_actions_target)
+            print(torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()])
             torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()] = q_new
-            # print(torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()])
-            # print(torch_tensor_actions_target)
-            # print("AAAA")
-            # print(torch_tensor_actions_target[index])
+            print(torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()])
+            print(torch_tensor_actions_target)
+            print("AAAA")
+            print(torch_tensor_actions_target[index])
 
 
         # print("FFFFFFFFFFFFF")

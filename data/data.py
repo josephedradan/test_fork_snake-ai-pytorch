@@ -21,15 +21,12 @@ Contributors:
 Reference:
 
 """
-from data.data import Data
+from abc import ABC
+from abc import abstractmethod
 
 
-class DataPlayer(Data):
+class Data(ABC):
 
-    def __init__(self):
-        self.score = 0
-        self.counter_play_step = 0
-
+    @abstractmethod
     def reset(self):
-        self.score = 0
-        self.counter_play_step = 0
+        ...

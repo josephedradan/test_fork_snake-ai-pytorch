@@ -22,12 +22,12 @@
                 PlayerAI returns Action
     Game
         Game handles PlayerAI's Action
-        Game gives DataGame and DataPlayer to PlayerAI
+        Game gives DataGame and DataPlayStepResult to PlayerAI
             PlayerAI
                 PlayerAI gives DataGame to GeneratorGameState to generate GameState for specific DeepQLearningModel
                     GeneratorGameState returns GameState
                 PlayerAI names GameState to GameState New
-                PlayerAI extracts important data from DataPlayer into Reward and Bool Dead
+                PlayerAI extracts important data from DataPlayStepResult into Reward and Bool Dead
                 PlayerAI gives GameState, Action, Reward, Bool Dead, GameState New to AgentDeepQLearning for training short term memory
                     AgentDeepQLearning
                         AgentDeepQLearning give GameState, Action, Reward, Bool Dead, GameState New to TrainerDeepQLearning for training short term memory

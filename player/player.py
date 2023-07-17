@@ -29,6 +29,7 @@ from typing import Union
 from chunk import Chunk
 from constants import TYPE_ACTION_POSSIBLE
 from data.data_game import DataGame
+from data.data_play_step_result import DataPlayStepResult
 from data.data_player import DataPlayer
 from wrapper.wrapper import Wrapper
 
@@ -46,13 +47,10 @@ class Player(ABC):
         self.wrapper = None
         self.action = None
 
-        self.score = 0
+        self.data_player = DataPlayer()
 
-    def add_to_score(self, value: int):
-        self.score += value
-
-    def reset_score(self):
-        self.score = 0
+    def get_data_player(self) -> DataPlayer:
+        return self.data_player
 
     def set_action(self, action: TYPE_ACTION_POSSIBLE):
         self.action = action
@@ -68,7 +66,7 @@ class Player(ABC):
 
     def send_feedback_of_step(self,
                               data_game: DataGame,
-                              data_player: DataPlayer,
+                              data_player: DataPlayStepResult,
                               ):
         """
         Essentially a callback that receives feedback after a play step has happened
@@ -123,4 +121,4 @@ class Player(ABC):
     #     # self.score = 0
     #     # self.chunk_food = None
     #     # self._place_food()
-    #     # self.index_frame = 0
+    #     # self.counter_play_step = 0

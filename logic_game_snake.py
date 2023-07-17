@@ -34,7 +34,7 @@ from chunk import Chunk
 from constants import Action
 from container_chunk.container_chunk_snake import ContainerChunkSnake
 from data.data_game import DataGame
-from data.data_player import DataPlayer
+from data.data_play_step_result import DataPlayStepResult
 from player.player import Player
 from utility import get_wrapper_from_chunk_that_collided
 from wrapper.wrapper import Wrapper
@@ -73,8 +73,7 @@ class LogicGameSnake:
 
         self.data_game = DataGame(self.settings)
 
-        # This is a data container about the current player
-        self.data_player = DataPlayer()
+        self.data_play_step_result = DataPlayStepResult()
 
         self._initialize(list_player)
 
@@ -180,30 +179,28 @@ class LogicGameSnake:
 
     def play_step_player(self,
                          player: Player,
-                         action_from_player: Action) -> DataPlayer:
+                         action_from_player: Action) -> DataPlayStepResult:
 
-        self.data_game.index_frame += 1
+        self.data_play_step_result.reset()
+        self.data_game.counter_play_step += 1
 
-        self.data_player.bool_dead = False
-        self.data_player.wrapper_object_that_collided = None
-        self.data_player.reward = 0
-
-        # time_previous = time.time()
+        player.get_data_player().counter_play_step += 1
 
         wrapper_from_player: Wrapper = player.get_wrapper()
 
         container_chunk_snake = wrapper_from_player.get_container_chunk()
 
-        chunk_snake_to_move_possible, x_chunk_snake_last_old, y_chunk_snake_last_old = self.get_chunk_snake_to_move_possible(
+        chunk_snake_to_move_possible, x_chunk_last_old, y_chunk_last_old = self.get_chunk_snake_to_move_possible(
             # time_previous,
             container_chunk_snake,
             action_from_player
         )
 
-        # TODO: MOVE THIS CHECKING SOMEWHERELSE + REDESIGN
+        # TODO: MOVE THIS CHECKING SOMEWHERE ELSE + REDESIGN
         ####################
         # Collision checking
         ####################
+
         wrapper_object_that_collided: Union[Wrapper, None] = get_wrapper_from_chunk_that_collided(
             self.data_game,
             chunk_snake_to_move_possible
@@ -214,38 +211,36 @@ class LogicGameSnake:
 
         # Check collision player with food
         if isinstance(wrapper_object_that_collided, WrapperFood):
-            player.add_to_score(1)
+            player.get_data_player().counter_play_step = 0
+            player.get_data_player().score += 1
 
-            self.data_player.reward = 108
+            self.data_play_step_result.reward = 1  # FIXME: THIS IS A HARD CODED VALUE
 
             self._place_food(wrapper_object_that_collided, chunk_snake_to_move_possible)
 
             # Extend the current player
             wrapper_from_player.get_container_chunk().add_new_chunk(
-                Chunk(x_chunk_snake_last_old, y_chunk_snake_last_old)
+                Chunk(x_chunk_last_old, y_chunk_last_old)
 
             )
-            return self.data_player
 
         # Collision player with player (Does not care about which player)
-        if isinstance(wrapper_object_that_collided, WrapperSnake):
-            self.data_player.bool_dead = True
-            self.data_player.wrapper_object_that_collided = wrapper_object_that_collided
-            self.data_player.reward = -10  # FIXME: MODEL IS VERY SENSITIVE TO HIGH REQARD
+        elif isinstance(wrapper_object_that_collided, WrapperSnake):
+            self.data_play_step_result.bool_dead = True
+            self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
+            self.data_play_step_result.reward = -1  # FIXME: THIS IS A HARD CODED VALUE
+
             print("Hit Snake")
 
-            return self.data_player
-
         # Check collision player with wall
-        if isinstance(wrapper_object_that_collided, WrapperWall):
-            self.data_player.bool_dead = True
-            self.data_player.wrapper_object_that_collided = wrapper_object_that_collided
-            self.data_player.reward = -10
+        elif isinstance(wrapper_object_that_collided, WrapperWall):
+            self.data_play_step_result.bool_dead = True
+            self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
+            self.data_play_step_result.reward = -1  # FIXME: THIS IS A HARD CODED VALUE
 
             print("Hit wall")
-            return self.data_player
 
-        return self.data_player
+        return self.data_play_step_result
 
     def get_chunk_snake_to_move_possible(self,
                                          container_chunk_snake: ContainerChunkSnake,
@@ -319,7 +314,6 @@ class LogicGameSnake:
     def get_generator_run_step(self) -> Generator[DataGame, None, None]:
         """
 
-        :param callback_for_iteration_end: Callback function to run_loop
         :return:
         """
         # self.data_game.deque_player = deque(self.data_game.list_player)
@@ -363,18 +357,18 @@ class LogicGameSnake:
         #
         #     print("ACTION FROM PLAYER", action_from_player)
         #
-        #     data_player = self.play_step_player(
+        #     data_play_step_result = self.play_step_player(
         #         player,
         #         action_from_player
         #     )
         #
         #     callback_for_iteration_end()
         #
-        #     if data_player.bool_dead is True:
+        #     if data_play_step_result.bool_dead is True:
         #         # Continue will skip re-adding deque_player back
         #         continue
         #
-        #     player.send_feedback_of_step(self.data_game, data_player)
+        #     player.send_feedback_of_step(self.data_game, data_play_step_result)
         #
         #     yield self.data_game
 

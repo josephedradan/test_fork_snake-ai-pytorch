@@ -8,7 +8,7 @@ from constants import TYPE_ACTION_POSSIBLE
 from constants import TYPE_GAME_STATE
 from constants import TYPE_TUPLE_INT_ACTION
 from data.data_game import DataGame
-from data.data_player import DataPlayer
+from data.data_play_step_result import DataPlayStepResult
 from game_state.generator_game_state import GeneratorGameState
 from game_state.generator_game_state_food_single import GeneratorGameStateFoodSingle
 from helper import plot
@@ -87,7 +87,7 @@ class PlayerAIQLearning(Player):
     #     self.score = 0
     #     self.chunk_food = None
     #     self._place_food()
-    #     self.index_frame = 0
+    #     self.counter_play_step = 0
 
     def get_action_new(self, data_game: DataGame) -> TYPE_ACTION_POSSIBLE:
 
@@ -104,7 +104,7 @@ class PlayerAIQLearning(Player):
 
     def send_feedback_of_step(self,
                               data_game: DataGame,
-                              data_player: DataPlayer,
+                              data_player: DataPlayStepResult,
                               ):
 
         game_state_new = self.generator_game_state.get_game_state(data_game, self)

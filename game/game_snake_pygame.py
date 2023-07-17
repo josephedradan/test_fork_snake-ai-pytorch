@@ -389,8 +389,8 @@ class GameSnakePygame(GameSnake):
                             # Get a random Action because the AI will crash without it
                             action_random = random.choice(LIST_ACTION_CYCLE_CLOCKWISE)
 
+                            self.player_ai_q_learning.get_data_player().reset()
                             self.player_ai_q_learning.set_action(Action.RIGHT)
-                            self.player_ai_q_learning.reset_score()
 
                             logic_game_snake = LogicGameSnake(
                                 [self.player_ai_q_learning],
@@ -409,7 +409,6 @@ class GameSnakePygame(GameSnake):
                             )
 
                             data_game = graphics_pygame.run_loop()
-
 
                         return None
 
