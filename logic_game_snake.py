@@ -45,8 +45,9 @@ from wrapper.wrapper_wall import WrapperWall
 
 class LogicGameSnake:
     settings: Settings
-    amount_of_block_width: int
-    amount_of_block_height: int
+
+    data_game: DataGame
+    data_play_step_result: DataPlayStepResult
 
     def __init__(self,
                  # pygame_surface_main: pygame.display,
@@ -62,9 +63,6 @@ class LogicGameSnake:
 
         self.settings = settings
 
-        self.amount_of_block_width = amount_of_block_width
-        self.amount_of_block_height = amount_of_block_height
-
         """ 
         #################### 
         GameSnakePygame related stuff 
@@ -72,6 +70,8 @@ class LogicGameSnake:
         """
 
         self.data_game = DataGame(self.settings)
+        self.data_game.amount_of_block_width = amount_of_block_width
+        self.data_game.amount_of_block_height = amount_of_block_height
 
         self.data_play_step_result = DataPlayStepResult()
 
@@ -82,16 +82,16 @@ class LogicGameSnake:
         wrapper_wall_border: WrapperWall = WrapperWall()
 
         # Create horizontal walls
-        for i in range(self.amount_of_block_width + 1):
+        for i in range(self.data_game.amount_of_block_width + 1):
             x_start = i * self.settings.block_size
-            y_start = self.amount_of_block_height * self.settings.block_size
+            y_start = self.data_game.amount_of_block_height * self.settings.block_size
 
             wrapper_wall_border.get_container_chunk().add_new_chunk(Chunk(x_start, 0))
             wrapper_wall_border.get_container_chunk().add_new_chunk(Chunk(x_start, y_start))
 
         # Create vertical walls
-        for i in range(1, self.amount_of_block_height):
-            x_start = self.amount_of_block_width * self.settings.block_size
+        for i in range(1, self.data_game.amount_of_block_height):
+            x_start = self.data_game.amount_of_block_width * self.settings.block_size
             y_start = i * self.settings.block_size
 
             wrapper_wall_border.get_container_chunk().add_new_chunk(Chunk(0, y_start))
@@ -148,8 +148,8 @@ class LogicGameSnake:
         # n amount of tries (3 in this case) to add a new chunk to wrapper_food via randomness
         for _ in range(3):
 
-            x = random.randint(0, self.amount_of_block_width) * self.settings.block_size
-            y = random.randint(0, self.amount_of_block_height) * self.settings.block_size
+            x = random.randint(0, self.data_game.amount_of_block_width) * self.settings.block_size
+            y = random.randint(0, self.data_game.amount_of_block_height) * self.settings.block_size
 
             chunk_food.x = x
             chunk_food.y = y
@@ -163,8 +163,8 @@ class LogicGameSnake:
                 return chunk_food
 
         # Fallback if randomness can't find a valid position to add chunk_food to a wrapper_food
-        for width in range(self.amount_of_block_width):
-            for height in range(self.amount_of_block_height):
+        for width in range(self.data_game.amount_of_block_width):
+            for height in range(self.data_game.amount_of_block_height):
 
                 chunk_food.x = width * self.settings.block_size
                 chunk_food.y = height * self.settings.block_size
@@ -184,7 +184,7 @@ class LogicGameSnake:
         self.data_play_step_result.reset()
         self.data_game.counter_play_step += 1
 
-        player.get_data_player().counter_play_step += 1
+        player.get_data_player().counter_play_step_since_last_reward += 1  # TODO: CAN MOVE INTO PLAYER AI
 
         wrapper_from_player: Wrapper = player.get_wrapper()
 
@@ -197,9 +197,12 @@ class LogicGameSnake:
         )
 
         # TODO: MOVE THIS CHECKING SOMEWHERE ELSE + REDESIGN
+
+        """
         ####################
-        # Collision checking
+        Collision checking
         ####################
+        """
 
         wrapper_object_that_collided: Union[Wrapper, None] = get_wrapper_from_chunk_that_collided(
             self.data_game,
@@ -211,10 +214,10 @@ class LogicGameSnake:
 
         # Check collision player with food
         if isinstance(wrapper_object_that_collided, WrapperFood):
-            player.get_data_player().counter_play_step = 0
-            player.get_data_player().score += 1
+            self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
 
-            self.data_play_step_result.reward = 1  # FIXME: THIS IS A HARD CODED VALUE
+            player.get_data_player().counter_play_step_since_last_reward = 0  # TODO: CAN MOVE INTO PLAYER AI
+            player.get_data_player().score += 1
 
             self._place_food(wrapper_object_that_collided, chunk_snake_to_move_possible)
 
@@ -226,17 +229,17 @@ class LogicGameSnake:
 
         # Collision player with player (Does not care about which player)
         elif isinstance(wrapper_object_that_collided, WrapperSnake):
-            self.data_play_step_result.bool_dead = True
+            self.data_play_step_result.bool_died = True
             self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
-            self.data_play_step_result.reward = -1  # FIXME: THIS IS A HARD CODED VALUE
+
 
             print("Hit Snake")
 
         # Check collision player with wall
         elif isinstance(wrapper_object_that_collided, WrapperWall):
-            self.data_play_step_result.bool_dead = True
+            self.data_play_step_result.bool_died = True
             self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
-            self.data_play_step_result.reward = -1  # FIXME: THIS IS A HARD CODED VALUE
+
 
             print("Hit wall")
 
@@ -335,15 +338,15 @@ class LogicGameSnake:
 
             print("ACTION FROM PLAYER", action_from_player)
 
-            data_player = self.play_step_player(
+            data_play_step_result = self.play_step_player(
                 player,
                 action_from_player
             )
 
             # This call must be made before the continue
-            player.send_feedback_of_step(self.data_game, data_player)
+            player.send_feedback_of_step(self.data_game, data_play_step_result)
 
-            if data_player.bool_dead is True:
+            if data_play_step_result.bool_died is True:
                 # Continue will skip re-adding player back to the deque
                 continue
 
@@ -364,7 +367,7 @@ class LogicGameSnake:
         #
         #     callback_for_iteration_end()
         #
-        #     if data_play_step_result.bool_dead is True:
+        #     if data_play_step_result.bool_died is True:
         #         # Continue will skip re-adding deque_player back
         #         continue
         #

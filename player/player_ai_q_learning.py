@@ -1,4 +1,4 @@
-from typing import Type
+from typing import Dict
 from typing import Type
 from typing import Union
 
@@ -14,10 +14,19 @@ from game_state.generator_game_state_food_single import GeneratorGameStateFoodSi
 from helper import plot
 from player.player import Player
 from utility import get_action_from_tuple_int_action_relative
-
+from wrapper.wrapper import Wrapper
+from wrapper.wrapper_food import WrapperFood
+from wrapper.wrapper_snake import WrapperSnake
+from wrapper.wrapper_wall import WrapperWall
 
 # pygame.init()
 # font_text = pygame.font_text.Font('../arial.ttf', 25)
+
+DICT_K_TYPE_WRAPPER_V_REWARD: Dict[Type[Wrapper], int] = {
+    WrapperFood: 10,
+    WrapperSnake: -10,
+    WrapperWall: -10
+}
 
 
 class PlayerAIQLearning(Player):
@@ -48,8 +57,6 @@ class PlayerAIQLearning(Player):
 
         self.plot_scores = []
         self.plot_scores_mean = []
-        self.score_total = 0
-        self.score_highest = 0
 
         # """
         # ####################
@@ -87,7 +94,7 @@ class PlayerAIQLearning(Player):
     #     self.score = 0
     #     self.chunk_food = None
     #     self._place_food()
-    #     self.counter_play_step = 0
+    #     self.counter_play_step_since_last_reward = 0
 
     def get_action_new(self, data_game: DataGame) -> TYPE_ACTION_POSSIBLE:
 
@@ -102,46 +109,79 @@ class PlayerAIQLearning(Player):
 
         return self.action
 
-    def send_feedback_of_step(self,
-                              data_game: DataGame,
-                              data_player: DataPlayStepResult,
-                              ):
+    def _respond_to_data_play_step_result(self,
+                                          data_game: DataGame,
+                                          data_play_step_result: DataPlayStepResult,
+                                          ):
+
+        # If player collided
+        if data_play_step_result.wrapper_object_that_collided is not None:
+
+            # Assign the reward based on the collision
+            self.data_player.reward = (
+                DICT_K_TYPE_WRAPPER_V_REWARD.get(type(data_play_step_result.wrapper_object_that_collided), 0)
+            )
+
+        # Kill the player if the player is stalling
+        elif self.get_data_player().counter_play_step_since_last_reward > 50:  # TODO CHANGE 100 TO SOMETHING ELSE
+            data_play_step_result.bool_died = True
+            self.data_player.reward = -1
+
+    def _do_reinforcement_learning_logic(self,
+                                         data_game: DataGame,
+                                         data_play_step_result: DataPlayStepResult,
+                                         ):
 
         game_state_new = self.generator_game_state.get_game_state(data_game, self)
 
         self.agent_q_learning.train_short_memory(
             self.game_state,
             self.tuple_int_action_relative,
-            data_player.reward,
+            self.data_player.reward,
             game_state_new,
-            data_player.bool_dead,
+            data_play_step_result.bool_died,
         )
 
         self.agent_q_learning.remember(
             self.game_state,
             self.tuple_int_action_relative,
-            data_player.reward,
+            self.data_player.reward,
             game_state_new,
-            data_player.bool_dead,
+            data_play_step_result.bool_died,
         )
 
-        if data_player.bool_dead:
+        if data_play_step_result.bool_died:
 
             self.agent_q_learning.amount_games += 1
             self.agent_q_learning.train_long_memory()
 
-            if self.score > self.score_highest:
-                self.score_highest = self.score
+            if self.data_player.score > self.data_player.score_highest:
+                self.data_player.score_highest = self.data_player.score
 
                 print("SAVE CALLED")
                 # Save
                 self.agent_q_learning.model.save()
 
-            self.plot_scores.append(self.score)  # BLUE LINE
-            self.score_total += self.score  # ORANGE LINE
-            score_mean = self.score_total / self.agent_q_learning.amount_games
+            self.plot_scores.append(self.data_player.score)  # BLUE LINE
+            self.data_player.score_total += self.data_player.score  # ORANGE LINE
+            score_mean = self.data_player.score_total / self.agent_q_learning.amount_games
             self.plot_scores_mean.append(score_mean)
             plot(self.plot_scores, self.plot_scores_mean)
+
+    def send_feedback_of_step(self,
+                              data_game: DataGame,
+                              data_play_step_result: DataPlayStepResult,
+                              ):
+        """
+
+        :param data_game:
+        :param data_play_step_result:
+        :return:
+        """
+
+        self._respond_to_data_play_step_result(data_game, data_play_step_result)
+
+        self._do_reinforcement_learning_logic(data_game, data_play_step_result)
 
     # def _place_food(self):
     #     x = random.randint(0, (self.window_width - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE

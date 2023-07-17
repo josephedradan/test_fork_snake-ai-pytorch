@@ -52,6 +52,9 @@ class DataGame(Data):
     """
     settings: Settings
 
+    amount_of_block_width: Union[int, None]
+    amount_of_block_height: Union[int, None]
+
     list_player: List[Player]
 
     list_wrapper_snake: List[WrapperSnake]
@@ -72,6 +75,9 @@ class DataGame(Data):
         # Constant data
         ####################
 
+        self.amount_of_block_width = None
+        self.amount_of_block_height = None
+
         self.list_player = []
 
         self.list_wrapper_snake = []
@@ -91,7 +97,10 @@ class DataGame(Data):
         self.bool_game_over = False
 
     def __str__(self):
-        return "\n".join(f"Player {index} Score: {player.score}" for index, player in enumerate(self.list_player))
+        return (
+            "\n".join(
+                f"Player {index} Score: {player.data_player.score}" for index, player in enumerate(self.list_player))
+        )
 
     def reset(self):
         self.list_pygame_event = []

@@ -27,9 +27,32 @@ from data.data import Data
 class DataPlayer(Data):
 
     def __init__(self):
+        """
+        Simple Player data object container
+        """
+
+        """
+        ####################
+        variables that track
+        ####################
+        """
+
+        self.score_highest = 0
+        self.score_total = 0
+
+        """
+        ####################
+        variables that change
+        ####################
+        """
+
         self.score = 0
-        self.counter_play_step = 0
+        self.counter_play_step_since_last_reward = 0
+
+        self.reward = 0
 
     def reset(self):
         self.score = 0
-        self.counter_play_step = 0
+        self.counter_play_step_since_last_reward = 0
+
+        self.reward = 0

@@ -51,7 +51,14 @@ class GraphicsPygame(Graphics):
                  pygame_font_text: pygame.font.Font,
                  pygame_font_fps: pygame.font.Font,
                  ):
+        """
 
+        :param settings:
+        :param logic_game_snake:
+        :param pygame_display:
+        :param pygame_font_text:
+        :param pygame_font_fps:
+        """
         """
         ####################
         Pygame related stuff
@@ -129,7 +136,7 @@ class GraphicsPygame(Graphics):
                 # )
 
             surface_text_scores = self.font_text.render(
-                f"P{index} Score: {player.score}",
+                f"P{index} Score: {player.get_data_player().score}",
                 True,
                 ColorRGB.GREEN
             )

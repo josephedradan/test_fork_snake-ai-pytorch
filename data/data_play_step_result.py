@@ -31,16 +31,13 @@ class DataPlayStepResult(Data):
     A lite container for player data stuff
 
     """
-    bool_dead: Union[bool, None]
+    bool_died: Union[bool, None]
     wrapper_object_that_collided: Union[bool, None]
-    reward: Union[int]
 
     def __init__(self):
-        self.bool_dead = None
+        self.bool_died = None
         self.wrapper_object_that_collided = None
-        self.reward = 9
 
     def reset(self):
-        self.bool_dead = None
+        self.bool_died = None
         self.wrapper_object_that_collided = None
-        self.reward = 0

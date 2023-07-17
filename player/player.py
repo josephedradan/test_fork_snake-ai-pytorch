@@ -23,10 +23,8 @@ Reference:
 """
 from abc import ABC
 from abc import abstractmethod
-from typing import Sequence
 from typing import Union
 
-from chunk import Chunk
 from constants import TYPE_ACTION_POSSIBLE
 from data.data_game import DataGame
 from data.data_play_step_result import DataPlayStepResult
@@ -38,7 +36,7 @@ class Player(ABC):
     wrapper: Union[Wrapper, None]
     action: TYPE_ACTION_POSSIBLE
 
-    score: int
+    data_player: DataPlayer
 
     def __init__(self):
         """
@@ -121,4 +119,4 @@ class Player(ABC):
     #     # self.score = 0
     #     # self.chunk_food = None
     #     # self._place_food()
-    #     # self.counter_play_step = 0
+    #     # self.counter_play_step_since_last_reward = 0
