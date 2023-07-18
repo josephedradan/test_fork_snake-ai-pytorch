@@ -175,7 +175,7 @@ class GameSnakePygame(GameSnake):
             if data_game:
                 for index, player in enumerate(data_game.list_player):
                     surface_text = self.pygame_font_text.render(
-                        f"Snake {index} score: {player.score}",
+                        f"Snake {index} score: {player.get_data_player().score}",
                         True,
                         ColorRGB.WHITE)
 
@@ -391,6 +391,8 @@ class GameSnakePygame(GameSnake):
 
                             self.player_ai_q_learning.get_data_player().reset()
                             self.player_ai_q_learning.set_action(Action.RIGHT)
+                            self.player_ai_q_learning.get_wrapper().get_container_chunk().get_chunk_first()
+
 
                             logic_game_snake = LogicGameSnake(
                                 [self.player_ai_q_learning],

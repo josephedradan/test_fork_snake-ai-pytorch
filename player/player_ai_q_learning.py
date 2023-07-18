@@ -29,7 +29,7 @@ DICT_K_TYPE_WRAPPER_V_REWARD: Dict[Type[Wrapper], int] = {
 }
 
 
-class PlayerAIQLearning(Player):
+class PlayerAIQLearning(Player[WrapperSnake]):
     window_width: int
     window_height: int
 
@@ -123,9 +123,10 @@ class PlayerAIQLearning(Player):
             )
 
         # Kill the player if the player is stalling
-        elif self.get_data_player().counter_play_step_since_last_reward > 50:  # TODO CHANGE 100 TO SOMETHING ELSE
-            data_play_step_result.bool_died = True
-            self.data_player.reward = -1
+        elif self.get_data_player().counter_play_step_since_last_reward > 100 * len(
+                self.wrapper.get_container_chunk()):  # TODO CHANGE 100 TO SOMETHING ELSE
+            data_play_step_result.bool_dead = True
+            self.data_player.reward = -10
 
     def _do_reinforcement_learning_logic(self,
                                          data_game: DataGame,
@@ -139,7 +140,7 @@ class PlayerAIQLearning(Player):
             self.tuple_int_action_relative,
             self.data_player.reward,
             game_state_new,
-            data_play_step_result.bool_died,
+            data_play_step_result.bool_dead,
         )
 
         self.agent_q_learning.remember(
@@ -147,10 +148,10 @@ class PlayerAIQLearning(Player):
             self.tuple_int_action_relative,
             self.data_player.reward,
             game_state_new,
-            data_play_step_result.bool_died,
+            data_play_step_result.bool_dead,
         )
 
-        if data_play_step_result.bool_died:
+        if data_play_step_result.bool_dead:
 
             self.agent_q_learning.amount_games += 1
             self.agent_q_learning.train_long_memory()

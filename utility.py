@@ -33,14 +33,16 @@ from chunk import Chunk
 from constants import Action
 from constants import DICT_K_ACTION_V_INDEX_ACTION_CYCLE_CLOCKWISE
 from constants import LIST_ACTION_CYCLE_CLOCKWISE
-from constants import T
+from constants import TYPEVAR_ANY
+from constants import TUPLE_INT_ACTION_FORWARD
 from constants import TUPLE_INT_ACTION_LEFT
 from constants import TUPLE_INT_ACTION_RIGHT
-from constants import TUPLE_INT_ACTION_FORWARD
 from constants import TYPE_ACTION_POSSIBLE
 from constants import TYPE_TUPLE_INT_ACTION
 from data.data_game import DataGame
+from player.player import Player
 from wrapper.wrapper import Wrapper
+from wrapper.wrapper_snake import WrapperSnake
 
 
 def get_wrapper_from_chunk_that_collided(data_game: DataGame, chunk: Chunk) -> Union[Wrapper, None]:
@@ -102,14 +104,25 @@ def get_action_from_tuple_int_action_relative(action: Action,
     return action
 
 
-class DequeFastLookUp(deque[T]):
+def initialize_easy_player_wrapper_snake(
+        player_wrapper_snake: Player[WrapperSnake],
+        action_initial: Action,
+        amount_chunk_to_add: int) -> None:
+
+    player_wrapper_snake.set_action(action_initial)
+
+    # TODO: COMPLETE LATER IDK
+
+
+
+class DequeFastLookUp(deque[TYPEVAR_ANY]):
     """
 
     Notes:
         Since self.set_ uses hashing, if an object is added to this object
         then the object added to self.set_ will be overwritten
     """
-    set_: Set[T]
+    set_: Set[TYPEVAR_ANY]
 
     def __init__(self, iterable: Iterable, maxlen: Union[int, None] = None):
         super().__init__(iterable, maxlen)
@@ -118,40 +131,40 @@ class DequeFastLookUp(deque[T]):
 
         self.set_.update(iterable)
 
-    def append(self, x: T) -> None:
+    def append(self, x: TYPEVAR_ANY) -> None:
         super().append(x)
         self.set_.add(x)
 
-    def appendleft(self, x: T) -> None:
+    def appendleft(self, x: TYPEVAR_ANY) -> None:
         super().appendleft(x)
         self.set_.add(x)
 
-    def copy(self) -> deque[[T]]:
+    def copy(self) -> deque[[TYPEVAR_ANY]]:
         return DequeFastLookUp(self)
 
     def clear(self) -> None:
         super().clear()
         self.set_.clear()
 
-    def extend(self, iterable: Iterable[T]) -> None:
+    def extend(self, iterable: Iterable[TYPEVAR_ANY]) -> None:
         super().extend(iterable)
         self.set_.update(iterable)
 
-    def extendleft(self, iterable: Iterable[T]) -> None:
+    def extendleft(self, iterable: Iterable[TYPEVAR_ANY]) -> None:
         super().extendleft(iterable)
         self.set_.update(iterable)
 
-    def insert(self, i: int, x: T) -> None:
+    def insert(self, i: int, x: TYPEVAR_ANY) -> None:
         super().insert(i, x)
         self.set_.update(x)
 
-    def pop(self) -> T:
+    def pop(self) -> TYPEVAR_ANY:
         self.set_.pop()
         return super(DequeFastLookUp, self).pop()
 
-    def popleft(self) -> T:
+    def popleft(self) -> TYPEVAR_ANY:
         self.set_.pop()
         return super(DequeFastLookUp, self).popleft()
 
-    def __contains__(self, item: T):
+    def __contains__(self, item: TYPEVAR_ANY):
         return item in self.set_

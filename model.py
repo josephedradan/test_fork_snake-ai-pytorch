@@ -72,6 +72,13 @@ class QTrainer:
                          ):
         """
 
+        Notes:
+            torch_tensor_game_states.shape is [1, n]
+            torch_tensor_action.shape is [1, 3]
+            torch_tensor_reward.shape is [1]
+            torch_tensor_game_states_next.shape is [1, n]
+            sequence_bool_player_dead  # Type Sequence[int]
+
         :param torch_tensor_game_states:
         :param torch_tensor_action:
         :param torch_tensor_reward:
@@ -118,11 +125,11 @@ class QTrainer:
 
             
         """
-        for index in range(len(sequence_bool_player_dead)):
-            q_new = torch_tensor_reward[index]
+        for index_game in range(len(sequence_bool_player_dead)):
+            q_new = torch_tensor_reward[index_game]
 
             # If player is not dead
-            if not sequence_bool_player_dead[index]:
+            if not sequence_bool_player_dead[index_game]:
                 """
                 
                 Notes:
@@ -142,23 +149,25 @@ class QTrainer:
                 """
                 # 2: q_new = r + y * max(next_predicted Q value) -> only do this if not sequence_bool_player_dead
 
+                print(self.model(torch_tensor_game_states_next[index_game]))
+
                 q_new = (
-                        torch_tensor_reward[index] +
-                        (self.gamma * torch.max(self.model(torch_tensor_game_states_next[index])))
+                        torch_tensor_reward[index_game] +
+                        (self.gamma * torch.max(self.model(torch_tensor_game_states_next[index_game])))
                 )
 
 
             # print("q_new", q_new)
-            # print("INDEX", index)
-            # print("torch_tensor_action[index]", torch_tensor_action[index])
-            # print("torch.argmax(torch_tensor_action[index]).item()", torch.argmax(torch_tensor_action[index]).item())
+            # print("INDEX", index_game)
+            # print("torch_tensor_action[index_game]", torch_tensor_action[index_game])
+            # print("torch.argmax(torch_tensor_action[index_game]).item()", torch.argmax(torch_tensor_action[index_game]).item())
             # print(torch_tensor_actions_target)
-            # print(torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()])
-            torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()] = q_new
-            # print(torch_tensor_actions_target[index][torch.argmax(torch_tensor_action[index]).item()])
+            # print(torch_tensor_actions_target[index_game][torch.argmax(torch_tensor_action[index_game]).item()])
+            torch_tensor_actions_target[index_game][torch.argmax(torch_tensor_action[index_game]).item()] = q_new
+            # print(torch_tensor_actions_target[index_game][torch.argmax(torch_tensor_action[index_game]).item()])
             # print(torch_tensor_actions_target)
             # print("AAAA")
-            # print(torch_tensor_actions_target[index])
+            # print(torch_tensor_actions_target[index_game])
 
 
         # print("FFFFFFFFFFFFF")

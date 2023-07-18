@@ -23,15 +23,12 @@ Reference:
 """
 from abc import ABC
 
-from constants import TYPE_ACTION_POSSIBLE
+from constants import TYPEVAR_WRAPPER
 from player.player import Player
 
 
-class PlayerAI(Player, ABC):
+class PlayerAI(Player[TYPEVAR_WRAPPER], ABC):
 
     def __init__(self,
-                 action_initial: TYPE_ACTION_POSSIBLE = None
                  ):
         super().__init__()
-
-        # self.generator_game_state = generator_game_state

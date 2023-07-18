@@ -25,12 +25,12 @@ from typing import Iterable
 from typing import Union
 
 from chunk import Chunk
-from wrapper.wrapper import Wrapper
-from wrapper.wrapper import TYPEVAR_CONTAINER_CHUNK
 from container_chunk.container_chunk import ContainerChunk
+from container_chunk.container_chunk_food import ContainerChunkFood
+from wrapper.wrapper import Wrapper
 
 
-class WrapperFood(Wrapper[TYPEVAR_CONTAINER_CHUNK]):
+class WrapperFood(Wrapper[ContainerChunkFood]):
 
     def __init__(self,
                  iterable_chunk: Union[Iterable[Chunk], None] = None
@@ -40,3 +40,4 @@ class WrapperFood(Wrapper[TYPEVAR_CONTAINER_CHUNK]):
                 iterable_chunk
             )
         )
+

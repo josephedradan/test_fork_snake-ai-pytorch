@@ -35,6 +35,7 @@ from constants import Action
 from container_chunk.container_chunk_snake import ContainerChunkSnake
 from data.data_game import DataGame
 from data.data_play_step_result import DataPlayStepResult
+from game_state.generator_game_state_food_single import GeneratorGameStateFoodSingle
 from player.player import Player
 from utility import get_wrapper_from_chunk_that_collided
 from wrapper.wrapper import Wrapper
@@ -204,13 +205,14 @@ class LogicGameSnake:
         ####################
         """
 
+        # Get Wrapper that collied with chunk_snake_to_move_possible
         wrapper_object_that_collided: Union[Wrapper, None] = get_wrapper_from_chunk_that_collided(
             self.data_game,
             chunk_snake_to_move_possible
         )
 
         # Move the player by placing chunk_snake_to_move_possible at the front of container_chunk_snake
-        container_chunk_snake.add_new_chunk_front(chunk_snake_to_move_possible)
+        container_chunk_snake.add_new_chunk_front(chunk_snake_to_move_possible) # FIXME ME THIS HERE WILL PREVNT CRACHES
 
         # Check collision player with food
         if isinstance(wrapper_object_that_collided, WrapperFood):
@@ -229,7 +231,7 @@ class LogicGameSnake:
 
         # Collision player with player (Does not care about which player)
         elif isinstance(wrapper_object_that_collided, WrapperSnake):
-            self.data_play_step_result.bool_died = True
+            self.data_play_step_result.bool_dead = True
             self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
 
 
@@ -237,7 +239,7 @@ class LogicGameSnake:
 
         # Check collision player with wall
         elif isinstance(wrapper_object_that_collided, WrapperWall):
-            self.data_play_step_result.bool_died = True
+            self.data_play_step_result.bool_dead = True
             self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
 
 
@@ -336,7 +338,8 @@ class LogicGameSnake:
 
             action_from_player: Action = player.get_action_new(self.data_game)
 
-            print("ACTION FROM PLAYER", action_from_player)
+            print(GeneratorGameStateFoodSingle.get_game_state(self.data_game, player))
+
 
             data_play_step_result = self.play_step_player(
                 player,
@@ -346,7 +349,7 @@ class LogicGameSnake:
             # This call must be made before the continue
             player.send_feedback_of_step(self.data_game, data_play_step_result)
 
-            if data_play_step_result.bool_died is True:
+            if data_play_step_result.bool_dead is True:
                 # Continue will skip re-adding player back to the deque
                 continue
 
@@ -367,7 +370,7 @@ class LogicGameSnake:
         #
         #     callback_for_iteration_end()
         #
-        #     if data_play_step_result.bool_died is True:
+        #     if data_play_step_result.bool_dead is True:
         #         # Continue will skip re-adding deque_player back
         #         continue
         #

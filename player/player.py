@@ -23,8 +23,10 @@ Reference:
 """
 from abc import ABC
 from abc import abstractmethod
+from typing import Generic
 from typing import Union
 
+from constants import TYPEVAR_WRAPPER
 from constants import TYPE_ACTION_POSSIBLE
 from data.data_game import DataGame
 from data.data_play_step_result import DataPlayStepResult
@@ -32,7 +34,7 @@ from data.data_player import DataPlayer
 from wrapper.wrapper import Wrapper
 
 
-class Player(ABC):
+class Player(ABC, Generic[TYPEVAR_WRAPPER]):
     wrapper: Union[Wrapper, None]
     action: TYPE_ACTION_POSSIBLE
 
@@ -56,10 +58,10 @@ class Player(ABC):
     def get_action(self) -> TYPE_ACTION_POSSIBLE:
         return self.action
 
-    def set_wrapper(self, wrapper: Wrapper):
+    def set_wrapper(self, wrapper: TYPEVAR_WRAPPER):
         self.wrapper = wrapper
 
-    def get_wrapper(self) -> Wrapper:
+    def get_wrapper(self) -> TYPEVAR_WRAPPER:
         return self.wrapper
 
     def send_feedback_of_step(self,

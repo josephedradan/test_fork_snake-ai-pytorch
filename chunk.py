@@ -41,4 +41,4 @@ class Chunk:
         return self.x == chunk.x and self.y == chunk.y
 
     def __str__(self):
-        return f"{Chunk.__name__}({self.x, self.y}, {self})"
+        return f"{Chunk.__name__}({self.x, self.y})"

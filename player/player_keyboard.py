@@ -49,10 +49,11 @@ from typing import Dict
 import pygame
 from pygame.key import ScancodeWrapper
 
-from data.data_game import DataGame
-from player.player import Player
 from constants import Action
 from constants import DICT_K_ACTION_V_ACTION_REVERSE
+from data.data_game import DataGame
+from player.player import Player
+from wrapper.wrapper_snake import WrapperSnake
 
 pygame.init()
 
@@ -70,7 +71,7 @@ DICT_K_PYGAME_EVENT_KEY_V_ACTION: Dict[int, Action] = {
 LIST_K_PYGAME_EVENT_KEY = DICT_K_PYGAME_EVENT_KEY_V_ACTION.keys()
 
 
-class PlayerKeyboard(Player):
+class PlayerKeyboard(Player[WrapperSnake]):
 
     def __init__(self):
         """
@@ -149,6 +150,8 @@ class PlayerKeyboard(Player):
     def get_action_new(self, data_game: DataGame) -> Action:  # FIXME HEAVILY TIED TO PYGAME
 
         scan_code_wrapper_keys: ScancodeWrapper = pygame.key.get_pressed()
+
+        self.action = None
 
         # Order of events in LIST_K_PYGAME_EVENT_KEY determines priority
         for pygame_event_key in LIST_K_PYGAME_EVENT_KEY:
