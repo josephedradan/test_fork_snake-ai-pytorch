@@ -47,12 +47,9 @@ class DataPlayer(Data):
         """
 
         self.score = 0
-        self.counter_play_step_since_last_reward = 0
-
-        self.reward = 0
+        self.counter_play_step_since_last_food = 0
 
     def reset(self):
         self.score = 0
-        self.counter_play_step_since_last_reward = 0
+        self.counter_play_step_since_last_food = 0
 
-        self.reward = 0

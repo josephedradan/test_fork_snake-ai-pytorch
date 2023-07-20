@@ -70,8 +70,11 @@ class Settings:
         self.width = get_dimension_corrected(self.block_size, width)
 
         self.block_size_offset = block_size_offset
-        self.fps = fps
+
+        #####
+
         self.font_size = font_size
+        self.fps = fps
 
         #####
 
@@ -80,4 +83,3 @@ class Settings:
 
         #####
         self.amount_food = amount_food
-

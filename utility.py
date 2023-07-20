@@ -21,28 +21,37 @@ Contributors:
 Reference:
 
 """
+from __future__ import annotations
+
 import itertools
 from collections import deque
 from typing import Iterable
+from typing import List
 from typing import Set
+from typing import TYPE_CHECKING
 from typing import Union
 
 import numpy as np
 
+from _settings import Settings
 from chunk import Chunk
 from constants import Action
+from constants import DICT_K_ACTION_V_ACTION_REVERSE
 from constants import DICT_K_ACTION_V_INDEX_ACTION_CYCLE_CLOCKWISE
 from constants import LIST_ACTION_CYCLE_CLOCKWISE
-from constants import TYPEVAR_ANY
 from constants import TUPLE_INT_ACTION_FORWARD
 from constants import TUPLE_INT_ACTION_LEFT
 from constants import TUPLE_INT_ACTION_RIGHT
+from constants import TYPEVAR_ANY
 from constants import TYPE_ACTION_POSSIBLE
 from constants import TYPE_TUPLE_INT_ACTION
-from data.data_game import DataGame
-from player.player import Player
-from wrapper.wrapper import Wrapper
-from wrapper.wrapper_snake import WrapperSnake
+
+if TYPE_CHECKING:
+    from data.data_game import DataGame
+    from logic_game_snake import LogicGameSnake
+    from player.player import Player
+    from wrapper.wrapper import Wrapper
+    from wrapper.wrapper_snake import WrapperSnake
 
 
 def get_wrapper_from_chunk_that_collided(data_game: DataGame, chunk: Chunk) -> Union[Wrapper, None]:
@@ -105,14 +114,72 @@ def get_action_from_tuple_int_action_relative(action: Action,
 
 
 def initialize_easy_player_wrapper_snake(
+        settings: Settings,
+        logic_game_snake: LogicGameSnake,
         player_wrapper_snake: Player[WrapperSnake],
         action_initial: Action,
         amount_chunk_to_add: int) -> None:
+    """
+    You can only call this once a game is created but not ran
+
+    :param settings:
+    :param logic_game_snake:
+    :param player_wrapper_snake:
+    :param action_initial:
+    :param amount_chunk_to_add:
+    :return:
+    """
+
+    dict_k_action_v_position_delta = {
+        Action.RIGHT: (settings.block_size, 0),
+        Action.LEFT: (-settings.block_size, 0),
+        Action.UP: (0, settings.block_size),
+        Action.DOWN: (0, -settings.block_size),
+
+    }
 
     player_wrapper_snake.set_action(action_initial)
 
-    # TODO: COMPLETE LATER IDK
+    chunk_selected = player_wrapper_snake.get_wrapper().get_container_chunk().get_chunk_first()
 
+    list_chunk_new: List[Chunk] = []
+
+    for index in range(amount_chunk_to_add):
+
+        action_reverse = DICT_K_ACTION_V_ACTION_REVERSE.get(action_initial)
+
+        position_delta = dict_k_action_v_position_delta.get(action_reverse)
+
+        chunk_new = Chunk(
+            chunk_selected.x + position_delta[0],
+            chunk_selected.y + position_delta[1]
+        )
+
+        # Check if placement of chunk is valid
+        if (get_bool_wrapper_from_chunk_that_collided(logic_game_snake.data_game, chunk_new) and
+                chunk_new not in list_chunk_new):
+
+            list_chunk_new.append(chunk_new)
+            chunk_selected = chunk_new
+
+        # Fallback, use an alternative position_delta
+        else:
+            for action, position_delta in dict_k_action_v_position_delta.items():
+                if action == action_initial:  # Skip already tried action
+                    continue
+
+                chunk_new.x = position_delta[0]
+                chunk_new.y = position_delta[1]
+
+                if (get_bool_wrapper_from_chunk_that_collided(
+                        logic_game_snake.data_game,chunk_new) and
+                        chunk_new not in list_chunk_new):
+                    list_chunk_new.append(chunk_new)
+                    chunk_selected = chunk_new
+                    break
+
+    for chunk_new in list_chunk_new:
+        player_wrapper_snake.get_wrapper().get_container_chunk().add_new_chunk(chunk_new)
 
 
 class DequeFastLookUp(deque[TYPEVAR_ANY]):

@@ -151,7 +151,7 @@ class PlayerKeyboard(Player[WrapperSnake]):
 
         scan_code_wrapper_keys: ScancodeWrapper = pygame.key.get_pressed()
 
-        self.action = None
+        # self.action = None  # TODO: USED FOR DEBUGGING
 
         # Order of events in LIST_K_PYGAME_EVENT_KEY determines priority
         for pygame_event_key in LIST_K_PYGAME_EVENT_KEY:

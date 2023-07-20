@@ -72,6 +72,14 @@ class AgentQLearning:
         np_ndarray_game_states = np.array(list_game_state)
         np_ndarray_game_states_next = np.array(list_game_states_next)
 
+        # print("#" * 100)
+        # print("states", list_game_state)
+        # print("actions", list_tuple_int_action)
+        # print("rewards", list_reward)
+        # print("next_states", list_game_states_next)
+        # print("dones", list_tuple_bool_player_dead)
+        # print("#" * 100)
+
         self.trainer.train_step_input_multiple(
             np_ndarray_game_states,
             list_tuple_int_action,

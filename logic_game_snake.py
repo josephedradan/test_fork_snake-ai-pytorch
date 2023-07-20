@@ -182,10 +182,12 @@ class LogicGameSnake:
                          player: Player,
                          action_from_player: Action) -> DataPlayStepResult:
 
+        # This function contains data about the current play set which is why .reset() must be called
         self.data_play_step_result.reset()
+
         self.data_game.counter_play_step += 1
 
-        player.get_data_player().counter_play_step_since_last_reward += 1  # TODO: CAN MOVE INTO PLAYER AI
+        player.get_data_player().counter_play_step_since_last_food += 1
 
         wrapper_from_player: Wrapper = player.get_wrapper()
 
@@ -218,7 +220,7 @@ class LogicGameSnake:
         if isinstance(wrapper_object_that_collided, WrapperFood):
             self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
 
-            player.get_data_player().counter_play_step_since_last_reward = 0  # TODO: CAN MOVE INTO PLAYER AI
+            player.get_data_player().counter_play_step_since_last_food = 0
             player.get_data_player().score += 1
 
             self._place_food(wrapper_object_that_collided, chunk_snake_to_move_possible)
@@ -234,14 +236,12 @@ class LogicGameSnake:
             self.data_play_step_result.bool_dead = True
             self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
 
-
             print("Hit Snake")
 
         # Check collision player with wall
         elif isinstance(wrapper_object_that_collided, WrapperWall):
             self.data_play_step_result.bool_dead = True
             self.data_play_step_result.wrapper_object_that_collided = wrapper_object_that_collided
-
 
             print("Hit wall")
 
@@ -334,12 +334,13 @@ class LogicGameSnake:
         # Loop control over WrapperSnake for fine control
         while self.data_game.deque_player:
 
+            print("*** FUCK ***", self.data_play_step_result.bool_dead)
+
             player: Player = self.data_game.deque_player.popleft()
 
             action_from_player: Action = player.get_action_new(self.data_game)
 
             print(GeneratorGameStateFoodSingle.get_game_state(self.data_game, player))
-
 
             data_play_step_result = self.play_step_player(
                 player,

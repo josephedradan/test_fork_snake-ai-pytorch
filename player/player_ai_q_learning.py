@@ -94,7 +94,7 @@ class PlayerAIQLearning(Player[WrapperSnake]):
     #     self.score = 0
     #     self.chunk_food = None
     #     self._place_food()
-    #     self.counter_play_step_since_last_reward = 0
+    #     self.counter_play_step_since_last_food = 0
 
     def get_action_new(self, data_game: DataGame) -> TYPE_ACTION_POSSIBLE:
 
@@ -112,25 +112,31 @@ class PlayerAIQLearning(Player[WrapperSnake]):
     def _respond_to_data_play_step_result(self,
                                           data_game: DataGame,
                                           data_play_step_result: DataPlayStepResult,
-                                          ):
+                                          ) -> int:
 
         # If player collided
         if data_play_step_result.wrapper_object_that_collided is not None:
 
             # Assign the reward based on the collision
-            self.data_player.reward = (
+            reward = (
                 DICT_K_TYPE_WRAPPER_V_REWARD.get(type(data_play_step_result.wrapper_object_that_collided), 0)
             )
 
         # Kill the player if the player is stalling
-        elif self.get_data_player().counter_play_step_since_last_reward > 100 * len(
+        elif self.get_data_player().counter_play_step_since_last_food > 100 * len(
                 self.wrapper.get_container_chunk()):  # TODO CHANGE 100 TO SOMETHING ELSE
             data_play_step_result.bool_dead = True
-            self.data_player.reward = -10
+            reward = -10
+
+        else:
+            reward = 0
+
+        return reward
 
     def _do_reinforcement_learning_logic(self,
                                          data_game: DataGame,
                                          data_play_step_result: DataPlayStepResult,
+                                         reward: int
                                          ):
 
         game_state_new = self.generator_game_state.get_game_state(data_game, self)
@@ -138,7 +144,7 @@ class PlayerAIQLearning(Player[WrapperSnake]):
         self.agent_q_learning.train_short_memory(
             self.game_state,
             self.tuple_int_action_relative,
-            self.data_player.reward,
+            reward,
             game_state_new,
             data_play_step_result.bool_dead,
         )
@@ -146,7 +152,7 @@ class PlayerAIQLearning(Player[WrapperSnake]):
         self.agent_q_learning.remember(
             self.game_state,
             self.tuple_int_action_relative,
-            self.data_player.reward,
+            reward,
             game_state_new,
             data_play_step_result.bool_dead,
         )
@@ -180,9 +186,9 @@ class PlayerAIQLearning(Player[WrapperSnake]):
         :return:
         """
 
-        self._respond_to_data_play_step_result(data_game, data_play_step_result)
+        reward = self._respond_to_data_play_step_result(data_game, data_play_step_result)
 
-        self._do_reinforcement_learning_logic(data_game, data_play_step_result)
+        self._do_reinforcement_learning_logic(data_game, data_play_step_result, reward)
 
     # def _place_food(self):
     #     x = random.randint(0, (self.window_width - BLOCK_SIZE) // BLOCK_SIZE) * BLOCK_SIZE

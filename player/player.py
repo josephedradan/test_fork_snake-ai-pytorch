@@ -121,4 +121,4 @@ class Player(ABC, Generic[TYPEVAR_WRAPPER]):
     #     # self.score = 0
     #     # self.chunk_food = None
     #     # self._place_food()
-    #     # self.counter_play_step_since_last_reward = 0
+    #     # self.counter_play_step_since_last_food = 0

@@ -98,7 +98,7 @@ class Condition(IntEnum):
     Generic state container
 
     Notes:
-        Basically when a boolean is not enough
+        When a boolean is not enough...
     """
     STATE_1 = auto()
     STATE_2 = auto()

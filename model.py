@@ -53,13 +53,13 @@ class QTrainer:
         torch_tensor_game_states = torch.tensor(np_ndarray_game_states, dtype=torch.float)
         torch_tensor_action = torch.tensor(sequence_action, dtype=torch.long)
         torch_tensor_reward = torch.tensor(sequence_reward, dtype=torch.float)
-        torch_tensor_game_state_nexts = torch.tensor(np_ndarray_game_states_next, dtype=torch.float)
+        torch_tensor_game_states_next = torch.tensor(np_ndarray_game_states_next, dtype=torch.float)
 
         self.train_step_train(
             torch_tensor_game_states,
             torch_tensor_action,
             torch_tensor_reward,
-            torch_tensor_game_state_nexts,
+            torch_tensor_game_states_next,
             sequence_bool_player_dead
         )
 
@@ -149,7 +149,7 @@ class QTrainer:
                 """
                 # 2: q_new = r + y * max(next_predicted Q value) -> only do this if not sequence_bool_player_dead
 
-                print(self.model(torch_tensor_game_states_next[index_game]))
+                # print(self.model(torch_tensor_game_states_next[index_game]))
 
                 q_new = (
                         torch_tensor_reward[index_game] +
@@ -169,6 +169,16 @@ class QTrainer:
             # print("AAAA")
             # print(torch_tensor_actions_target[index_game])
 
+
+        # print("---------------------")
+        # print("state",torch_tensor_game_states)
+        # print("next_state", torch_tensor_game_states_next)
+        # print("action", torch_tensor_actions_prediction)
+        # print("reward", torch_tensor_actions_prediction)
+        # print("done", sequence_bool_player_dead)
+        # print("pred", torch_tensor_actions_prediction)
+        # print()
+        # input()
 
         # print("FFFFFFFFFFFFF")
         # print(torch_tensor_actions_target)

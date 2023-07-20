@@ -41,7 +41,6 @@ from typing import Union
 import pygame
 
 from _settings import Settings
-from constants import Action
 from constants import ColorRGB
 from constants import Condition
 from constants import LIST_ACTION_CYCLE_CLOCKWISE
@@ -54,6 +53,7 @@ from player.player_ai_q_learning import PlayerAIQLearning
 from player.player_keyboard import PlayerKeyboard
 from pygame_abstraction.text_box import TextBox
 from pygame_abstraction.text_button import TextButton
+from utility import initialize_easy_player_wrapper_snake
 
 
 class GameSnakePygame(GameSnake):
@@ -385,20 +385,25 @@ class GameSnakePygame(GameSnake):
                         ##########
 
                         for index_run in range(amount_run):
-
                             # Get a random Action because the AI will crash without it
                             action_random = random.choice(LIST_ACTION_CYCLE_CLOCKWISE)
 
-                            self.player_ai_q_learning.get_data_player().reset()
-                            self.player_ai_q_learning.set_action(Action.RIGHT)
-                            self.player_ai_q_learning.get_wrapper().get_container_chunk().get_chunk_first()
-
+                            self.player_ai_q_learning.get_data_player().reset()  # WARNING: MAKE SURE TO CALL THIS
+                            # self.player_ai_q_learning.set_action(Action.RIGHT)
 
                             logic_game_snake = LogicGameSnake(
                                 [self.player_ai_q_learning],
                                 self.settings,
                                 amount_of_block_width,
                                 amount_of_block_height
+                            )
+
+                            initialize_easy_player_wrapper_snake(
+                                self.settings,
+                                logic_game_snake,
+                                self.player_ai_q_learning,
+                                action_random,
+                                2
                             )
 
                             # Make pygame graphics for the logic_game_snake
@@ -411,6 +416,8 @@ class GameSnakePygame(GameSnake):
                             )
 
                             data_game = graphics_pygame.run_loop()
+
+                            print("GAMEOVER!!!!!!!!!!!!!!!")
 
                         return None
 

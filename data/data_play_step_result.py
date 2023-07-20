@@ -24,6 +24,7 @@ Reference:
 from typing import Union
 
 from data.data import Data
+from wrapper.wrapper import Wrapper
 
 
 class DataPlayStepResult(Data):
@@ -31,13 +32,13 @@ class DataPlayStepResult(Data):
     A lite container for player data stuff
 
     """
-    bool_dead: Union[bool, None]
-    wrapper_object_that_collided: Union[bool, None]
+    bool_dead: bool
+    wrapper_object_that_collided: Union[Wrapper, None]
 
     def __init__(self):
-        self.bool_dead = None
+        self.bool_dead = False
         self.wrapper_object_that_collided = None
 
     def reset(self):
-        self.bool_dead = None
+        self.bool_dead = False
         self.wrapper_object_that_collided = None
