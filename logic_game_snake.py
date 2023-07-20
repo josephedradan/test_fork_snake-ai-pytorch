@@ -35,7 +35,6 @@ from constants import Action
 from container_chunk.container_chunk_snake import ContainerChunkSnake
 from data.data_game import DataGame
 from data.data_play_step_result import DataPlayStepResult
-from game_state.generator_game_state_food_single import GeneratorGameStateFoodSingle
 from player.player import Player
 from utility import get_wrapper_from_chunk_that_collided
 from wrapper.wrapper import Wrapper
@@ -214,7 +213,8 @@ class LogicGameSnake:
         )
 
         # Move the player by placing chunk_snake_to_move_possible at the front of container_chunk_snake
-        container_chunk_snake.add_new_chunk_front(chunk_snake_to_move_possible) # FIXME ME THIS HERE WILL PREVNT CRACHES
+        container_chunk_snake.add_new_chunk_front(
+            chunk_snake_to_move_possible)  # FIXME ME THIS HERE WILL PREVNT CRACHES
 
         # Check collision player with food
         if isinstance(wrapper_object_that_collided, WrapperFood):
@@ -292,55 +292,18 @@ class LogicGameSnake:
 
         return chunk_snake_last_to_move_possible, x_chunk_last_old, y_chunk_last_old
 
-    # def get_collided(self, chunk: Chunk) -> bool:
-    #     """
-    #     Check if a chunk has collided with something in the logic_game_snake
-    #
-    #     Notes:
-    #         1. Check if the chunk_front is colliding
-    #
-    #     :param chunk:
-    #     :return:
-    #     """
-    #
-    #     # Collision with boundary
-    #     if (chunk.x > self.window_width - self.settings.block_size or
-    #             chunk.x < 0 or
-    #             chunk.y > self.window_height - self.settings.block_size or
-    #             chunk.y < 0):
-    #         return True
-    #
-    #     # for snake in self.data_game.list_wrapper_snake:
-    #     #     if snake.get_container_chunk_snake().is_chunk_in_snake(chunk):
-    #     #         return True
-    #
-    #     return False
-
     def get_generator_run_step(self) -> Generator[DataGame, None, None]:
         """
 
         :return:
         """
-        # self.data_game.deque_player = deque(self.data_game.list_player)
-
-        #
-        # if callback_for_iteration_end is None:
-        #     def callback_does_nothing():
-        #         pass
-        #
-        #     callback_for_iteration_end = callback_does_nothing
-        #
 
         # Loop control over WrapperSnake for fine control
         while self.data_game.deque_player:
 
-            print("*** FUCK ***", self.data_play_step_result.bool_dead)
-
             player: Player = self.data_game.deque_player.popleft()
 
             action_from_player: Action = player.get_action_new(self.data_game)
-
-            print(GeneratorGameStateFoodSingle.get_game_state(self.data_game, player))
 
             data_play_step_result = self.play_step_player(
                 player,
@@ -380,13 +343,3 @@ class LogicGameSnake:
         #     yield self.data_game
 
         # return self.data_game
-
-# def main():
-#     game = LogicGameSnake()
-#
-#     game.run_loop()
-#
-#
-# if __name__ == '__main__':
-#     main()
-#     # print(type(pygame))

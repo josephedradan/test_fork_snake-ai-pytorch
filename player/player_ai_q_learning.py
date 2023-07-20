@@ -79,23 +79,6 @@ class PlayerAIQLearning(Player[WrapperSnake]):
         #
         # self._initialize()
 
-    # def _initialize(self):
-    #     # init logic_game_snake game_state
-    #     self.action_current = Action.RIGHT
-    #
-    #     self.head = Chunk(self.window_width / 2, self.window_height / 2)
-    #
-    #     self.list_point_snake = [
-    #         self.head,
-    #         Chunk(self.head.x - BLOCK_SIZE, self.head.y),
-    #         Chunk(self.head.x - (2 * BLOCK_SIZE), self.head.y)
-    #     ]
-    #
-    #     self.score = 0
-    #     self.chunk_food = None
-    #     self._place_food()
-    #     self.counter_play_step_since_last_food = 0
-
     def get_action_new(self, data_game: DataGame) -> TYPE_ACTION_POSSIBLE:
 
         # Get game game_state based on DataGame
