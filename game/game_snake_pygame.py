@@ -50,7 +50,7 @@ from game.game_snake import GameSnake
 from graphics.graphics_pygame import GraphicsPygame
 from logic_game_snake import LogicGameSnake
 from player.player_ai_q_learning import PlayerAIQLearning
-from player.player_keyboard import PlayerKeyboard
+from player.player_keyboard_pygame import PlayerKeyboardPyGame
 from pygame_abstraction.text_box import TextBox
 from pygame_abstraction.text_button import TextButton
 from utility import initialize_easy_player_wrapper_snake
@@ -248,7 +248,7 @@ class GameSnakePygame(GameSnake):
 
                         # Make new logic_game_snake
                         logic_game_snake = LogicGameSnake(
-                            [PlayerKeyboard()],
+                            [PlayerKeyboardPyGame()],
                             self.settings,
                             amount_of_block_width,
                             amount_of_block_height

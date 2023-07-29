@@ -64,7 +64,7 @@ class ContainerChunkSnake(ContainerChunk):
         super(ContainerChunkSnake, self).pop_chunk(chunk)
         self._deque_chunk.remove(chunk)
 
-    def get_chunk_first(self) -> Chunk:
+    def get_chunk_primary(self) -> Chunk:
         """
         This should be an O(1) operation
 

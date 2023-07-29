@@ -41,6 +41,9 @@ class Graphics(ABC):
         self.settings = settings
         self.logic_game_snake = logic_game_snake
 
+    def get_logic_game_snake(self) -> LogicGameSnake:
+        return self.logic_game_snake
+
     @abstractmethod
     def draw_graphics(self):
         """
@@ -49,9 +52,6 @@ class Graphics(ABC):
         :return:
         """
         pass
-
-    def get_logic_game_snake(self) -> LogicGameSnake:
-        return self.logic_game_snake
 
     @abstractmethod
     def run_loop(self) -> DataGame:  # TODO: MAYBE RETURN SOMETHING ELSE? MORE GAME DATA???

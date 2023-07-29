@@ -44,3 +44,11 @@
                                                 If Bool Dead is False
                                                     
                     
+# On the subject of playing as a food or a wall
+
+    Problem:
+        player_ai_q_learning requires a GeneratorGameStateFoodSingle which requires a method
+        called get_chunk_primary which only exists on a ContainerChunkSnake which does not exists on
+        a ContainerChunk
+        
+        IF I WANT OT BE A FOOD THEN I WANT TO BE A FOOD

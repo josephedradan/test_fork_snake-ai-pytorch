@@ -258,7 +258,7 @@ class LogicGameSnake:
         :return:
         """
 
-        chunk_snake_first: Chunk = container_chunk_snake.get_chunk_first()
+        chunk_snake_first: Chunk = container_chunk_snake.get_chunk_primary()
 
         # print(container_chunk_snake._deque_chunk)
         # print(chunk_snake_first)
@@ -294,7 +294,10 @@ class LogicGameSnake:
 
     def get_generator_run_step(self) -> Generator[DataGame, None, None]:
         """
+        Generator that runs 1 game step every next call
 
+        Notes:
+            Loop over this generator to run the game
         :return:
         """
 
@@ -311,7 +314,7 @@ class LogicGameSnake:
             )
 
             # This call must be made before the continue
-            player.send_feedback_of_step(self.data_game, data_play_step_result)
+            player.receive_feedback_of_step(self.data_game, data_play_step_result)
 
             if data_play_step_result.bool_dead is True:
                 # Continue will skip re-adding player back to the deque
@@ -338,7 +341,7 @@ class LogicGameSnake:
         #         # Continue will skip re-adding deque_player back
         #         continue
         #
-        #     player.send_feedback_of_step(self.data_game, data_play_step_result)
+        #     player.receive_feedback_of_step(self.data_game, data_play_step_result)
         #
         #     yield self.data_game
 

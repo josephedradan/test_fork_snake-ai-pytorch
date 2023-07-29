@@ -63,7 +63,7 @@ class DataGame(Data):
 
     #####
 
-    list_pygame_event: List[pygame.event.Event]
+    # list_pygame_event: List[pygame.event.Event]
     counter_play_step: int
     deque_player: Union[Deque[Player], None]
     bool_game_over: bool
@@ -88,8 +88,6 @@ class DataGame(Data):
         # Variable data
         ####################
 
-        self.list_pygame_event = []
-
         self.counter_play_step = 0
 
         self.deque_player = None
@@ -103,7 +101,6 @@ class DataGame(Data):
         )
 
     def reset(self):
-        self.list_pygame_event = []
 
         self.counter_play_step = 0
 

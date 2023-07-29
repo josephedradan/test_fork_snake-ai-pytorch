@@ -64,10 +64,10 @@ class Player(ABC, Generic[TYPEVAR_WRAPPER]):
     def get_wrapper(self) -> TYPEVAR_WRAPPER:
         return self.wrapper
 
-    def send_feedback_of_step(self,
-                              data_game: DataGame,
-                              data_player: DataPlayStepResult,
-                              ):
+    def receive_feedback_of_step(self,
+                                 data_game: DataGame,
+                                 data_player: DataPlayStepResult,
+                                 ):
         """
         Essentially a callback that receives feedback after a play step has happened
 

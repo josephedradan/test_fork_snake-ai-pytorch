@@ -122,6 +122,13 @@ def initialize_easy_player_wrapper_snake(
     """
     You can only call this once a game is created but not ran
 
+    Notes:
+        This will:
+            1. Get the snake position
+            2. Get snake direction (Action)
+            3. Add new chunks to the snake that a valid and will most likely not collide with the snake
+            going in its initial direction (Action)
+
     :param settings:
     :param logic_game_snake:
     :param player_wrapper_snake:
@@ -140,45 +147,41 @@ def initialize_easy_player_wrapper_snake(
 
     player_wrapper_snake.set_action(action_initial)
 
-    chunk_selected = player_wrapper_snake.get_wrapper().get_container_chunk().get_chunk_first()
+    chunk_current = player_wrapper_snake.get_wrapper().get_container_chunk().get_chunk_primary()
 
-    list_chunk_new: List[Chunk] = []
+    action_reverse = DICT_K_ACTION_V_ACTION_REVERSE.get(action_initial)
 
-    for index in range(amount_chunk_to_add):
+    list_action = list(dict_k_action_v_position_delta.keys())
+    list_position_delta = list(dict_k_action_v_position_delta.values())
 
-        action_reverse = DICT_K_ACTION_V_ACTION_REVERSE.get(action_initial)
+    index_action_reverse = list_action.index(action_reverse)
 
-        position_delta = dict_k_action_v_position_delta.get(action_reverse)
+    list_chunk_new_to_add: List[Chunk] = []
 
-        chunk_new = Chunk(
-            chunk_selected.x + position_delta[0],
-            chunk_selected.y + position_delta[1]
-        )
+    for _index in range(amount_chunk_to_add):
 
-        # Check if placement of chunk is valid
-        if (get_bool_wrapper_from_chunk_that_collided(logic_game_snake.data_game, chunk_new) and
-                chunk_new not in list_chunk_new):
+        for index_selected in range(len(list_position_delta)):
+            index_selected_corrected = (index_action_reverse + index_selected) % len(list_position_delta)
 
-            list_chunk_new.append(chunk_new)
-            chunk_selected = chunk_new
+            position_delta = list_position_delta[index_selected_corrected]
 
-        # Fallback, use an alternative position_delta
-        else:
-            for action, position_delta in dict_k_action_v_position_delta.items():
-                if action == action_initial:  # Skip already tried action
-                    continue
+            chunk_new = Chunk(
+                chunk_current.x + position_delta[0],
+                chunk_current.y + position_delta[1]
+            )
 
-                chunk_new.x = position_delta[0]
-                chunk_new.y = position_delta[1]
+            # Check if placement of chunk is valid
+            if not (get_bool_wrapper_from_chunk_that_collided(logic_game_snake.data_game, chunk_new) and
+                    chunk_new not in list_chunk_new_to_add):
 
-                if (get_bool_wrapper_from_chunk_that_collided(
-                        logic_game_snake.data_game,chunk_new) and
-                        chunk_new not in list_chunk_new):
-                    list_chunk_new.append(chunk_new)
-                    chunk_selected = chunk_new
-                    break
+                list_chunk_new_to_add.append(chunk_new)
 
-    for chunk_new in list_chunk_new:
+                # Set chunk to extend onto
+                chunk_current = chunk_new
+                break
+
+    # Add new chunks to snake
+    for chunk_new in list_chunk_new_to_add:
         player_wrapper_snake.get_wrapper().get_container_chunk().add_new_chunk(chunk_new)
 
 

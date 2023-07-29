@@ -122,7 +122,6 @@ class QTrainer:
                 alpha = learning rate
                 gamma = discount rate
             
-
             
         """
         for index_game in range(len(sequence_bool_player_dead)):

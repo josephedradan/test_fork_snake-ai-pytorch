@@ -51,9 +51,9 @@ from pygame.key import ScancodeWrapper
 
 from constants import Action
 from constants import DICT_K_ACTION_V_ACTION_REVERSE
+from constants import TYPEVAR_WRAPPER
 from data.data_game import DataGame
 from player.player import Player
-from wrapper.wrapper_snake import WrapperSnake
 
 pygame.init()
 
@@ -71,13 +71,10 @@ DICT_K_PYGAME_EVENT_KEY_V_ACTION: Dict[int, Action] = {
 LIST_K_PYGAME_EVENT_KEY = DICT_K_PYGAME_EVENT_KEY_V_ACTION.keys()
 
 
-class PlayerKeyboard(Player[WrapperSnake]):
+class PlayerKeyboardPyGame(Player[TYPEVAR_WRAPPER]):
 
     def __init__(self):
-        """
-        :param width:
-        :param height:
-        """
+
         super().__init__()
 
         # super().__init__(action_initial, x_initial, y_initial)
@@ -95,11 +92,11 @@ class PlayerKeyboard(Player[WrapperSnake]):
     #
     #     """
     #     ####################
-    #     PlayerKeyboard game_state related stuff
+    #     PlayerKeyboardPyGame game_state related stuff
     #     ####################
     #     """
     #
-    #     # Initialize PlayerKeyboard Condition
+    #     # Initialize PlayerKeyboardPyGame Condition
     #     self.action_current: Action = Action.RIGHT
     #
     #     self.chunk_head: Chunk = Chunk(640 / 2, 480 / 2)
@@ -263,7 +260,7 @@ class PlayerKeyboard(Player[WrapperSnake]):
 #         self.chunk_head = Chunk(x, y)
 #
 # if __name__ == '__main__':
-#     logic_game_snake = PlayerKeyboard(
+#     logic_game_snake = PlayerKeyboardPyGame(
 #         Action.RIGHT,
 #         640 // 2,
 #         480 // 2,

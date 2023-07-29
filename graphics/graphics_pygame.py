@@ -171,17 +171,16 @@ class GraphicsPygame(Graphics):
 
         generator_run_step = self.logic_game_snake.get_generator_run_step()
 
-        self.logic_game_snake.data_game.list_pygame_event = pygame.event.get()
-
+        # FPS based game
         if bool_fps_bound:
             for data_game in generator_run_step:
                 list_pygame_event = pygame.event.get()
 
-                data_game.list_pygame_event = list_pygame_event
-
                 # This loop prevents the pygame window from hanging
                 for event in list_pygame_event:
-                    pass
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit(0)
 
                 self.draw_graphics()
                 self.clock.tick(self.settings.fps)
@@ -194,12 +193,11 @@ class GraphicsPygame(Graphics):
 
                 list_pygame_event = pygame.event.get()
 
-                # Update the data_game.list_pygame_event
-                self.logic_game_snake.data_game.list_pygame_event = list_pygame_event
-
                 # This loop prevents the pygame window from hanging
                 for event in list_pygame_event:
-                    pass
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        exit(0)
 
                 if time_now - time_previous > game_speed:
                     try:

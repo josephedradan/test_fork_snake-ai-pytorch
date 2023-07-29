@@ -78,7 +78,7 @@ def train(game_snake: GameSnake, settings: Settings,
                 record = score
                 agent.model.save()
 
-            print('PlayerKeyboard', agent.amount_games, 'Score', score, 'Record:', record)
+            print('PlayerKeyboardPyGame', agent.amount_games, 'Score', score, 'Record:', record)
 
             plot_scores.append(score)
             total_score += score

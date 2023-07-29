@@ -31,16 +31,16 @@ from constants import TYPE_GAME_STATE
 from data.data_game import DataGame
 from game_state.generator_game_state import GeneratorGameState
 from player.player import Player
-from utility import get_bool_wrapper_from_chunk_that_collided
 from utility import get_wrapper_from_chunk_that_collided
 from wrapper.wrapper_food import WrapperFood
+from wrapper.wrapper_snake import WrapperSnake
 
 
 class GeneratorGameStateFoodSingle(GeneratorGameState):
 
     @staticmethod
-    def get_game_state(data_game: DataGame, player: Player) -> TYPE_GAME_STATE:
-        chunk_snake_head: Chunk = player.get_wrapper().get_container_chunk().get_chunk_first()
+    def get_game_state(data_game: DataGame, player: Player[WrapperSnake]) -> TYPE_GAME_STATE:
+        chunk_snake_head: Chunk = player.get_wrapper().get_container_chunk().get_chunk_primary()
 
         chunk_pseudo_left = Chunk(chunk_snake_head.x - data_game.settings.block_size, chunk_snake_head.y)
         chunk_pseudo_right = Chunk(chunk_snake_head.x + data_game.settings.block_size, chunk_snake_head.y)
@@ -67,7 +67,6 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
             if _dict_k_chunk_v_chunk:
                 # WARNING : Potentially slow if there are a lot of keys
                 chunk_food = tuple(_dict_k_chunk_v_chunk.keys())[0]
-
 
         # print("PLAYER", chunk_snake_head)
         # print("CHUNK L", chunk_pseudo_left)

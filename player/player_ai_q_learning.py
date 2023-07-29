@@ -4,6 +4,7 @@ from typing import Union
 
 from agent.agent_q_learning import AgentQLearning
 from constants import Action
+from constants import TYPEVAR_WRAPPER
 from constants import TYPE_ACTION_POSSIBLE
 from constants import TYPE_GAME_STATE
 from constants import TYPE_TUPLE_INT_ACTION
@@ -29,7 +30,7 @@ DICT_K_TYPE_WRAPPER_V_REWARD: Dict[Type[Wrapper], int] = {
 }
 
 
-class PlayerAIQLearning(Player[WrapperSnake]):
+class PlayerAIQLearning(Player[TYPEVAR_WRAPPER]):
     window_width: int
     window_height: int
 
@@ -73,7 +74,7 @@ class PlayerAIQLearning(Player[WrapperSnake]):
         #
         # """
         # ####################
-        # PlayerKeyboard game_state related stuff
+        # PlayerKeyboardPyGame game_state related stuff
         # ####################
         # """
         #
@@ -158,10 +159,10 @@ class PlayerAIQLearning(Player[WrapperSnake]):
             self.plot_scores_mean.append(score_mean)
             plot(self.plot_scores, self.plot_scores_mean)
 
-    def send_feedback_of_step(self,
-                              data_game: DataGame,
-                              data_play_step_result: DataPlayStepResult,
-                              ):
+    def receive_feedback_of_step(self,
+                                 data_game: DataGame,
+                                 data_play_step_result: DataPlayStepResult,
+                                 ):
         """
 
         :param data_game:
