@@ -48,6 +48,7 @@ from constants import TUPLE_INT_ACTION_LEFT
 from constants import TUPLE_INT_ACTION_RIGHT
 from constants import TYPEVAR_ANY
 from constants import TYPE_ACTION_POSSIBLE
+from constants import TYPE_NP_NDARRAY_GAME_STATE_GENERIC
 from constants import TYPE_TUPLE_INT_ACTION
 from game_state.generator_game_state import GeneratorGameState
 
@@ -213,6 +214,24 @@ Meta python stuff
 """
 
 
+def get_type_return_from_generator_game_state(
+        class_generator_game_state: Type[GeneratorGameState]) -> TYPE_NP_NDARRAY_GAME_STATE_GENERIC:
+    """
+    Get the return type from a GeneratorGameState.get_game_state call
+
+    :param class_generator_game_state:
+    :return:
+    """
+    dict_k_key_v_type = get_type_hints(
+        class_generator_game_state.get_game_state,
+        include_extras=True  # Will capture the full typing.Annotated type
+    )
+
+    type_return = dict_k_key_v_type.get("return")
+
+    return type_return
+
+
 def get_shape_from_generator_game_state(class_generator_game_state: Type[GeneratorGameState]) -> Tuple[int, ...]:
     """
     This is used to get the return shape of a GeneratorGameState.get_game_state call.
@@ -237,16 +256,13 @@ def get_shape_from_generator_game_state(class_generator_game_state: Type[Generat
     :param class_generator_game_state:
     :return:
     """
-    dict_k_key_v_type = get_type_hints(
-        class_generator_game_state.get_game_state,
-        include_extras=True  # Will capture the full typing.Annotated type
-    )
 
-    type_return = dict_k_key_v_type.get("return")
+    type_return = get_type_return_from_generator_game_state(class_generator_game_state)
 
     shape = type_return.__dict__.get("__metadata__")[0].__dict__.get("__args__")
 
     return shape
+
 
 """
 ####################
@@ -255,7 +271,7 @@ Miscellaneous
 """
 
 
-class DequeFastLookUp(deque[TYPEVAR_ANY]):
+class DequeSet(deque[TYPEVAR_ANY]):
     """
 
     Notes:
@@ -280,7 +296,7 @@ class DequeFastLookUp(deque[TYPEVAR_ANY]):
         self.set_.add(x)
 
     def copy(self) -> deque[[TYPEVAR_ANY]]:
-        return DequeFastLookUp(self)
+        return DequeSet(self)
 
     def clear(self) -> None:
         super().clear()
@@ -300,11 +316,11 @@ class DequeFastLookUp(deque[TYPEVAR_ANY]):
 
     def pop(self) -> TYPEVAR_ANY:
         self.set_.pop()
-        return super(DequeFastLookUp, self).pop()
+        return super(DequeSet, self).pop()
 
     def popleft(self) -> TYPEVAR_ANY:
         self.set_.pop()
-        return super(DequeFastLookUp, self).popleft()
+        return super(DequeSet, self).popleft()
 
     def __contains__(self, item: TYPEVAR_ANY):
         return item in self.set_

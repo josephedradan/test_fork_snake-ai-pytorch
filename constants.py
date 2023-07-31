@@ -55,8 +55,6 @@ TEXT_LINE_SPACING_AMOUNT = FONT_SIZE + 5
 
 TYPE_POSITION = Tuple[int, int]
 
-TYPE_GAME_STATE = Union[Tuple[int, ...], np.ndarray, torch.Tensor]
-
 TYPE_BOOL_SNAKE_DEAD = bool
 TYPE_WRAPPER_POSSIBLE = Union[Wrapper, None]
 TYPE_CALLABLE_FOR_ITERATION_END = Callable[[TYPE_BOOL_SNAKE_DEAD, TYPE_WRAPPER_POSSIBLE], None]
@@ -114,6 +112,8 @@ Machine learning stuff
 
 Reference:
     Numpy Typing with specific shape and datatype
+        Notes:
+            Type hinting numpy.ndarray
         Reference:
             https://stackoverflow.com/questions/71109838/numpy-typing-with-specific-shape-and-datatype
 
@@ -123,12 +123,16 @@ Reference:
         Reference:
             https://stackoverflow.com/questions/21851985/difference-between-np-int-np-int-int-and-np-int-t-in-cython
 
-
 ####################
 """
 
-TYPE_NP_NDARRAY_11 = Annotated[npt.NDArray[int], Literal[11]]
-TYPE_NP_NDARRAY_13 = Annotated[npt.NDArray[int], Literal[13]]
+TYPEVAR_NP_GENERIC = TypeVar("TYPEVAR_NP_GENERIC", bound=np.generic)
+
+TYPE_NP_NDARRAY_GAME_STATE_GENERIC = Annotated[npt.NDArray[TYPEVAR_NP_GENERIC],
+                                               Tuple[int, ...]]
+
+TYPE_NP_NDARRAY_GAME_STATE_11 = Annotated[npt.NDArray[int], Literal[11]]
+TYPE_NP_NDARRAY_GAME_STATE_13 = Annotated[npt.NDArray[int], Literal[13]]
 
 """
 ####################

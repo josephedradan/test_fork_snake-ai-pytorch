@@ -10,7 +10,7 @@ import torch
 from torch import nn
 
 from constants import LIST_TUPLE_INT_ACTION_ORDERED
-from constants import TYPE_GAME_STATE
+from constants import TYPE_NP_NDARRAY_GAME_STATE_GENERIC
 from constants import TYPE_TUPLE_INT_ACTION
 from game_state.generator_game_state import GeneratorGameState
 from model import LinearQNet
@@ -29,7 +29,12 @@ class AgentQLearning:
         self.amount_games: int = 0
         self.epsilon: float = 0  # randomness
         self.gamma: float = 0.9  # discount rate (Must be smaller than 1)
-        self.deque_memory: Deque[Tuple[TYPE_GAME_STATE, TYPE_TUPLE_INT_ACTION, int, TYPE_GAME_STATE, bool]] = (
+
+        self.deque_memory: Deque[Tuple[TYPE_NP_NDARRAY_GAME_STATE_GENERIC,
+                                       TYPE_TUPLE_INT_ACTION,
+                                       int,
+                                       TYPE_NP_NDARRAY_GAME_STATE_GENERIC,
+                                       bool]] = (
             deque(maxlen=MAX_MEMORY)
         )
 
@@ -39,10 +44,10 @@ class AgentQLearning:
         self.trainer = QTrainer(self.model, learning_rate=LR, gamma=self.gamma)
 
     def remember(self,
-                 game_state: TYPE_GAME_STATE,
+                 game_state: TYPE_NP_NDARRAY_GAME_STATE_GENERIC,
                  action: TYPE_TUPLE_INT_ACTION,
                  reward: int,
-                 game_state_next: TYPE_GAME_STATE,
+                 game_state_next: TYPE_NP_NDARRAY_GAME_STATE_GENERIC,
                  done: bool):
         """
         Deque that stores the game game_state essentially and will pop old game states when more game states
@@ -64,10 +69,10 @@ class AgentQLearning:
         else:
             mini_sample = self.deque_memory
 
-        list_game_state: List[TYPE_GAME_STATE]
+        list_game_state: List[TYPE_NP_NDARRAY_GAME_STATE_GENERIC]
         list_tuple_int_action: List[TYPE_TUPLE_INT_ACTION]
         list_reward: List[int]
-        list_game_states_next: List[TYPE_GAME_STATE]
+        list_game_states_next: List[TYPE_NP_NDARRAY_GAME_STATE_GENERIC]
         list_tuple_bool_player_dead: List[bool]
 
         list_game_state, list_tuple_int_action, list_reward, list_game_states_next, list_tuple_bool_player_dead = (
@@ -97,16 +102,16 @@ class AgentQLearning:
         #    self.trainer.train_step_input_single(game_state, torch_tensor_action, torch_tensor_reward, torch_tensor_game_states_next, sequence_bool_player_dead)
 
     def train_short_memory(self,
-                           game_state: TYPE_GAME_STATE,
+                           game_state: TYPE_NP_NDARRAY_GAME_STATE_GENERIC,
                            tuple_int_action: TYPE_TUPLE_INT_ACTION,
                            reward: int,
-                           game_state_next: TYPE_GAME_STATE,
+                           game_state_next: TYPE_NP_NDARRAY_GAME_STATE_GENERIC,
                            done: bool
                            ):
 
         self.trainer.train_step_input_single(game_state, tuple_int_action, reward, game_state_next, done)
 
-    def get_tuple_int_action_relative(self, game_state: TYPE_GAME_STATE) -> TYPE_TUPLE_INT_ACTION:
+    def get_tuple_int_action_relative(self, game_state: TYPE_NP_NDARRAY_GAME_STATE_GENERIC) -> TYPE_TUPLE_INT_ACTION:
         """
 
         Notes:

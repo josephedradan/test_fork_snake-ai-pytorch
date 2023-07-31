@@ -27,7 +27,7 @@ import numpy as np
 
 from chunk import Chunk
 from constants import Action
-from constants import TYPE_NP_NDARRAY_11
+from constants import TYPE_NP_NDARRAY_GAME_STATE_11
 from data.data_game import DataGame
 from game_state.generator_game_state import GeneratorGameState
 from player.player import Player
@@ -40,7 +40,7 @@ from wrapper.wrapper_food import WrapperFood
 class GeneratorGameStateFoodSingle(GeneratorGameState):
 
     @staticmethod
-    def get_game_state(data_game: DataGame, player: Player[Wrapper]) -> TYPE_NP_NDARRAY_11:
+    def get_game_state(data_game: DataGame, player: Player[Wrapper]) -> TYPE_NP_NDARRAY_GAME_STATE_11:
         chunk_snake_head: Chunk = player.get_wrapper().get_container_chunk().get_chunk_first()
 
         chunk_pseudo_left = Chunk(chunk_snake_head.x - data_game.settings.block_size, chunk_snake_head.y)

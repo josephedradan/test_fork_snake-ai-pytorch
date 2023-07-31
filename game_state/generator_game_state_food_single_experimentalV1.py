@@ -27,7 +27,7 @@ import numpy as np
 
 from chunk import Chunk
 from constants import Action
-from constants import TYPE_NP_NDARRAY_13
+from constants import TYPE_NP_NDARRAY_GAME_STATE_13
 from data.data_game import DataGame
 from game_state.generator_game_state import GeneratorGameState
 from player.player import Player
@@ -39,7 +39,7 @@ from wrapper.wrapper import Wrapper
 class GeneratorGameStateFoodSingle_ExperimentalV1(GeneratorGameState):  # NOQA
 
     @staticmethod
-    def get_game_state(data_game: DataGame, player: Player[Wrapper]) -> TYPE_NP_NDARRAY_13:
+    def get_game_state(data_game: DataGame, player: Player[Wrapper]) -> TYPE_NP_NDARRAY_GAME_STATE_13:
         """
 
         Notes:

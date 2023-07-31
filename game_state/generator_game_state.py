@@ -24,8 +24,8 @@ Reference:
 from abc import ABC
 from abc import abstractmethod
 
+from constants import TYPE_NP_NDARRAY_GAME_STATE_GENERIC
 from player.player import Player
-from constants import TYPE_GAME_STATE
 from data.data_game import DataGame
 
 
@@ -33,5 +33,5 @@ class GeneratorGameState(ABC):
 
     @staticmethod
     @abstractmethod
-    def get_game_state(data_game: DataGame, player: Player) -> TYPE_GAME_STATE:
+    def get_game_state(data_game: DataGame, player: Player) -> TYPE_NP_NDARRAY_GAME_STATE_GENERIC:
         ...

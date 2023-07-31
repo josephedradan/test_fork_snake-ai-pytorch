@@ -6,7 +6,7 @@ from agent.agent_q_learning import AgentQLearning
 from constants import Action
 from constants import TYPEVAR_WRAPPER
 from constants import TYPE_ACTION_POSSIBLE
-from constants import TYPE_GAME_STATE
+from constants import TYPE_NP_NDARRAY_GAME_STATE_GENERIC
 from constants import TYPE_TUPLE_INT_ACTION
 from data.data_game import DataGame
 from data.data_play_step_result import DataPlayStepResult
@@ -51,7 +51,7 @@ class PlayerAIQLearning(Player[TYPEVAR_WRAPPER]):
         ####################
         """
 
-        self.game_state: Union[TYPE_GAME_STATE, None] = None
+        self.game_state: Union[TYPE_NP_NDARRAY_GAME_STATE_GENERIC, None] = None
         self.tuple_int_action_relative: Union[TYPE_TUPLE_INT_ACTION, None] = None
 
         #####

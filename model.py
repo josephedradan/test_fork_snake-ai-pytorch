@@ -9,8 +9,7 @@ import torch.optim as optim
 from torch.nn.modules.loss import _Loss
 from torch.optim import Optimizer
 
-from constants import Action
-from constants import TYPE_GAME_STATE
+from constants import TYPE_NP_NDARRAY_GAME_STATE_GENERIC
 from constants import TYPE_TUPLE_INT_ACTION
 
 
@@ -156,7 +155,6 @@ class QTrainer:
                         (self.gamma * torch.max(self.model(torch_tensor_game_states_next[index_game])))
                 )
 
-
             # print("q_new", q_new)
             # print("INDEX", index_game)
             # print("torch_tensor_action[index_game]", torch_tensor_action[index_game])
@@ -168,7 +166,6 @@ class QTrainer:
             # print(torch_tensor_actions_target)
             # print("AAAA")
             # print(torch_tensor_actions_target[index_game])
-
 
         # print("---------------------")
         # print("state",torch_tensor_game_states)
@@ -193,10 +190,10 @@ class QTrainer:
         self.optimizer.step()
 
     def train_step_input_single(self,
-                                game_state: TYPE_GAME_STATE,
+                                game_state: TYPE_NP_NDARRAY_GAME_STATE_GENERIC,
                                 tuple_int_action: TYPE_TUPLE_INT_ACTION,
                                 reward: int,
-                                game_state_next: TYPE_GAME_STATE,
+                                game_state_next: TYPE_NP_NDARRAY_GAME_STATE_GENERIC,
                                 done: bool
                                 ):
 
