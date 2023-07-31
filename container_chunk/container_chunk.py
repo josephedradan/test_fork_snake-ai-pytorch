@@ -39,7 +39,6 @@ class ContainerChunk:
         Notes:
             Recall that python dictionaries past 3.6 are ordered by insertion.
 
-        :param chunk_initial:
         :param iterable_chunk:
         """
 
@@ -67,6 +66,19 @@ class ContainerChunk:
         :return:
         """
         return self._dict_k_chunk_v_chunk.pop(chunk)
+
+    def get_chunk_first(self) -> Chunk:
+        """
+        Get the the first chunk of this object
+
+        Notes:
+            This function should crash if there is no chunk
+
+        :return:
+        """
+
+        # WARNING : Potentially slow if there are a lot of keys
+        return self._dict_k_chunk_v_chunk[tuple(self._dict_k_chunk_v_chunk.keys())[0]]
 
     def reset(self, iterable_chunk_additional: Union[Iterable[Chunk], None] = None):
         self._dict_k_chunk_v_chunk.clear()

@@ -3,6 +3,7 @@ from collections import deque
 from typing import Deque
 from typing import List
 from typing import Tuple
+from typing import Type
 
 import numpy as np
 import torch
@@ -11,8 +12,10 @@ from torch import nn
 from constants import LIST_TUPLE_INT_ACTION_ORDERED
 from constants import TYPE_GAME_STATE
 from constants import TYPE_TUPLE_INT_ACTION
+from game_state.generator_game_state import GeneratorGameState
 from model import LinearQNet
 from model import QTrainer
+from utility import get_shape_from_generator_game_state
 
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
@@ -22,7 +25,7 @@ LR = 0.001
 class AgentQLearning:
     amount_games: int
 
-    def __init__(self):  # TODO: ADD INSTANCE VARS AS PARAMETERS
+    def __init__(self, class_generator_game_state: Type[GeneratorGameState]):  # TODO: ADD INSTANCE VARS AS PARAMETERS
         self.amount_games: int = 0
         self.epsilon: float = 0  # randomness
         self.gamma: float = 0.9  # discount rate (Must be smaller than 1)
@@ -30,7 +33,9 @@ class AgentQLearning:
             deque(maxlen=MAX_MEMORY)
         )
 
-        self.model: nn.Module = LinearQNet(11, 256, 3)  # FIXME MODEL INPUT MAKE IT DYNAMIC
+        shape = get_shape_from_generator_game_state(class_generator_game_state)
+
+        self.model: nn.Module = LinearQNet(shape[0], 256, 3)
         self.trainer = QTrainer(self.model, learning_rate=LR, gamma=self.gamma)
 
     def remember(self,

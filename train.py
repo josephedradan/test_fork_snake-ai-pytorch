@@ -34,7 +34,7 @@ from player.player_ai_q_learning import PlayerAIQLearning
 
 # TODO: Generalize to GraphicsGameSnake, might not need graphics too
 def train(game_snake: GameSnake, settings: Settings,
-          # generator_game_state: Type[GeneratorGameState]
+          # class_generator_game_state: Type[GeneratorGameState]
           ):
     plot_scores = []
     plot_mean_scores = []

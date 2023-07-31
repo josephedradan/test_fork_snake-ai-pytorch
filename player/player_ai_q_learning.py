@@ -38,12 +38,12 @@ class PlayerAIQLearning(Player[TYPEVAR_WRAPPER]):
 
     frame_iteration: int
 
-    def __init__(self, generator_game_state: Type[GeneratorGameState] = GeneratorGameStateFoodSingle):
+    def __init__(self, class_generator_game_state: Type[GeneratorGameState] = GeneratorGameStateFoodSingle):
 
         super().__init__()
 
-        self.generator_game_state = generator_game_state
-        self.agent_q_learning = AgentQLearning()
+        self.generator_game_state = class_generator_game_state
+        self.agent_q_learning = AgentQLearning(GeneratorGameStateFoodSingle)
 
         """
         ####################

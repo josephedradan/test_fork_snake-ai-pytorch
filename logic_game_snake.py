@@ -258,7 +258,7 @@ class LogicGameSnake:
         :return:
         """
 
-        chunk_snake_first: Chunk = container_chunk_snake.get_chunk_primary()
+        chunk_snake_first: Chunk = container_chunk_snake.get_chunk_first()
 
         # print(container_chunk_snake._deque_chunk)
         # print(chunk_snake_first)

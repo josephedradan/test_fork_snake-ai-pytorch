@@ -1,5 +1,5 @@
 """
-Date created: 5/24/2023
+Date created: 7/29/2023
 
 Purpose:
 
@@ -27,21 +27,32 @@ import numpy as np
 
 from chunk import Chunk
 from constants import Action
-from constants import TYPE_NP_NDARRAY_11
+from constants import TYPE_NP_NDARRAY_13
 from data.data_game import DataGame
 from game_state.generator_game_state import GeneratorGameState
 from player.player import Player
+from utility import get_bool_wrapper_from_chunk_that_collided
 from utility import get_chunk_possible_from_wrappers
-from utility import get_wrapper_from_chunk_that_collided
 from wrapper.wrapper import Wrapper
-from wrapper.wrapper_food import WrapperFood
 
 
-class GeneratorGameStateFoodSingle(GeneratorGameState):
+class GeneratorGameStateFoodSingle_ExperimentalV1(GeneratorGameState):  # NOQA
 
     @staticmethod
-    def get_game_state(data_game: DataGame, player: Player[Wrapper]) -> TYPE_NP_NDARRAY_11:
-        chunk_snake_head: Chunk = player.get_wrapper().get_container_chunk().get_chunk_first()
+    def get_game_state(data_game: DataGame, player: Player[Wrapper]) -> TYPE_NP_NDARRAY_13:
+        """
+
+        Notes:
+            7/31/2023
+                Indicating that a possible action that will result in a collision on food will probably
+                make a model/agent that uses this game state avoid food. The previous statement may
+                not be entirely true, more tests need to be conducted.
+
+        :param data_game:
+        :param player:
+        :return:
+        """
+        chunk_snake_head: Chunk = player.get_wrapper().get_container_chunk().get_chunk_first()  # NOQA
 
         chunk_pseudo_left = Chunk(chunk_snake_head.x - data_game.settings.block_size, chunk_snake_head.y)
         chunk_pseudo_right = Chunk(chunk_snake_head.x + data_game.settings.block_size, chunk_snake_head.y)
@@ -58,63 +69,24 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
         # Selecting a food to target
         chunk_food_possible: Union[Chunk, None] = get_chunk_possible_from_wrappers(data_game.list_wrapper_food)
 
-        # print("PLAYER", chunk_snake_head)
-        # print("CHUNK L", chunk_pseudo_left)
-        # print("CHUNK R", chunk_pseudo_right)
-        # print("CHUNK U", chunk_pseudo_up)
-        # print("CHUNK D", chunk_pseudo_down)
-        # print("FOOD", chunk_food_possible)
-
         #####
 
-        wrapper_from_chunk_that_collided_right = get_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_right)
-        wrapper_from_chunk_that_collided_left = get_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_left)
-        wrapper_from_chunk_that_collided_up = get_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_up)
-        wrapper_from_chunk_that_collided_down = get_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_down)
-
-        # Collisions with anything that is not food
-        bool_collision_right = (
-            False if wrapper_from_chunk_that_collided_right is None or (
-                isinstance(wrapper_from_chunk_that_collided_right, WrapperFood)) else True
-        )
-
-        bool_collision_left = (
-            False if wrapper_from_chunk_that_collided_left is None or (
-                isinstance(wrapper_from_chunk_that_collided_left, WrapperFood)) else True
-        )
-
-        bool_collision_up = (
-            False if wrapper_from_chunk_that_collided_up is None or (
-                isinstance(wrapper_from_chunk_that_collided_up, WrapperFood)) else True
-        )
-
-        bool_collision_down = (
-            False if wrapper_from_chunk_that_collided_down is None or (
-                isinstance(wrapper_from_chunk_that_collided_down, WrapperFood)) else True
-        )
-
-        # bool_collision_right = get_bool_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_right)
-        # bool_collision_left = get_bool_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_left)
-        # bool_collision_up = get_bool_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_up)
-        # bool_collision_down = get_bool_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_down)
-        # print("B R",bool_collision_right)
-        # print("B L",bool_collision_left)
-        # print("B U",bool_collision_up)
-        # print("B D",bool_collision_down)
+        # Collisions with anything
+        bool_collision_right = get_bool_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_right)
+        bool_collision_left = get_bool_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_left)
+        bool_collision_up = get_bool_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_up)
+        bool_collision_down = get_bool_wrapper_from_chunk_that_collided(data_game, chunk_pseudo_down)
 
         #####
         """
         Notes:
-            Shape is (11,)
-        
+            Shape is (13,)
+
             Output:
                 [
-                    Snake going forward (from snake's perspective), 
-                        check if next move going forward will collide with anything that is not food,
-                    Snake going forward (from snake's perspective), 
-                        check if next move going right will collide with anything that is not food,
-                    Snake going forward (from snake's perspective), 
-                        check if next move going left will collide with anything that is not food,
+                    Snake going forward (from snake's perspective), check if next move going forward will collide,
+                    Snake going forward (from snake's perspective), check if next move going right will collide,
+                    Snake going forward (from snake's perspective), check if next move going left will collide,
                     is Current direction (from global perspective) moving left,
                     is Current direction (from global perspective) moving right,
                     is Current direction (from global perspective) moving up,
@@ -123,8 +95,10 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
                     chunk_food_possible is right of chunk_snake_head,
                     chunk_food_possible is up of chunk_snake_head,
                     chunk_food_possible is down of chunk_snake_head,
+                    chunk_food_possible is on chunk_snake_head on horizontal,
+                    chunk_food_possible is on chunk_snake_head on vertical
                 ]
-            
+
         """
         state = [
             # Snake going forward (from snake's perspective), check if next move going forward will collide
@@ -156,6 +130,9 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
             chunk_food_possible.x > chunk_snake_head.x if chunk_food_possible is not None else False,
             chunk_food_possible.y < chunk_snake_head.y if chunk_food_possible is not None else False,
             chunk_food_possible.y > chunk_snake_head.y if chunk_food_possible is not None else False,
+            chunk_food_possible.x == chunk_snake_head.x if chunk_food_possible is not None else False,
+            chunk_food_possible.y == chunk_snake_head.y if chunk_food_possible is not None else False,
+
         ]
 
         print("*** DEBUG STATE ****")
@@ -170,6 +147,8 @@ class GeneratorGameStateFoodSingle(GeneratorGameState):
         print("FOOD X > HEAD X", state[8])
         print("FOOD Y < HEAD Y", state[9])
         print("FOOD Y > HEAD Y", state[10])
+        print("FOOD X == HEAD X", state[11])
+        print("FOOD Y == HEAD Y", state[12])
         print()
 
         return np.array(state, dtype=int)

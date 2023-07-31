@@ -20,21 +20,52 @@ Contributors:
     
 Reference:
 
+
 """
 
 from enum import IntEnum
 from enum import auto
+from typing import Annotated
 from typing import Callable
 from typing import Dict
 from typing import List
+from typing import Literal
 from typing import Tuple
 from typing import TypeVar
 from typing import Union
 
 import numpy as np
+import numpy.typing as npt
 import torch
 
 from wrapper.wrapper import Wrapper
+
+"""
+####################
+Game related stuff
+####################
+"""
+
+BLOCK_SIZE = 20
+BLOCK_SIZE_OFFSET = 1
+GAME_SPEED = 20
+
+FONT_SIZE = 20
+TEXT_LINE_SPACING_AMOUNT = FONT_SIZE + 5
+
+TYPE_POSITION = Tuple[int, int]
+
+TYPE_GAME_STATE = Union[Tuple[int, ...], np.ndarray, torch.Tensor]
+
+TYPE_BOOL_SNAKE_DEAD = bool
+TYPE_WRAPPER_POSSIBLE = Union[Wrapper, None]
+TYPE_CALLABLE_FOR_ITERATION_END = Callable[[TYPE_BOOL_SNAKE_DEAD, TYPE_WRAPPER_POSSIBLE], None]
+
+"""
+####################
+Tuple Int Action
+####################
+"""
 
 TYPE_TUPLE_INT_ACTION = Tuple[int, int, int]
 
@@ -47,6 +78,12 @@ LIST_TUPLE_INT_ACTION_ORDERED: List[TYPE_TUPLE_INT_ACTION] = [
     TUPLE_INT_ACTION_RIGHT,
     TUPLE_INT_ACTION_LEFT
 ]
+
+"""
+####################
+Action
+####################
+"""
 
 
 class Action(IntEnum):
@@ -62,8 +99,6 @@ DICT_K_ACTION_V_INDEX_ACTION_CYCLE_CLOCKWISE: Dict[Action, int] = {
     action: index for index, action in enumerate(LIST_ACTION_CYCLE_CLOCKWISE)
 }
 
-TYPE_ACTION_POSSIBLE = Union[Action, None]
-
 DICT_K_ACTION_V_ACTION_REVERSE: Dict[Action, Action] = {
     Action.UP: Action.DOWN,
     Action.DOWN: Action.UP,
@@ -71,13 +106,35 @@ DICT_K_ACTION_V_ACTION_REVERSE: Dict[Action, Action] = {
     Action.RIGHT: Action.LEFT
 }
 
-TYPE_POSITION = Tuple[int, int]
+TYPE_ACTION_POSSIBLE = Union[Action, None]
 
-TYPE_GAME_STATE = Union[Tuple[int, ...], np.ndarray, torch.Tensor]
+"""
+####################
+Machine learning stuff
 
-TYPE_BOOL_SNAKE_DEAD = bool
-TYPE_WRAPPER_POSSIBLE = Union[Wrapper, None]
-TYPE_CALLABLE_FOR_ITERATION_END = Callable[[TYPE_BOOL_SNAKE_DEAD, TYPE_WRAPPER_POSSIBLE], None]
+Reference:
+    Numpy Typing with specific shape and datatype
+        Reference:
+            https://stackoverflow.com/questions/71109838/numpy-typing-with-specific-shape-and-datatype
+
+    Difference between np.int, np.int_, int, and np.int_t in cython?
+        Notes:
+            what happens when dtype=int
+        Reference:
+            https://stackoverflow.com/questions/21851985/difference-between-np-int-np-int-int-and-np-int-t-in-cython
+
+
+####################
+"""
+
+TYPE_NP_NDARRAY_11 = Annotated[npt.NDArray[int], Literal[11]]
+TYPE_NP_NDARRAY_13 = Annotated[npt.NDArray[int], Literal[13]]
+
+"""
+####################
+Miscellaneous
+####################
+"""
 
 
 class ColorRGB(Tuple[int, int, int]):
@@ -104,13 +161,6 @@ class Condition(IntEnum):
     STATE_2 = auto()
     STATE_3 = auto()
 
-
-BLOCK_SIZE = 20
-BLOCK_SIZE_OFFSET = 1
-GAME_SPEED = 20
-
-FONT_SIZE = 20
-TEXT_LINE_SPACING_AMOUNT = FONT_SIZE + 5
 
 TYPEVAR_WRAPPER = TypeVar("TYPEVAR_WRAPPER", bound=Wrapper)
 

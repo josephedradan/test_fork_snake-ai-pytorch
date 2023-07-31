@@ -27,9 +27,13 @@ import itertools
 from collections import deque
 from typing import Iterable
 from typing import List
+from typing import Sequence
 from typing import Set
 from typing import TYPE_CHECKING
+from typing import Tuple
+from typing import Type
 from typing import Union
+from typing import get_type_hints
 
 import numpy as np
 
@@ -45,6 +49,7 @@ from constants import TUPLE_INT_ACTION_RIGHT
 from constants import TYPEVAR_ANY
 from constants import TYPE_ACTION_POSSIBLE
 from constants import TYPE_TUPLE_INT_ACTION
+from game_state.generator_game_state import GeneratorGameState
 
 if TYPE_CHECKING:
     from data.data_game import DataGame
@@ -113,6 +118,23 @@ def get_action_from_tuple_int_action_relative(action: Action,
     return action
 
 
+def get_chunk_possible_from_wrappers(list_wrapper: Sequence[Wrapper]) -> Union[Chunk, None]:
+    if list_wrapper:
+        wrapper_food_arbitrary = list_wrapper[0]
+
+        container_chunk_food = wrapper_food_arbitrary.get_container_chunk()
+
+        _dict_k_chunk_v_chunk = container_chunk_food.get_dict_k_chunk_v_chunk()
+
+        try:
+            return container_chunk_food.get_chunk_first()
+
+        except IndexError as e:
+            pass
+
+    return None
+
+
 def initialize_easy_player_wrapper_snake(
         settings: Settings,
         logic_game_snake: LogicGameSnake,
@@ -147,7 +169,7 @@ def initialize_easy_player_wrapper_snake(
 
     player_wrapper_snake.set_action(action_initial)
 
-    chunk_current = player_wrapper_snake.get_wrapper().get_container_chunk().get_chunk_primary()
+    chunk_current = player_wrapper_snake.get_wrapper().get_container_chunk().get_chunk_first()
 
     action_reverse = DICT_K_ACTION_V_ACTION_REVERSE.get(action_initial)
 
@@ -173,7 +195,6 @@ def initialize_easy_player_wrapper_snake(
             # Check if placement of chunk is valid
             if not (get_bool_wrapper_from_chunk_that_collided(logic_game_snake.data_game, chunk_new) and
                     chunk_new not in list_chunk_new_to_add):
-
                 list_chunk_new_to_add.append(chunk_new)
 
                 # Set chunk to extend onto
@@ -183,6 +204,55 @@ def initialize_easy_player_wrapper_snake(
     # Add new chunks to snake
     for chunk_new in list_chunk_new_to_add:
         player_wrapper_snake.get_wrapper().get_container_chunk().add_new_chunk(chunk_new)
+
+
+"""
+####################
+Meta python stuff
+####################
+"""
+
+
+def get_shape_from_generator_game_state(class_generator_game_state: Type[GeneratorGameState]) -> Tuple[int, ...]:
+    """
+    This is used to get the return shape of a GeneratorGameState.get_game_state call.
+    The shape returned is the shape of the np.ndarray object as a tuple.
+    The result of this callable is probably used as an arg in a neural network's input layer so the model can
+    work properly.
+
+    Note that if the return type of a GeneratorGameState.get_game_state call does not match what is actually
+    returned from that callable, then its possible that crash may occur.
+
+    Reference:
+        What is the right way to check if a type hint is annotated?
+            Notes:
+                using typing.get_type_hints how to show Annotated
+            Reference:
+                https://stackoverflow.com/questions/68275615/what-is-the-right-way-to-check-if-a-type-hint-is-annotated
+
+                typing.get_type_hints(obj, globalns=None, localns=None, include_extras=False)
+                    Reference:
+                        https://docs.python.org/3/library/typing.html#typing.get_type_hints
+
+    :param class_generator_game_state:
+    :return:
+    """
+    dict_k_key_v_type = get_type_hints(
+        class_generator_game_state.get_game_state,
+        include_extras=True  # Will capture the full typing.Annotated type
+    )
+
+    type_return = dict_k_key_v_type.get("return")
+
+    shape = type_return.__dict__.get("__metadata__")[0].__dict__.get("__args__")
+
+    return shape
+
+"""
+####################
+Miscellaneous
+####################
+"""
 
 
 class DequeFastLookUp(deque[TYPEVAR_ANY]):
