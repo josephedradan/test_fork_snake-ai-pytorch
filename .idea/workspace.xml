@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ea6f27ae-6a93-4139-9cc9-bb386d1f4749" name="Default Changelist" comment="Ua">
-      <change afterPath="$PROJECT_DIR$/pygame_util/group_text.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pygame_util/text_button.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/game/game_snake_pygame.py" beforeDir="false" afterPath="$PROJECT_DIR$/game/game_snake_pygame.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/model.pth" beforeDir="false" afterPath="$PROJECT_DIR$/model/model.pth" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pygame_abstraction/text.py" beforeDir="false" afterPath="$PROJECT_DIR$/pygame_util/text.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pygame_abstraction/text_box.py" beforeDir="false" afterPath="$PROJECT_DIR$/pygame_util/text_box.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pygame_abstraction/text_button.py" beforeDir="false" />
-    </list>
+    <list default="true" id="ea6f27ae-6a93-4139-9cc9-bb386d1f4749" name="Default Changelist" comment="Ua" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -231,7 +222,7 @@
       <workItem from="1688902261849" duration="302750000" />
       <workItem from="1690957658296" duration="25490000" />
       <workItem from="1691130126311" duration="39362000" />
-      <workItem from="1695990146463" duration="1850000" />
+      <workItem from="1695990146463" duration="2443000" />
     </task>
     <servers />
   </component>
