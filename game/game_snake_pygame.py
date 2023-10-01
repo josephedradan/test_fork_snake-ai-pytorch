@@ -36,6 +36,7 @@ Reference:
 
 """
 import random
+from typing import List
 from typing import Union
 
 import pygame
@@ -51,8 +52,9 @@ from graphics.graphics_pygame import GraphicsPygame
 from logic_game_snake import LogicGameSnake
 from player.player_ai_q_learning import PlayerAIQLearning
 from player.player_keyboard_pygame import PlayerKeyboardPyGame
-from pygame_abstraction.text_box import TextBox
-from pygame_abstraction.text_button import TextButton
+from pygame_util.text_box import TextBox
+from pygame_util.text_button import TextButton
+
 from utility import initialize_easy_player_wrapper_snake
 
 
@@ -98,7 +100,11 @@ class GameSnakePygame(GameSnake):
             (self.settings.width // 2, self.settings.height // 2),
             self.pygame_font_text,
             ColorRGB.WHITE,
-            ColorRGB.GREEN
+            ColorRGB.GREEN,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.RED,
+            ColorRGB.BLUE_1,
         )
 
         button_quit = TextButton(
@@ -106,7 +112,11 @@ class GameSnakePygame(GameSnake):
             (self.settings.width // 2, ((self.settings.height // 2) + self.settings.text_line_spacing_amount)),
             self.pygame_font_text,
             ColorRGB.WHITE,
-            ColorRGB.GREEN
+            ColorRGB.GREEN,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
         )
 
         data_game: Union[DataGame, None] = None
@@ -118,8 +128,6 @@ class GameSnakePygame(GameSnake):
         """
 
         ####################
-
-        position_mouse: TYPE_POSITION = pygame.mouse.get_pos()
 
         """
         IMPORTANT NOTES:
@@ -133,9 +141,10 @@ class GameSnakePygame(GameSnake):
 
             # TODO: Find better menu displaying solution, button to a new loop seems kind of cringe
 
-            event: pygame.event.Event
-            for event in pygame.event.get():
-                position_mouse = pygame.mouse.get_pos()
+            list_event: List[pygame.event.Event] = pygame.event.get()
+            position_mouse = pygame.mouse.get_pos()
+
+            for event in list_event:
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -143,7 +152,6 @@ class GameSnakePygame(GameSnake):
 
                 # Button Play
                 if button_play.is_position_colliding(position_mouse):
-
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         data_game = self._menu_play()
 
@@ -158,18 +166,9 @@ class GameSnakePygame(GameSnake):
             # Drawing
             #########################
 
-            # Button Play
-            if button_play.is_position_colliding(position_mouse):
-                button_play.draw_hover(self.pygame_surface_main)
-            else:
-                button_play.draw(self.pygame_surface_main)
+            button_play.draw(self.pygame_surface_main, list_event, position_mouse)
 
-            # Button Quit
-            if button_quit.is_position_colliding(position_mouse):
-                button_quit.draw_hover(self.pygame_surface_main)
-
-            else:
-                button_quit.draw(self.pygame_surface_main)
+            button_quit.draw(self.pygame_surface_main, list_event, position_mouse)
 
             # Text post game data
             if data_game:
@@ -200,7 +199,11 @@ class GameSnakePygame(GameSnake):
             (self.settings.width // 2, (self.settings.height // 2)),
             self.pygame_font_text,
             ColorRGB.WHITE,
-            ColorRGB.GREEN
+            ColorRGB.GREEN,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
         )
 
         button_ai = TextButton(
@@ -208,7 +211,11 @@ class GameSnakePygame(GameSnake):
             (self.settings.width // 2, ((self.settings.height // 2) + self.settings.text_line_spacing_amount)),
             self.pygame_font_text,
             ColorRGB.WHITE,
-            ColorRGB.GREEN
+            ColorRGB.GREEN,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
         )
 
         button_play_back = TextButton(
@@ -216,19 +223,22 @@ class GameSnakePygame(GameSnake):
             (self.settings.width // 2, ((self.settings.height // 2) + (2 * self.settings.text_line_spacing_amount))),
             self.pygame_font_text,
             ColorRGB.WHITE,
-            ColorRGB.GREEN
+            ColorRGB.GREEN,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
         )
 
         #####
 
-        position_mouse: TYPE_POSITION = pygame.mouse.get_pos()
-
         while True:
             self.pygame_surface_main.fill(ColorRGB.BLACK)
 
-            event: pygame.event.Event
-            for event in pygame.event.get():
-                position_mouse = pygame.mouse.get_pos()
+            list_event: List[pygame.event.Event] = pygame.event.get()
+            position_mouse = pygame.mouse.get_pos()
+
+            for event in list_event:
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -281,23 +291,9 @@ class GameSnakePygame(GameSnake):
             # Drawing
             #########################
 
-            # Button Keyboard
-            if button_play_keyboard.is_position_colliding(position_mouse):
-                button_play_keyboard.draw_hover(self.pygame_surface_main)
-            else:
-                button_play_keyboard.draw(self.pygame_surface_main)
-
-            # Button AI
-            if button_ai.is_position_colliding(position_mouse):
-                button_ai.draw_hover(self.pygame_surface_main)
-            else:
-                button_ai.draw(self.pygame_surface_main)
-
-            # Button Back
-            if button_play_back.is_position_colliding(position_mouse):
-                button_play_back.draw_hover(self.pygame_surface_main)
-            else:
-                button_play_back.draw(self.pygame_surface_main)
+            button_play_keyboard.draw(self.pygame_surface_main, list_event, position_mouse)
+            button_ai.draw(self.pygame_surface_main, list_event, position_mouse)
+            button_play_back.draw(self.pygame_surface_main, list_event, position_mouse)
 
             pygame.display.flip()
 
@@ -309,7 +305,11 @@ class GameSnakePygame(GameSnake):
             (self.settings.width // 2, ((self.settings.height // 2))),
             self.pygame_font_text,
             ColorRGB.WHITE,
-            ColorRGB.GREEN
+            ColorRGB.GREEN,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
         )
 
         text_box_amount_run = TextBox(
@@ -318,10 +318,10 @@ class GameSnakePygame(GameSnake):
             self.pygame_font_text,
             ColorRGB.WHITE,
             ColorRGB.GREEN,
-            ColorRGB.BLACK,
-            ColorRGB.BLACK,
-            ColorRGB.GOLD,
-            ColorRGB.BLACK,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.RED,
+            ColorRGB.BLUE_1,
         )
         text_box_amount_run.extend_to_list_char(str(1000))
 
@@ -331,10 +331,10 @@ class GameSnakePygame(GameSnake):
             self.pygame_font_text,
             ColorRGB.WHITE,
             ColorRGB.GREEN,
-            ColorRGB.BLACK,
-            ColorRGB.BLACK,
-            ColorRGB.GOLD,
-            ColorRGB.BLACK,
+            ColorRGB.WHITE,
+            ColorRGB.WHITE,
+            ColorRGB.RED,
+            ColorRGB.BLUE_1,
         )
         text_box_amount_fps.extend_to_list_char(str(2000))
 
@@ -354,8 +354,9 @@ class GameSnakePygame(GameSnake):
         while True:
             self.pygame_surface_main.fill(ColorRGB.BLACK)
 
-            event: pygame.event.Event
-            for event in pygame.event.get():
+            list_event: List[pygame.event.Event] = pygame.event.get()
+
+            for event in list_event:
                 position_mouse = pygame.mouse.get_pos()
 
                 if event.type == pygame.QUIT:
@@ -500,30 +501,27 @@ class GameSnakePygame(GameSnake):
             #########################
 
             # Button Play AI
-            if button_play_ai.is_position_colliding(position_mouse):
-                button_play_ai.draw_hover(self.pygame_surface_main)
-            else:
-                button_play_ai.draw(self.pygame_surface_main)
+            button_play_ai.draw(self.pygame_surface_main,list_event, position_mouse)
 
             # amount_run
-            if condition_amount_run == Condition.STATE_1:
-                text_box_amount_run.draw(self.pygame_surface_main)
+            # if condition_amount_run == Condition.STATE_1:
+            text_box_amount_run.draw(self.pygame_surface_main,list_event, position_mouse)
 
-            elif condition_amount_run == Condition.STATE_2:
-                text_box_amount_run.draw_hover(self.pygame_surface_main)
-
-            elif condition_amount_run == Condition.STATE_3:
-                text_box_amount_run.draw_active(self.pygame_surface_main)
+            # elif condition_amount_run == Condition.STATE_2:
+            #     text_box_amount_run.draw_hover(self.pygame_surface_main,list_event, position_mouse)
+            #
+            # elif condition_amount_run == Condition.STATE_3:
+            #     text_box_amount_run.draw_active(self.pygame_surface_main,list_event, position_mouse)
 
             # amount_fps
-            if condition_amount_fps == Condition.STATE_1:
-                text_box_amount_fps.draw(self.pygame_surface_main)
+            # if condition_amount_fps == Condition.STATE_1:
+            text_box_amount_fps.draw(self.pygame_surface_main,list_event, position_mouse)
 
-            elif condition_amount_fps == Condition.STATE_2:
-                text_box_amount_fps.draw_hover(self.pygame_surface_main)
-
-            elif condition_amount_fps == Condition.STATE_3:
-                text_box_amount_fps.draw_active(self.pygame_surface_main)
+            # elif condition_amount_fps == Condition.STATE_2:
+            #     text_box_amount_fps.draw_hover(self.pygame_surface_main,list_event, position_mouse)
+            #
+            # elif condition_amount_fps == Condition.STATE_3:
+            #     text_box_amount_fps.draw_active(self.pygame_surface_main,list_event, position_mouse)
 
             pygame.display.flip()
 

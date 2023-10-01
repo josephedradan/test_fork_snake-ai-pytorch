@@ -36,7 +36,6 @@ from typing import Union
 
 import numpy as np
 import numpy.typing as npt
-import torch
 
 from wrapper.wrapper import Wrapper
 
@@ -152,6 +151,9 @@ class ColorRGB(Tuple[int, int, int]):
     GREEN_KELLY = (76, 187, 23)
     LIGHT_GOLDEN_ROD_YELLOW = (250, 250, 210)
     GOLD = (255, 215, 0)
+
+
+ColorRGBPossible = Union[ColorRGB, None]
 
 
 class Condition(IntEnum):
