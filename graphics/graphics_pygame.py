@@ -6,6 +6,7 @@ Purpose:
 Details:
 
 Description:
+    Pygame Graphics for the game
 
 Notes:
 
@@ -105,10 +106,11 @@ class GraphicsPygame(Graphics):
             pygame.draw.rect(
                 self.pygame_display,
                 ColorRGB.GREEN_KELLY,
-                pygame.Rect(wrapper_from_player.get_container_chunk()[0].x + BLOCK_SIZE_OFFSET,
-                            wrapper_from_player.get_container_chunk()[0].y + BLOCK_SIZE_OFFSET,
-                            BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2),
-                            BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2))
+                pygame.Rect(
+                    wrapper_from_player.get_container_chunk()[0].x + BLOCK_SIZE_OFFSET,
+                    wrapper_from_player.get_container_chunk()[0].y + BLOCK_SIZE_OFFSET,
+                    BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2),
+                    BLOCK_SIZE - (BLOCK_SIZE_OFFSET * 2))
             )
 
             # Draw snake body
@@ -116,7 +118,6 @@ class GraphicsPygame(Graphics):
                     wrapper_from_player.get_container_chunk(),
                     1,
                     len(wrapper_from_player.get_container_chunk())):
-
                 pygame.draw.rect(
                     self.pygame_display,
                     ColorRGB.GREEN,
